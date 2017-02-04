@@ -57,7 +57,7 @@ Json json = new Json() {
 };
 ```
 
-Finally, you can add values with the `put()` method:
+Third, you can add values with the `put()` method:
 
 ```java
 Json json = new Json()
@@ -116,7 +116,7 @@ String input = // ...
 JsonArray<Json> array = new JsonArray<Json>(input);
 ```
 
-You can add new objects to them:
+You can add new objects with `.add()`:
 
 ```java
 JsonArray<String> array = new JsonArray<String>();
@@ -124,7 +124,7 @@ JsonArray<String> array = new JsonArray<String>();
 array.add("Hello", "World!");
 ```
 
-And of course, you can retrieve and remove objects by index:
+You can retrieve and remove objects by index:
 
 ```java
 JsonArray<Json> array = // ...
@@ -202,7 +202,7 @@ int day = json.get("birthday.day");
 int year = json.get("birthday.year");
 ```
 
-You can also quickly check equality in objects...
+You can quickly check equality in objects...
 
 ```java
 Json json = // ...
@@ -229,7 +229,7 @@ boolean firstItemBirthYearCheck = array.equal(0, "birthday.year", 1995);
 
 # Serialization
 
-This library allows very easy serialization and deserialization. Serialization is converting an Java class instance 
+This library allows very easy serialization and deserialization. Serialization is converting a Java class instance 
 to JSON.
 
 Take this class for the coming set of examples:
@@ -409,7 +409,7 @@ Person person = array.get(0, Person.class);
 
 This library comes with a two annotations that have their own special use cases.
 
-### JsonName
+### @JsonName
 
 This annotation allows you to assign a custom name to fields.
 
@@ -440,7 +440,7 @@ public class Person {
 }
 ```
 
-### JsonIgnore
+### @JsonIgnore
 
 This annotation tells the library to ignore and fields it's used to mark. That means the field is not serialized, 
 deserialized, or used with field construction:
