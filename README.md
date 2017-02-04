@@ -13,12 +13,23 @@ classes (`JSONObject`, `JSONArray`, etc.) which also happen to be included in th
 
 The dependency *will be available on jCenter shortly*, if it doesn't resolve yet, please wait a bit longer.
 
-### Gradle
+### Gradle (Java)
 
 ```Gradle
 dependencies {
-    ...
     compile 'com.afollestad:json:0.1.0'
+}
+```
+
+### Gradle (Android)
+
+Since Android includes `org.json` classes, you'll want to exclude the copies provided by this library:
+
+```Gradle
+dependencies {
+    compile('com.afollestad:json:0.1.0') {
+        exclude group: 'org.json', module: 'json'
+    }
 }
 ```
 
