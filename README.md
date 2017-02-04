@@ -14,7 +14,7 @@ in the Android SDK. As we all know, those stock classes tend to be a pain. They 
 
 # Dependency
 
-The dependency *will be available on jCenter shortly*, if it doesn't resolve yet, please wait a bit longer.
+The dependency is available via jCenter.
 
 ### Gradle (Java)
 
