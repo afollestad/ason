@@ -14,7 +14,7 @@ import static com.afollestad.json.Util.*;
 /**
  * @author Aidan Follestad (afollestad)
  */
-@SuppressWarnings({"WeakerAccess", "unused", "unchecked"}) public class Json {
+@SuppressWarnings({"WeakerAccess", "unused", "unchecked", "SameParameterValue"}) public class Json {
 
     private JSONObject json;
     private JsonSerializer serializer;
@@ -111,7 +111,11 @@ import static com.afollestad.json.Util.*;
         return this;
     }
 
-    @SuppressWarnings("unchecked") public <T> T get(String key) {
+    public <T> T get(String key) {
+        return get(key, (T) null);
+    }
+
+    @SuppressWarnings("unchecked") public <T> T get(String key, T defaultValue) {
         if (key == null)
             throw new IllegalArgumentException("Key cannot be null.");
         Object result;
@@ -122,7 +126,7 @@ import static com.afollestad.json.Util.*;
             result = json.opt(key);
         }
         if (result == null) {
-            return null;
+            return defaultValue;
         } else if (result instanceof JSONObject) {
             result = new Json((JSONObject) result);
         } else if (result instanceof JSONArray) {
@@ -136,37 +140,77 @@ import static com.afollestad.json.Util.*;
     }
 
     public boolean getBool(String key) {
-        return (Boolean) get(key);
+        return getBool(key, false);
+    }
+
+    public boolean getBool(String key, boolean defaultValue) {
+        return get(key, defaultValue);
     }
 
     public String getString(String key) {
-        return (String) get(key);
+        return getString(key, null);
+    }
+
+    public String getString(String key, String defaultValue) {
+        return get(key, defaultValue);
     }
 
     public short getShort(String key) {
-        return (Short) get(key);
+        return getShort(key, (short) 0);
+    }
+
+    public short getShort(String key, short defaultValue) {
+        return get(key, defaultValue);
     }
 
     public int getInt(String key) {
-        return (Integer) get(key);
+        return getInt(key, 0);
+    }
+
+    public int getInt(String key, int defaultValue) {
+        return get(key, defaultValue);
     }
 
     public long getLong(String key) {
-        return (Long) get(key);
+        return getLong(key, 0L);
+    }
+
+    public long getLong(String key, long defaultValue) {
+        return get(key, defaultValue);
     }
 
     public float getFloat(String key) {
-        return (Float) get(key);
+        return getFloat(key, 0f);
+    }
+
+    public float getFloat(String key, float defaultValue) {
+        return get(key, defaultValue);
     }
 
     public double getDouble(String key) {
-        return (Double) get(key);
+        return getDouble(key, 0d);
     }
 
-    @SuppressWarnings("Duplicates") public <T> T get(String key, Class<T> cls) {
-        Object value = get(key);
+    public double getDouble(String key, double defaultValue) {
+        return get(key, defaultValue);
+    }
+
+    public Json getJsonObject(String key) {
+        return get(key, (Json) null);
+    }
+
+    public JsonArray getJsonArray(String key) {
+        return get(key, (JsonArray) null);
+    }
+
+    public <T> T get(String key, Class<T> cls) {
+        return get(key, cls, null);
+    }
+
+    @SuppressWarnings("Duplicates") public <T> T get(String key, Class<T> cls, T defaultValue) {
+        Object value = get(key, defaultValue);
         if (value == null) {
-            return null;
+            return defaultValue;
         } else if (isPrimitive(cls) ||
                 cls == JSONObject.class ||
                 cls == JSONArray.class ||

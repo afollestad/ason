@@ -21,7 +21,7 @@ The dependency *will be available on jCenter shortly*, if it doesn't resolve yet
 ```Gradle
 dependencies {
     ...
-    compile 'com.afollestad:json:0.1.0'
+    compile 'com.afollestad:json:0.1.1'
 }
 ```
 
@@ -32,7 +32,7 @@ Since Android includes `org.json` classes, you'll want to exclude the copies pro
 ```Gradle
 dependencies {
     ...
-    compile('com.afollestad:json:0.1.0') {
+    compile('com.afollestad:json:0.1.1') {
         exclude group: 'org.json', module: 'json'
     }
 }
@@ -44,7 +44,7 @@ dependencies {
 <dependency>
   <groupId>com.afollestad</groupId>
   <artifactId>json</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -82,22 +82,49 @@ Json json = new Json()
     .put("born", 1995);
 ```
 
+You can quickly put in arrays just by passing multiple values to `put()`:
+
+```java
+// Translates to {"greetings":["Hello","Hey"]}
+Json json = new Json();
+// The first parameter is a key, you can pass any type for the rest of the varargs parameters
+json.put("greetings", "Hello", "World");
+```
+
 ---
 
 # Retrieving Values from Objects
 
-Various methods exist for retrieving existing values (default values are returned if they don't exist):
+Various methods exist for retrieving existing values (default values are returned if they don't exist). The one parameter 
+version uses whatever the usual default of a type is (0 for number types, null for everything else), if the no value is found 
+for the key. The two parameter version lets you specify a custom default.
 
 ```java
 Json json = // ...
 
 String str = json.getString("name");
+String strWithDefault = json.getString("name", null);
+
 boolean bool = json.getBool("name");
+boolean boolWithDefault = json.getBool("name", true);
+
 short shrt = json.getShort("name");
+short shrtWithDefault = json.getShort("name", (short)0);
+
 int integer = json.getInt("name");
+int integerWithDefault = json.getInt("name", 0);
+
 long lng = json.getLong("name");
+long lngWithDefault = json.getLong("name", 0L);
+
 float flt = json.getFloat("name");
+float fltWithDefault = json.getFloat("name", 0f);
+
 double doub = json.getDouble("name");
+double doubWithDefault = json.getDouble("name", 0d);
+
+Json obj = json.getJsonObject("name");
+JsonArray ary = json.getJsonArray("name");
 ```
 
 Further, the `get(String)` method will actually automatically cast its return value to whatever variable you're setting it to:
@@ -107,8 +134,13 @@ String str = json.get("name");
 long lng = json.get("name");
 ```
 
-The only time you *need* to use explicit `get[Type]` getters is when you aren't setting them to a value before 
-using them (e.g. in an if statement).
+It will also infer its type if you pass a default value, removing the need to use explicit `get[Type]` methods:
+
+```java
+if (json.get("name", false)) {
+    // do something
+}
+```
 
 ---
 

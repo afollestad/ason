@@ -23,6 +23,7 @@ public class JsonTest {
         assertTrue(json.equal("name", "Aidan"));
         assertTrue(json.equal("_id", 3));
         assertTrue(json.equal("age", 21));
+        assertEquals(json.get("non-existent", 69).intValue(), 69);
     }
 
     @Test public void anon_fields_test() {
