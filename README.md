@@ -83,17 +83,6 @@ Json json = new Json()
 
 # Retrieving Values from Objects
 
-You can check if values exist, are null, equal another value, or even remove them by key:
-
-```java
-Json json = // ...
-
-boolean exists = json.has("name");
-boolean isNull = json.isNull("name");
-boolean valueEqual = json.equal("key-name", value);
-json.remove("name");
-```
-
 Various methods exist for retrieving existing values (default values are returned if they don't exist):
 
 ```java
@@ -117,6 +106,19 @@ long lng = json.get("name");
 
 The only time you *need* to use explicit `get[Type]` getters is when you aren't setting them to a value before 
 using them (e.g. in an if statement).
+
+---
+
+You can check if values exist, are null, equal another value, or even remove them by key:
+
+```java
+Json json = // ...
+
+boolean exists = json.has("name");
+boolean isNull = json.isNull("name");
+boolean valueEqual = json.equal("key-name", value);
+json.remove("name");
+```
 
 ---
 
