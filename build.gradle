@@ -1,0 +1,34 @@
+group 'com.afollestad'
+version '0.1.0'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:+'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile group: 'org.json', name: 'json', version: '20160810'
+}
+
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'drummer-aidan'
+    groupId = 'com.afollestad'
+    artifactId = 'json'
+    publishVersion = '0.1.0'
+    website = 'https://github.com/afollestad/json'
+}
