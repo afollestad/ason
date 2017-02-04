@@ -5,7 +5,8 @@
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 This library intends to make JSON very easy to interact with in Java. It wraps around the well-known `org.json` 
-classes (`JSONObject`, `JSONArray`, etc.) which also happen to be included in the Android SDK.
+classes (`JSONObject`, `JSONArray`, etc.) which also happen to be included in the Android SDK. As we all know, those 
+stock classes tend to be a pain. They feel bulky, and make you try/catch *way* too many Exceptions.
 
 ---
 
