@@ -17,6 +17,7 @@ The dependency *will be available on jCenter shortly*, if it doesn't resolve yet
 
 ```Gradle
 dependencies {
+    ...
     compile 'com.afollestad:json:0.1.0'
 }
 ```
@@ -27,6 +28,7 @@ Since Android includes `org.json` classes, you'll want to exclude the copies pro
 
 ```Gradle
 dependencies {
+    ...
     compile('com.afollestad:json:0.1.0') {
         exclude group: 'org.json', module: 'json'
     }
