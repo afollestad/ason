@@ -1,11 +1,37 @@
 # Json
 
 [ ![Download](https://api.bintray.com/packages/drummer-aidan/maven/json/images/download.svg) ](https://bintray.com/drummer-aidan/maven/json/_latestVersion)
-
-
+[![Build Status](https://travis-ci.org/afollestad/json.svg)](https://travis-ci.org/afollestad/json)
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 This library intends to make JSON very easy to interact with in Java. It wraps around the well-known `org.json` 
 classes (`JSONObject`, `JSONArray`, etc.) which also happen to be included in the Android SDK.
+
+---
+
+# Dependency
+
+The dependency *will be available on jCenter shortly*, if it doesn't resolve yet, please wait a bit longer.
+
+### Gradle
+
+```Gradle
+dependencies {
+    ...
+    compile 'com.afollestad:json:0.1.0'
+}
+```
+
+### Maven
+
+```xml
+<dependency>
+  <groupId>com.afollestad</groupId>
+  <artifactId>json</artifactId>
+  <version>0.1.0</version>
+  <type>pom</type>
+</dependency>
+```
 
 ---
 
