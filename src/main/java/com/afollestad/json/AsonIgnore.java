@@ -12,5 +12,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)
 @Target({FIELD})
-public @interface JsonIgnore {
+public @interface AsonIgnore {
 }

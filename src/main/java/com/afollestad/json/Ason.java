@@ -14,24 +14,24 @@ import static com.afollestad.json.Util.*;
 /**
  * @author Aidan Follestad (afollestad)
  */
-@SuppressWarnings({"WeakerAccess", "unused", "unchecked", "SameParameterValue"}) public class Json {
+@SuppressWarnings({"WeakerAccess", "unused", "unchecked", "SameParameterValue"}) public class Ason {
 
     private JSONObject json;
-    private JsonSerializer serializer;
+    private AsonSerializer serializer;
     private boolean loadedMyFields;
 
-    public Json(JSONObject stock) {
+    public Ason(JSONObject stock) {
         if (stock == null)
             stock = new JSONObject();
         this.json = stock;
-        this.serializer = JsonSerializer.get();
+        this.serializer = AsonSerializer.get();
     }
 
-    public Json() {
+    public Ason() {
         this(new JSONObject());
     }
 
-    public Json(Map<String, Object> map) {
+    public Ason(Map<String, Object> map) {
         this();
         if (map == null) return;
         for (String key : map.keySet()) {
@@ -40,7 +40,7 @@ import static com.afollestad.json.Util.*;
         }
     }
 
-    public Json(String json) {
+    public Ason(String json) {
         try {
             this.json = new JSONObject(json);
         } catch (JSONException e) {
@@ -48,7 +48,7 @@ import static com.afollestad.json.Util.*;
         }
     }
 
-    private Json putInternal(JSONArray intoArray,
+    private Ason putInternal(JSONArray intoArray,
                              JSONObject intoObject,
                              String key,
                              Object value) {
@@ -66,10 +66,10 @@ import static com.afollestad.json.Util.*;
                 } else {
                     json.put(key, value);
                 }
-            } else if (value instanceof Json) {
-                putInternal(intoArray, intoObject, key, ((Json) value).toStockJson());
-            } else if (value instanceof JsonArray) {
-                putInternal(intoArray, intoObject, key, ((JsonArray) value).toStockJson());
+            } else if (value instanceof Ason) {
+                putInternal(intoArray, intoObject, key, ((Ason) value).toStockJson());
+            } else if (value instanceof AsonArray) {
+                putInternal(intoArray, intoObject, key, ((AsonArray) value).toStockJson());
             } else if (value.getClass().isArray()) {
                 putInternal(intoArray, intoObject, key, serializer.serializeArray((Object[]) value));
             } else if (isList(value.getClass())) {
@@ -83,7 +83,7 @@ import static com.afollestad.json.Util.*;
         return this;
     }
 
-    public Json put(String key, Object... values) {
+    public Ason put(String key, Object... values) {
         if (key == null)
             throw new IllegalArgumentException("Key cannot be null.");
         Object insertObject;
@@ -106,7 +106,7 @@ import static com.afollestad.json.Util.*;
         return this;
     }
 
-    public Json remove(String key) {
+    public Ason remove(String key) {
         json.remove(key);
         return this;
     }
@@ -128,9 +128,9 @@ import static com.afollestad.json.Util.*;
         if (result == null) {
             return defaultValue;
         } else if (result instanceof JSONObject) {
-            result = new Json((JSONObject) result);
+            result = new Ason((JSONObject) result);
         } else if (result instanceof JSONArray) {
-            result = new JsonArray((JSONArray) result);
+            result = new AsonArray((JSONArray) result);
         }
         try {
             return (T) result;
@@ -195,12 +195,12 @@ import static com.afollestad.json.Util.*;
         return get(key, defaultValue);
     }
 
-    public Json getJsonObject(String key) {
-        return get(key, (Json) null);
+    public Ason getJsonObject(String key) {
+        return get(key, (Ason) null);
     }
 
-    public JsonArray getJsonArray(String key) {
-        return get(key, (JsonArray) null);
+    public AsonArray getJsonArray(String key) {
+        return get(key, (AsonArray) null);
     }
 
     public <T> T get(String key, Class<T> cls) {
@@ -214,30 +214,30 @@ import static com.afollestad.json.Util.*;
         } else if (isPrimitive(cls) ||
                 cls == JSONObject.class ||
                 cls == JSONArray.class ||
-                cls == Json.class ||
-                cls == JsonArray.class) {
+                cls == Ason.class ||
+                cls == AsonArray.class) {
             return (T) value;
         } else if (cls.isArray()) {
-            if (!(value instanceof JsonArray)) {
-                throw new IllegalStateException("Expected a JsonArray to convert to " +
+            if (!(value instanceof AsonArray)) {
+                throw new IllegalStateException("Expected a AsonArray to convert to " +
                         cls.getName() + ", found " + value.getClass().getName() + ".");
             }
-            JsonArray<T> array = (JsonArray<T>) value;
-            return (T) JsonSerializer.get().deserializeArray(array, cls.getComponentType());
+            AsonArray<T> array = (AsonArray<T>) value;
+            return (T) AsonSerializer.get().deserializeArray(array, cls.getComponentType());
         } else if (isList(cls)) {
-            if (!(value instanceof JsonArray)) {
-                throw new IllegalStateException("Expected a JsonArray to convert to " +
+            if (!(value instanceof AsonArray)) {
+                throw new IllegalStateException("Expected a AsonArray to convert to " +
                         cls.getName() + ", found " + value.getClass().getName() + ".");
             }
-            JsonArray<T> array = (JsonArray<T>) value;
-            return (T) JsonSerializer.get().deserializeList(array, cls.getComponentType());
+            AsonArray<T> array = (AsonArray<T>) value;
+            return (T) AsonSerializer.get().deserializeList(array, cls.getComponentType());
         } else {
-            if (!(value instanceof Json)) {
-                throw new IllegalStateException("Expected a Json to convert to " +
+            if (!(value instanceof Ason)) {
+                throw new IllegalStateException("Expected a Ason to convert to " +
                         cls.getName() + ", found " + value.getClass().getName() + ".");
             }
-            Json object = (Json) value;
-            return JsonSerializer.get().deserialize(object, cls);
+            Ason object = (Ason) value;
+            return AsonSerializer.get().deserialize(object, cls);
         }
     }
 
@@ -296,8 +296,8 @@ import static com.afollestad.json.Util.*;
     }
 
     @Override public boolean equals(Object obj) {
-        return obj instanceof Json &&
-                ((Json) obj).json.toString().equals(json.toString());
+        return obj instanceof Ason &&
+                ((Ason) obj).json.toString().equals(json.toString());
     }
 
     @Override public String toString() {
@@ -312,5 +312,64 @@ import static com.afollestad.json.Util.*;
         } catch (JSONException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    //
+    ////// SERIALIZATION
+    //
+
+    public static Ason serialize(Object object) {
+        return AsonSerializer.get().serialize(object);
+    }
+
+    public static <T> AsonArray<T> serializeArray(Object object) {
+        return AsonSerializer.get().serializeArray(object);
+    }
+
+    public static <T> AsonArray<T> serializeList(List<T> object) {
+        return AsonSerializer.get().serializeList(object);
+    }
+
+    //
+    ////// DESERIALIZATION
+    //
+
+    public <T> T deserialize(Class<T> cls) {
+        return deserialize(this, cls);
+    }
+
+    public static <T> T deserialize(String json, Class<T> cls) {
+        if (isJsonArray(json)) {
+            AsonArray ason = new AsonArray(json);
+            return AsonSerializer.get().deserializeArray(ason, cls);
+        } else {
+            Ason ason = new Ason(json);
+            return AsonSerializer.get().deserialize(ason, cls);
+        }
+    }
+
+    public static <T> T deserialize(Ason json, Class<T> cls) {
+        return AsonSerializer.get().deserialize(json, cls);
+    }
+
+    public static <T> T deserialize(AsonArray json, Class<T> cls) {
+        if (cls == null) {
+            throw new IllegalArgumentException("cls parameter cannot be null.");
+        } else if (!cls.isArray()) {
+            if (isList(cls)) {
+                throw new IllegalStateException("Use Ason.deserializeList() for Lists, not deserialize().");
+            }
+            throw new IllegalArgumentException(cls.getName() + " is not an array type.");
+        }
+        return AsonSerializer.get().deserializeArray(json, cls);
+    }
+
+    public static <T> List<T> deserializeList(String json, Class<T> cls) {
+        AsonArray array = new AsonArray(json);
+        return AsonSerializer.get().deserializeList(array, cls);
+    }
+
+    public static <T> List<T> deserializeList(AsonArray json, Class<T> cls) {
+        return AsonSerializer.get().deserializeList(json, cls);
     }
 }

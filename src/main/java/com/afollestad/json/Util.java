@@ -99,7 +99,8 @@ class Util {
                 cls == int.class || cls == Integer.class ||
                 cls == long.class || cls == Long.class ||
                 cls == String.class ||
-                cls == byte.class || cls == Byte.class;
+                cls == byte.class || cls == Byte.class ||
+                cls == char.class || cls == Character.class;
     }
 
     static boolean isPrimitive(Object cls) {
@@ -110,7 +111,8 @@ class Util {
                 cls instanceof Integer ||
                 cls instanceof Long ||
                 cls instanceof String ||
-                cls instanceof Byte;
+                cls instanceof Byte ||
+                cls instanceof Character;
     }
 
     static boolean isList(Class<?> cls) {
@@ -125,11 +127,11 @@ class Util {
 
     static boolean shouldIgnore(Field field) {
         return field.getName().startsWith("this$") ||
-                field.getAnnotation(JsonIgnore.class) != null;
+                field.getAnnotation(AsonIgnore.class) != null;
     }
 
     static String fieldName(Field field) {
-        JsonName annotation = field.getAnnotation(JsonName.class);
+        AsonName annotation = field.getAnnotation(AsonName.class);
         if (annotation != null) {
             return annotation.name();
         }
@@ -145,5 +147,17 @@ class Util {
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Failed to set the value of " + field.getName() + " in " + object.getClass().getName(), e);
         }
+    }
+
+    static boolean isJsonArray(String json) {
+        for (int i = 0; i < json.length(); i++) {
+            char c = json.charAt(i);
+            if (Character.isAlphabetic(c) || c == '{') {
+                return false;
+            } else if (c == '[') {
+                return true;
+            }
+        }
+        return false;
     }
 }

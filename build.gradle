@@ -1,5 +1,5 @@
 group 'com.afollestad'
-version '0.1.1'
+version '1.0.0'
 
 apply plugin: 'java'
 
@@ -29,6 +29,6 @@ publish {
     userOrg = 'drummer-aidan'
     groupId = 'com.afollestad'
     artifactId = 'json'
-    publishVersion = '0.1.1'
+    publishVersion = '1.0.0'
     website = 'https://github.com/afollestad/json'
 }

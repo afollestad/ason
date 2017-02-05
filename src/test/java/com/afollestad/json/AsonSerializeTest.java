@@ -6,19 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
-public class JsonSerializeTest {
+public class AsonSerializeTest {
 
     static class Person {
 
-        @JsonName(name = "_id") int id;
+        @AsonName(name = "_id") int id;
         String name;
         int age;
         Person spouse;
-        @JsonIgnore String gibberish = "Hello, world!";
+        @AsonIgnore String gibberish = "Hello, world!";
 
         public Person() {
         }
@@ -37,9 +38,9 @@ public class JsonSerializeTest {
     @Test public void test_serialize() {
         Person person = new Person(2, "Aidan", 21);
         person.spouse = new Person(6, "Waverly", 19);
-        Json json = JsonSerializer.get().serialize(person);
+        Ason ason = Ason.serialize(person);
         String expected = "{\"name\":\"Aidan\",\"_id\":2,\"age\":21,\"spouse\":{\"name\":\"Waverly\",\"_id\":6,\"age\":19}}";
-        assertEquals(json.toString(), expected);
+        assertEquals(ason.toString(), expected);
     }
 
     @Test public void test_serialize_array() {
@@ -47,7 +48,7 @@ public class JsonSerializeTest {
                 new Person(1, "Aidan", 21),
                 new Person(2, "Waverly", 19)
         };
-        JsonArray<Person> json = JsonSerializer.get().serializeArray(people);
+        AsonArray<Person> json = Ason.serializeArray(people);
         String expected = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
         assertEquals(json.toString(), expected);
     }
@@ -56,20 +57,20 @@ public class JsonSerializeTest {
         List<Person> people = new ArrayList<>(2);
         people.add(new Person(1, "Aidan", 21));
         people.add(new Person(2, "Waverly", 19));
-        JsonArray<Person> json = JsonSerializer.get().serializeList(people);
+        AsonArray<Person> json = Ason.serializeList(people);
         String expected = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
         assertEquals(json.toString(), expected);
     }
 
     @Test public void test_put_object_serialize() {
-        Json object = new Json();
+        Ason object = new Ason();
         Person person = new Person(1, "Aidan", 21);
         object.put("person", person);
         assertEquals("{\"person\":{\"name\":\"Aidan\",\"_id\":1,\"age\":21}}", object.toString());
     }
 
     @Test public void test_put_array_serialize() {
-        JsonArray<Person> array = new JsonArray<>();
+        AsonArray<Person> array = new AsonArray<>();
         Person person = new Person(1, "Aidan", 21);
         array.add(person);
         assertEquals("[{\"name\":\"Aidan\",\"_id\":1,\"age\":21}]", array.toString());
@@ -81,8 +82,8 @@ public class JsonSerializeTest {
 
     @Test public void test_deserialize() {
         String input = "{\"name\":\"Aidan\",\"_id\":2,\"age\":21,\"spouse\":{\"name\":\"Waverly\",\"_id\":6,\"age\":19}}";
-        Json json = new Json(input);
-        Person person = JsonSerializer.get().deserialize(json, Person.class);
+        Ason ason = new Ason(input);
+        Person person = ason.deserialize(Person.class);
         assertEquals(person.name, "Aidan");
         assertEquals(person.id, 2);
         assertEquals(person.age, 21);
@@ -94,8 +95,8 @@ public class JsonSerializeTest {
 
     @Test public void test_deserialize_array() {
         String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
-        JsonArray<Person> array = new JsonArray<>(input);
-        Person[] people = JsonSerializer.get().deserializeArray(array, Person.class);
+        AsonArray<Person> array = new AsonArray<>(input);
+        Person[] people = array.deserialize(Person[].class);
 
         assertEquals(people[0].name, "Aidan");
         assertEquals(people[0].id, 1);
@@ -108,8 +109,8 @@ public class JsonSerializeTest {
 
     @Test public void test_deserialize_list() {
         String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
-        JsonArray<Person> array = new JsonArray<>(input);
-        List<Person> people = JsonSerializer.get().deserializeList(array, Person.class);
+        AsonArray<Person> array = new AsonArray<>(input);
+        List<Person> people = array.deserializeList(Person.class);
 
         assertEquals(people.get(0).name, "Aidan");
         assertEquals(people.get(0).id, 1);
@@ -120,10 +121,28 @@ public class JsonSerializeTest {
         assertEquals(people.get(1).age, 19);
     }
 
+    @Test public void test_deserialize_string_object() {
+        String input = "{\"name\":\"Aidan\",\"_id\":2,\"age\":21,\"spouse\":{\"name\":\"Waverly\",\"_id\":6,\"age\":19}}";
+        Person object = Ason.deserialize(input, Person.class);
+        assertNotNull(object);
+    }
+
+    @Test public void test_deserialize_string_array() {
+        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
+        Person[] object = Ason.deserialize(input, Person[].class);
+        assertEquals(object.length, 2);
+    }
+
+    @Test public void test_deserialize_string_list() {
+        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
+        List<Person> object = Ason.deserializeList(input, Person.class);
+        assertEquals(object.size(), 2);
+    }
+
     @Test public void test_get_object_deserialize() {
         String input = "{\"person\":{\"name\":\"Aidan\",\"_id\":1,\"age\":21}}";
-        Json json = new Json(input);
-        Person person = json.get("person", Person.class);
+        Ason ason = new Ason(input);
+        Person person = ason.get("person", Person.class);
         assertEquals(person.name, "Aidan");
         assertEquals(person.id, 1);
         assertEquals(person.age, 21);
@@ -131,7 +150,7 @@ public class JsonSerializeTest {
 
     @Test public void test_get_array_deserialize() {
         String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21}]";
-        JsonArray<Person> json = new JsonArray<>(input);
+        AsonArray<Person> json = new AsonArray<>(input);
         Person person = json.get(0, Person.class);
         assertEquals(person.name, "Aidan");
         assertEquals(person.id, 1);

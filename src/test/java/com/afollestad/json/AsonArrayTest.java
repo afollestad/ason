@@ -6,17 +6,17 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class JsonArrayTest {
+public class AsonArrayTest {
 
-    private JsonArray<Json> array;
+    private AsonArray<Ason> array;
 
     @Before public void setup() {
-        array = new JsonArray<Json>()
-                .add(new Json()
+        array = new AsonArray<Ason>()
+                .add(new Ason()
                         .put("_id", 1)
                         .put("name", "Aidan")
                         .put("attrs.priority", 2))
-                .add(new Json()
+                .add(new Ason()
                         .put("_id", 2)
                         .put("name", "Waverly")
                         .put("attrs.priority", 1));

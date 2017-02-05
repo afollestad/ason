@@ -1,7 +1,7 @@
-# Json
+# Ason
 
-[ ![Download](https://api.bintray.com/packages/drummer-aidan/maven/json/images/download.svg) ](https://bintray.com/drummer-aidan/maven/json/_latestVersion)
-[![Build Status](https://travis-ci.org/afollestad/json.svg)](https://travis-ci.org/afollestad/json)
+[ ![Download](https://api.bintray.com/packages/drummer-aidan/maven/ason/images/download.svg) ](https://bintray.com/drummer-aidan/maven/ason/_latestVersion)
+[![Build Status](https://travis-ci.org/afollestad/ason.svg)](https://travis-ci.org/afollestad/ason)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 This library intends to make JSON very easy to interact with in Java; it also makes (de)serialization painless.
@@ -21,7 +21,7 @@ The dependency is available via jCenter.
 ```Gradle
 dependencies {
     ...
-    compile 'com.afollestad:json:0.1.1'
+    compile 'com.afollestad:ason:1.0.0'
 }
 ```
 
@@ -32,7 +32,7 @@ Since Android includes `org.json` classes, you'll want to exclude the copies pro
 ```Gradle
 dependencies {
     ...
-    compile('com.afollestad:json:0.1.1') {
+    compile('com.afollestad:ason:1.0.0') {
         exclude group: 'org.json', module: 'json'
     }
 }
@@ -43,8 +43,8 @@ dependencies {
 ```xml
 <dependency>
   <groupId>com.afollestad</groupId>
-  <artifactId>json</artifactId>
-  <version>0.1.1</version>
+  <artifactId>ason</artifactId>
+  <version>1.0.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -59,14 +59,14 @@ Parsing strings is the first, just use the constructor which accepts a `String`:
 
 ```java
 String input = // ...
-Json json = new Json(input);
+Ason ason = new Ason(input);
 ```
 
 Second, you can build objects using Java fields:
 
 ```java
 // Translates to {"id":1,"name":"Aidan","born":1995}
-Json json = new Json() {
+Ason ason = new Ason() {
     int id = 1;
     String name = "Aidan";
     int born = 1995;
@@ -76,7 +76,7 @@ Json json = new Json() {
 Third, you can add values with the `put()` method:
 
 ```java
-Json json = new Json()
+Ason ason = new Ason()
     .put("_id", 1)
     .put("name", "Aidan")
     .put("born", 1995);
@@ -86,9 +86,9 @@ You can quickly put in arrays just by passing multiple values to `put()`:
 
 ```java
 // Translates to {"greetings":["Hello","Hey"]}
-Json json = new Json();
+Ason ason = new Ason();
 // The first parameter is a key, you can pass any type for the rest of the varargs parameters
-json.put("greetings", "Hello", "World");
+ason.put("greetings", "Hello", "World");
 ```
 
 ---
@@ -100,44 +100,44 @@ version uses whatever the usual default of a type is (0 for number types, null f
 for the key. The two parameter version lets you specify a custom default.
 
 ```java
-Json json = // ...
+Ason ason = // ...
 
-String str = json.getString("name");
-String strWithDefault = json.getString("name", null);
+String str = ason.getString("name");
+String strWithDefault = ason.getString("name", null);
 
-boolean bool = json.getBool("name");
-boolean boolWithDefault = json.getBool("name", true);
+boolean bool = ason.getBool("name");
+boolean boolWithDefault = ason.getBool("name", true);
 
-short shrt = json.getShort("name");
-short shrtWithDefault = json.getShort("name", (short)0);
+short shrt = ason.getShort("name");
+short shrtWithDefault = ason.getShort("name", (short)0);
 
-int integer = json.getInt("name");
-int integerWithDefault = json.getInt("name", 0);
+int integer = ason.getInt("name");
+int integerWithDefault = ason.getInt("name", 0);
 
-long lng = json.getLong("name");
-long lngWithDefault = json.getLong("name", 0L);
+long lng = ason.getLong("name");
+long lngWithDefault = ason.getLong("name", 0L);
 
-float flt = json.getFloat("name");
-float fltWithDefault = json.getFloat("name", 0f);
+float flt = ason.getFloat("name");
+float fltWithDefault = ason.getFloat("name", 0f);
 
-double doub = json.getDouble("name");
-double doubWithDefault = json.getDouble("name", 0d);
+double doub = ason.getDouble("name");
+double doubWithDefault = ason.getDouble("name", 0d);
 
-Json obj = json.getJsonObject("name");
-JsonArray ary = json.getJsonArray("name");
+Ason obj = ason.getAsonObject("name");
+AsonArray ary = ason.getAsonArray("name");
 ```
 
 Further, the `get(String)` method will actually automatically cast its return value to whatever variable you're setting it to:
 
 ```java
-String str = json.get("name");
-long lng = json.get("name");
+String str = ason.get("name");
+long lng = ason.get("name");
 ```
 
 It will also infer its type if you pass a default value, removing the need to use explicit `get[Type]` methods:
 
 ```java
-if (json.get("name", false)) {
+if (ason.get("name", false)) {
     // do something
 }
 ```
@@ -147,12 +147,12 @@ if (json.get("name", false)) {
 You can check if values exist, are null, equal another value, or even remove them by key:
 
 ```java
-Json json = // ...
+Ason ason = // ...
 
-boolean exists = json.has("name");
-boolean isNull = json.isNull("name");
-boolean valueEqual = json.equal("key-name", value);
-json.remove("name");
+boolean exists = ason.has("name");
+boolean isNull = ason.isNull("name");
+boolean valueEqual = ason.equal("key-name", value);
+ason.remove("name");
 ```
 
 ---
@@ -163,13 +163,13 @@ Like objects, you can parse arrays from Strings:
 
 ```java
 String input = // ...
-JsonArray<Json> array = new JsonArray<Json>(input);
+AsonArray<Ason> array = new AsonArray<Ason>(input);
 ```
 
 You can add new objects with `.add()`:
 
 ```java
-JsonArray<String> array = new JsonArray<String>();
+AsonArray<String> array = new AsonArray<String>();
 // You can add multiple items with a single .put() call, you could use multiple if necessary too
 array.add("Hello", "World!");
 ```
@@ -177,16 +177,16 @@ array.add("Hello", "World!");
 You can retrieve and remove objects by index:
 
 ```java
-JsonArray<Json> array = // ...
+AsonArray<Ason> array = // ...
 
-Json firstItem = array.get(0);
+Ason firstItem = array.get(0);
 array.remove(0);
 ```
 
 Some other utility methods exist, also:
 
 ```java
-JsonArray<String> array = // ...
+AsonArray<String> array = // ...
 
 int size = array.size();
 boolean empty = array.isEmpty();
@@ -200,10 +200,10 @@ boolean itemEqual = array.equal(0, "Does index 0 equal this value?")
 Objects and arrays can both be converted to strings simply with the `toString()` method:
 
 ```java
-Json json = // ...
+Ason ason = // ...
 
-String value = json.toString(); // all on one line, no formatting
-String formatted = json.toString(4); // 4 spaces being the indent size
+String value = ason.toString(); // all on one line, no formatting
+String formatted = ason.toString(4); // 4 spaces being the indent size
 ```
 
 ---
@@ -216,7 +216,7 @@ traversing.
 Lets create an object using path keys:
 
 ```java
-Json json = new Json()
+Ason ason = new Ason()
     .put("id", 1)
     .put("name", "Aidan")
     .put("birthday.month", "July")
@@ -244,32 +244,32 @@ As you can see, a child object is automatically created for you. We only use two
 We can use this same dot notation to retrieve these child values:
 
 ```java
-Json json = // ...
+Ason ason = // ...
 
-String name = json.get("name");
-String month = json.get("birthday.month");
-int day = json.get("birthday.day");
-int year = json.get("birthday.year");
+String name = ason.get("name");
+String month = ason.get("birthday.month");
+int day = ason.get("birthday.day");
+int year = ason.get("birthday.year");
 ```
 
 You can quickly check equality in objects...
 
 ```java
-Json json = // ...
-boolean birthYearCheck = json.equal("birthday.year", 1995);
+Ason ason = // ...
+boolean birthYearCheck = ason.equal("birthday.year", 1995);
 ```
 
 And arrays:
 
 ```java
-Json json = new Json()
+Ason ason = new Ason()
     .put("id", 1)
     .put("name", "Aidan")
     .put("birthday.month", "July")
     .put("birthday.day", 28)
     .put("birthday.year", 1995);
-JsonArray<Json> array = JsonArray<Json>();
-array.put(json);
+AsonArray<Ason> array = AsonArray<Ason>();
+array.put(ason);
 
 // The first parameter is the index of the item, the second is a key path, the third is the value you're comparing to
 boolean firstItemBirthYearCheck = array.equal(0, "birthday.year", 1995);
@@ -298,7 +298,7 @@ public class Person {
 }
 ```
 
-### The JsonSerializer
+### Serializing Objects
 
 We can serialize an instance as follows:
 
@@ -306,11 +306,10 @@ We can serialize an instance as follows:
 Person aidan = new Person(1, "Aidan");
 aidan.spouse = new Person(2, "Waverly");
 
-JsonSerializer serializer = JsonSerializer.get();
-Json json = serializer.serialize(aidan);
+Ason ason = Ason.serialize(aidan);
 ```
 
-The resulting `Json` object is:
+The resulting `Ason` object is:
 
 ```json
 {
@@ -323,30 +322,42 @@ The resulting `Json` object is:
 }
 ```
 
-Notice that the `Person` instance inside of parent `Person` instance is automatically serialized too.
+### Serializing Arrays
 
-In addition to objects, you can serialize arrays and lists:
+Serializing arrays is very similar to serializing objects, it uses the `serializeArray` method:
 
 ```java
-JsonSerializer serializer = JsonSerializer.get();
-
 Person[] people = // ...
-JsonArray<Person> array = serializer.serializeArray(people);
+AsonArray<Person> array = Ason.serializeArray(people);
+```
 
+Don't forget, you can serialize primitive arrays:
+
+```java
+int[] ids = new int[] { 1, 2, 3, 4 };
+AsonArray<Integer> array = Ason.serializeArray(ids);
+```
+
+### Serializing Lists
+
+Serializing lists uses the `serializeList` method: 
+
+```java
 List<Person> people2 = // ...
-JsonArray<Person> array2 = serializer.serializeList(people2);
+AsonArray<Person> array2 = AsonArray.serializeList(people2);
 ```
 
 ### Automatic Serialization
 
-If you already have a `Json` instance, you can add Java class instances into the object and serialize them automatically:
+If you already have a `Ason` instance, you can add Java class instances into the object and serialize them automatically:
 
 ```java
-Json json = new Json();
+Ason ason = new Ason();
 Person person1 = new Person(1, "Aidan");
 Person person2 = new Person(2, "Waverly");
-json.put("person1", person);
-json.put("person2", person2);
+
+ason.put("person1", person);
+ason.put("person2", person2);
 ```
 
 This would result in:
@@ -364,12 +375,13 @@ This would result in:
 }
 ```
 
-This automatic serialization works with `JsonArray`'s too:
+This automatic serialization works with `AsonArray`'s too:
 
 ```java
-JsonArray<Person> array = new JsonArray<Person>();
+AsonArray<Person> array = new AsonArray<Person>();
 Person person1 = new Person(1, "Aidan");
 Person person2 = new Person(2, "Waverly");
+
 array.add(person1, person2);
 ```
 
@@ -410,45 +422,102 @@ public class Person {
 }
 ```
 
-### The JsonSerializer
+### Deserializing Objects
 
 We can deserialize an object as follows:
 
 ```java
 String input = "{\"id\":1,\"name\":\"Aidan\",\"spouse\":{\"id\":2,\"name\":\"Waverly\"}}";
-Json json = new Json(input);
+Ason ason = new Ason(input);
 
-JsonSerializer serializer = JsonSerializer.get();
-Person person = serializer.deserialize(json, Person.class);
+Person person = ason.deserialize(Person.class);
 ```
 
-The ID, name, and spouse object would all be populated to match the values in the JSON string.
-
-And of course, you can deserialize JSON arrays to lists and arrays too:
+There is also a static method which has the same effect:
 
 ```java
-JsonSerializer serializer = JsonSerializer.get();
-JsonArray<Person> array = // ...
+String input = "{\"id\":1,\"name\":\"Aidan\",\"spouse\":{\"id\":2,\"name\":\"Waverly\"}}";
+Ason ason = new Ason(input);
 
-Person[] peopleArray = serializer.deserializeArray(array, Person.class);
-List<Person> peopleList = serializer.deserializeList(array, Person.class);
+Person person = Ason.deserialize(ason, Person.class);
+```
+
+Lastly, you can directly deserialize JSON strings:
+
+```java
+String input = "{\"id\":1,\"name\":\"Aidan\",\"spouse\":{\"id\":2,\"name\":\"Waverly\"}}";
+Person person = Ason.deserialize(input, Person.class);
+```
+
+### Deserializing Arrays
+
+You can deserialize JSON arrays to Java lists and arrays too:
+
+```java
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+AsonArray<Person> array = new AsonArray<>(input);
+
+Person[] peopleArray = array.deserialize(Person[].class);
+```
+
+There is also static methods which have the same effect:
+
+```java
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+AsonArray<Person> array = new AsonArray<>(input);
+
+Person[] peopleArray = Ason.deserialize(array, Person[].class);
+```
+
+Lastly, you can directly deserialize JSON strings:
+
+```java
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+Person[] peopleArray = Ason.deserialize(input, Person[].class);
+```
+
+### Deserializing Lists
+
+Unlike objects and arrays, deserializing lists requires a separate method:
+
+```java
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+AsonArray<Person> array = new AsonArray<>(input);
+
+List<Person> peopleList = array.deserializeList(Person.class);
+```
+
+There is also a static method which has the same effect:
+
+```java
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+AsonArray<Person> array = new AsonArray<>(input);
+
+List<Person> peopleList = Ason.deserializeList(array, Person.class);
+```
+
+You can deserialize strings directly:
+
+```java
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+List<Person> peopleList = Ason.deserializeList(input, Person.class);
 ```
 
 ### Automatic Deserialization
 
-If you already have a `Json` instance, you can automatically pull out and deserialize Java class instances without 
-using the `JsonSerializer` directly:
+If you already have a `Ason` instance, you can automatically pull out and deserialize Java class instances without 
+using the `AsonSerializer` directly:
 
 ```java
-Json json = // ...
+Ason ason = // ...
 // The JSON object needs to contain a child object with the key "person" representing the Person class.
-Person person = json.get("person", Person.class);
+Person person = ason.get("person", Person.class);
 ```
 
-The same works for `JsonArray`'s:
+The same works for `AsonArray`'s:
 
 ```java
-JsonArray<Person> array = // ...
+AsonArray<Person> array = // ...
 // The JSON array needs to contain a list of objects representing the Person class.
 Person person = array.get(0, Person.class);
 ```
@@ -459,15 +528,15 @@ Person person = array.get(0, Person.class);
 
 This library comes with a two annotations that have their own special use cases.
 
-### @JsonName
+### @AsonName
 
 This annotation allows you to assign a custom name to fields.
 
-It's used with `Json` field construction:
+It's used with `Ason` field construction:
 
 ```java
-Json json = new Json() {
-    @JsonName(name = "_id") int id = 1;
+Ason ason = new Ason() {
+    @AsonName(name = "_id") int id = 1;
     String name = "Aidan";
     int born = 1995;
 };
@@ -478,7 +547,7 @@ And of course during serialization and deserialization:
 ```java
 public class Person {
     
-    @JsonName(name = "_id") int id;
+    @AsonName(name = "_id") int id;
     String name;
     int born;
     
@@ -490,7 +559,7 @@ public class Person {
 }
 ```
 
-### @JsonIgnore
+### @AsonIgnore
 
 This annotation tells the library to ignore and fields it's used to mark. That means the field is not serialized, 
 deserialized, or used with field construction:
@@ -498,11 +567,10 @@ deserialized, or used with field construction:
 ```java
 public class Person {
     
-    @JsonName(name = "_id") int id;
+    @AsonIgnore String invisibleField = "Hello, world!";
+    int id;
     String name;
     int born;
-    
-    @JsonIgnore String invisibleField = "Hello, world!";
     
     public Person(int id, String name, int born) {
         this.id = id;
