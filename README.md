@@ -12,6 +12,33 @@ in the Android SDK. As we all know, those stock classes tend to be a pain. They 
 
 ---
 
+# Table of Contents
+
+1. [Dependency](https://github.com/afollestad/ason#dependency)
+    1. [Gradle (Java)](https://github.com/afollestad/ason#gradle-java)
+    2. [Gradle (Android)](https://github.com/afollestad/ason#gradle-android)
+    3. [Maven](https://github.com/afollestad/ason#maven)
+2. [Parsing and Building Objects](https://github.com/afollestad/ason#parsing-and-building-objects)
+3. [Retrieving Values from Objects](https://github.com/afollestad/ason#retrieving-values-from-objects)
+4. [Parsing and Building Arrays](https://github.com/afollestad/ason#parsing-and-building-arrays)
+5. [Pretty Print](https://github.com/afollestad/ason#pretty-print)
+6. [Paths](https://github.com/afollestad/ason#paths)
+7. [Serialization](https://github.com/afollestad/ason#serialization)
+    1. [Serializing Objects](https://github.com/afollestad/ason#serializing-objects)
+    2. [Serializing Arrays](https://github.com/afollestad/ason#serializing-arrays)
+    3. [Serializing Lists](https://github.com/afollestad/ason#serializing-lists)
+    4. [Automatic Serialization](https://github.com/afollestad/ason#automatic-serialization)
+8. [Deserialization](https://github.com/afollestad/ason#deserialization)
+    1. [Deserializing Objects](https://github.com/afollestad/ason#deserializing-objects)
+    2. [Deserializing Arrays](https://github.com/afollestad/ason#deserializing-arrays)
+    3. [Deserializing Lists](https://github.com/afollestad/ason#deserializing-lists)
+    4. [Automatic Deserialization](https://github.com/afollestad/ason#automatic-deserialization)
+9. [Annotations](https://github.com/afollestad/ason#annotations)
+    1. [@AsonName](https://github.com/afollestad/ason#asonname)
+    2. [@AsonIgnore](https://github.com/afollestad/ason#asonignore)
+
+---
+
 # Dependency
 
 The dependency is available via jCenter.
