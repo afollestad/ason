@@ -375,6 +375,8 @@ This would result in:
 }
 ```
 
+---
+
 This automatic serialization works with `AsonArray`'s too:
 
 ```java
@@ -474,6 +476,13 @@ Lastly, you can directly deserialize JSON strings:
 ```java
 String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
 Person[] peopleArray = Ason.deserialize(input, Person[].class);
+```
+
+One more thing, you can deserialize arrays containing primitive types:
+
+```java
+String input = "[1,2,3,4]";
+int[] primitiveArray = Ason.deserialize(input, int[].class);
 ```
 
 ### Deserializing Lists
