@@ -190,7 +190,13 @@ import static com.afollestad.json.Util.*;
 
         for (int i = 0; i < json.size(); i++) {
             if (isPrimitive(component)) {
-                Array.set(newArray, i, json.get(i));
+                Object value = json.get(i);
+                if (component == char.class || component == Character.class) {
+                    value = ((String) value).charAt(0);
+                } else if (component == short.class || component == Short.class) {
+                    value = Short.parseShort(Integer.toString((int) value));
+                }
+                Array.set(newArray, i, value);
             } else if (component.isArray()) {
                 AsonArray subArray = (AsonArray) json.get(i);
                 Class<?> arrayComponent = component.getComponentType();
