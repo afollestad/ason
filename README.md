@@ -112,7 +112,7 @@ Ason ason = new Ason()
 You can quickly put in arrays just by passing multiple values to `put()`:
 
 ```java
-// Translates to {"greetings":["Hello","Hey"]}
+// Translates to {"greetings":["Hello","World"]}
 Ason ason = new Ason();
 // The first parameter is a key, you can pass any type for the rest of the varargs parameters
 ason.put("greetings", "Hello", "World");
