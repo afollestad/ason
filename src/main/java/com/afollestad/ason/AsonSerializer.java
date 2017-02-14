@@ -1,4 +1,4 @@
-package com.afollestad.json;
+package com.afollestad.ason;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.afollestad.json.Util.*;
+import static com.afollestad.ason.Util.*;
 
 /**
  * @author Aidan Follestad (afollestad)

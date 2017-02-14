@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile group: 'org.json', name: 'json', version: '20160810'
+    compile group: 'org.ason', name: 'ason', version: '20160810'
 }
 
 apply plugin: 'com.novoda.bintray-release'
@@ -28,7 +28,7 @@ apply plugin: 'com.novoda.bintray-release'
 publish {
     userOrg = 'drummer-aidan'
     groupId = 'com.afollestad'
-    artifactId = 'json'
-    publishVersion = '1.0.0'
-    website = 'https://github.com/afollestad/json'
+    artifactId = 'ason'
+    publishVersion = '1.1.0'
+    website = 'https://github.com/afollestad/ason'
 }

@@ -1,4 +1,4 @@
-package com.afollestad.json;
+package com.afollestad.ason;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;

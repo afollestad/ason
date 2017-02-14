@@ -1,4 +1,4 @@
-package com.afollestad.json;
+package com.afollestad.ason;
 
 import org.junit.Before;
 import org.junit.Test;

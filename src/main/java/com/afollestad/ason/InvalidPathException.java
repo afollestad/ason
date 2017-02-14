@@ -1,4 +1,4 @@
-package com.afollestad.json;
+package com.afollestad.ason;
 
 /**
  * @author Aidan Follestad (afollestad)

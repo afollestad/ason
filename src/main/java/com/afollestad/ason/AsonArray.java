@@ -1,4 +1,4 @@
-package com.afollestad.json;
+package com.afollestad.ason;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.afollestad.json.Util.isList;
-import static com.afollestad.json.Util.isPrimitive;
+import static com.afollestad.ason.Util.isList;
+import static com.afollestad.ason.Util.isPrimitive;
 
 /**
  * @author Aidan Follestad (afollestad)
