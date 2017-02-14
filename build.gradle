@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile group: 'org.ason', name: 'ason', version: '20160810'
+    compile group: 'org.json', name: 'json', version: '20160810'
 }
 
 apply plugin: 'com.novoda.bintray-release'
