@@ -2,6 +2,7 @@ group 'com.afollestad'
 version '1.0.0'
 
 apply plugin: 'java'
+apply plugin: 'jacoco'
 
 sourceCompatibility = 1.7
 
@@ -31,4 +32,11 @@ publish {
     artifactId = 'ason'
     publishVersion = '1.1.0'
     website = 'https://github.com/afollestad/ason'
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
 }
