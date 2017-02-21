@@ -80,6 +80,14 @@ public class AsonArray<T> implements Iterable<T> {
         }
     }
 
+    public Ason getJsonObject(int index) {
+        return new Ason(array.optJSONObject(index));
+    }
+
+    public AsonArray getJsonArray(int index) {
+        return new AsonArray(array.getJSONArray(index));
+    }
+
     public T get(int index, Class<T> cls) {
         Object value = array.opt(index);
         if (value == null) {
