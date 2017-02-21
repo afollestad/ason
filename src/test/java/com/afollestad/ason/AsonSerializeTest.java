@@ -50,7 +50,7 @@ public class AsonSerializeTest {
         };
         AsonArray<Person> json = Ason.serializeArray(people);
         String expected = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
-        assertEquals(json.toString(), expected);
+        assertEquals("Was " + json.toString(), json.toString(), expected);
     }
 
     @Test public void test_serialize_list() {
