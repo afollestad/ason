@@ -2,6 +2,7 @@
 
 [ ![Download](https://api.bintray.com/packages/drummer-aidan/maven/ason/images/download.svg) ](https://bintray.com/drummer-aidan/maven/ason/_latestVersion)
 [![Build Status](https://travis-ci.org/afollestad/ason.svg)](https://travis-ci.org/afollestad/ason)
+[![Codecov](https://img.shields.io/codecov/c/github/afollestad/ason.svg)](https://codecov.io/gh/afollestad/ason)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 This library intends to make JSON very easy to interact with in Java; it also makes (de)serialization painless.
