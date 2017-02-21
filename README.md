@@ -49,7 +49,7 @@ The dependency is available via jCenter.
 ```Gradle
 dependencies {
     ...
-    compile 'com.afollestad:ason:1.1.0'
+    compile 'com.afollestad:ason:1.2.0'
 }
 ```
 
@@ -60,7 +60,7 @@ Since Android includes `org.json` classes, you'll want to exclude the copies pro
 ```Gradle
 dependencies {
     ...
-    compile('com.afollestad:ason:1.1.0') {
+    compile('com.afollestad:ason:1.2.0') {
         exclude group: 'org.json', module: 'json'
     }
 }
@@ -72,7 +72,7 @@ dependencies {
 <dependency>
   <groupId>com.afollestad</groupId>
   <artifactId>ason</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -301,6 +301,23 @@ array.put(ason);
 
 // The first parameter is the index of the item, the second is a key path, the third is the value you're comparing to
 boolean firstItemBirthYearCheck = array.equal(0, "birthday.year", 1995);
+```
+
+---
+
+If your keys actually have periods in them, you can escape periods:
+
+```java
+{
+    "files": {
+        "test.txt": "Hello, world!"
+    }
+}
+```
+
+```java
+Ason ason = // ...
+String value = ason.get("files.test\\.txt");
 ```
 
 ---

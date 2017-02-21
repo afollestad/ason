@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.afollestad.ason.Util.isList;
-import static com.afollestad.ason.Util.isPrimitive;
+import static com.afollestad.ason.Util.*;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -146,7 +145,7 @@ public class AsonArray<T> implements Iterable<T> {
         } else {
             encloser = ((Ason) arrayEntry).toStockJson();
         }
-        Object pathValue = Util.getPathValue(encloser, path, path.split("\\."));
+        Object pathValue = getPathValue(encloser, path, splitPath(path));
         if (pathValue == null) {
             return value == null;
         }
@@ -173,13 +172,11 @@ public class AsonArray<T> implements Iterable<T> {
         return array;
     }
 
-    @Override
-    public Iterator<T> iterator() {
+    @Override public Iterator<T> iterator() {
         return toList().iterator();
     }
 
-    @Override
-    public String toString() {
+    @Override public String toString() {
         return array.toString();
     }
 

@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,31 +16,53 @@ class Util {
     private Util() {
     }
 
+    static String[] splitPath(String key) {
+        List<String> result = new ArrayList<>(4);
+        int start = 0;
+        for (int i = 0; i < key.length(); i++) {
+            if (key.charAt(i) == '.') {
+                if (i > 0 && key.charAt(i - 1) == '\\') {
+                    continue;
+                }
+                String entry = key.substring(start, i)
+                        .replace("\\.", ".");
+                result.add(entry);
+                start = i + 1;
+            }
+        }
+        result.add(key.substring(start).replace("\\.", "."));
+        return result.toArray(new String[result.size()]);
+    }
+
     static JSONObject followPath(JSONObject encloser,
                                  String key,
                                  String[] splitKey,
                                  boolean createMissing) {
         Object parent = encloser.opt(splitKey[0]);
         if (parent != null && !(parent instanceof JSONObject)) {
-            throw new InvalidPathException("First component of key " + key + " refers to " + splitKey[0] + ", which is not an object (it's a " + parent.getClass().getName() + ").");
+            throw new InvalidPathException("First component of key " + key + " refers to " +
+                    splitKey[0] + ", which is not an object (it's a " + parent.getClass().getName() + ").");
         } else if (parent == null) {
             if (createMissing) {
                 parent = new JSONObject();
                 encloser.put(splitKey[0], parent);
             } else {
-                throw new InvalidPathException("No object found for the first component of key " + key + " (" + splitKey[0] + ").");
+                throw new InvalidPathException("No object found for the first component of key " +
+                        key + " (" + splitKey[0] + ").");
             }
         }
         for (int i = 1; i < splitKey.length - 1; i++) {
             Object current = ((JSONObject) parent).opt(splitKey[i]);
             if (current != null && !(current instanceof JSONObject)) {
-                throw new InvalidPathException("Component " + (i + 1) + " of key " + key + " refers to " + splitKey[i] + ", which is not an object (most likely a primitive).");
+                throw new InvalidPathException("Component " + (i + 1) + " of key " + key +
+                        " refers to " + splitKey[i] + ", which is not an object (most likely a primitive).");
             } else if (current == null) {
                 if (createMissing) {
                     current = new JSONObject();
                     ((JSONObject) parent).put(splitKey[i], current);
                 } else {
-                    throw new InvalidPathException("Component " + (i + 1) + " of key " + key + " refers to " + splitKey[i] + ", which is not an object (most likely a primitive).");
+                    throw new InvalidPathException("Component " + (i + 1) + " of key " + key +
+                            " refers to " + splitKey[i] + ", which is not an object (most likely a primitive).");
                 }
             }
             parent = current;
@@ -47,9 +70,10 @@ class Util {
         return (JSONObject) parent;
     }
 
-    @SuppressWarnings("unchecked") static <T> T getPathValue(JSONObject encloser,
-                                                             String key,
-                                                             String[] splitKey) {
+    @SuppressWarnings("unchecked") static <T> T getPathValue(
+            JSONObject encloser,
+            String key,
+            String[] splitKey) {
         if (splitKey.length == 1) {
             return (T) encloser.get(key);
         }
@@ -58,8 +82,9 @@ class Util {
     }
 
     @SuppressWarnings("unchecked")
-    static <T> T newInstance(Class<?> cls,
-                             Map<Class<?>, Constructor<?>> cache) {
+    static <T> T newInstance(
+            Class<?> cls,
+            Map<Class<?>, Constructor<?>> cache) {
         final Constructor ctor = getDefaultConstructor(cls, cache);
         try {
             return (T) ctor.newInstance();
@@ -68,8 +93,9 @@ class Util {
         }
     }
 
-    static Constructor<?> getDefaultConstructor(Class<?> cls,
-                                                Map<Class<?>, Constructor<?>> cache) {
+    private static Constructor<?> getDefaultConstructor(
+            Class<?> cls,
+            Map<Class<?>, Constructor<?>> cache) {
         if (cache != null) {
             Constructor ctor = cache.get(cls);
             if (ctor != null) return ctor;
@@ -145,7 +171,8 @@ class Util {
         try {
             field.set(object, value);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("Failed to set the value of " + field.getName() + " in " + object.getClass().getName(), e);
+            throw new RuntimeException("Failed to set the value of " + field.getName() + " in "
+                    + object.getClass().getName(), e);
         }
     }
 

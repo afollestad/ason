@@ -97,8 +97,8 @@ import static com.afollestad.ason.Util.*;
             insertObject = newArray;
         }
         if (key.contains(".")) {
-            final String[] splitKey = key.split("\\.");
-            JSONObject target = Util.followPath(json, key, splitKey, true);
+            final String[] splitKey = splitPath(key);
+            JSONObject target = followPath(json, key, splitKey, true);
             target.put(splitKey[splitKey.length - 1], insertObject);
         } else {
             putInternal(null, null, key, insertObject);
@@ -120,7 +120,7 @@ import static com.afollestad.ason.Util.*;
             throw new IllegalArgumentException("Key cannot be null.");
         Object result;
         if (key.contains(".")) {
-            final String[] splitKey = key.split("\\.");
+            final String[] splitKey = splitPath(key);
             result = getPathValue(json, key, splitKey);
         } else {
             result = json.opt(key);
