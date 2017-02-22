@@ -109,7 +109,8 @@ public class AsonSerializeTest {
     //
 
     @Test public void test_deserialize() {
-        String input = "{\"name\":\"Aidan\",\"_id\":2,\"age\":21,\"spouse\":{\"name\":\"Waverly\",\"_id\":6,\"age\":19}}";
+        String input = "{\"name\":\"Aidan\",\"_id\":2,\"age\":21," +
+                "\"spouse\":{\"name\":\"Waverly\",\"_id\":6,\"age\":19}}";
         Ason ason = new Ason(input);
         Person person = ason.deserialize(Person.class);
         assertEquals(person.name, "Aidan");
@@ -122,7 +123,8 @@ public class AsonSerializeTest {
     }
 
     @Test public void test_deserialize_array() {
-        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
+        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21}," +
+                "{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
         AsonArray<Person> array = new AsonArray<>(input);
         Person[] people = array.deserialize(Person[].class);
 
@@ -136,7 +138,8 @@ public class AsonSerializeTest {
     }
 
     @Test public void test_deserialize_list() {
-        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
+        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21}," +
+                "{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
         AsonArray<Person> array = new AsonArray<>(input);
         List<Person> people = array.deserializeList(Person.class);
 
@@ -150,19 +153,22 @@ public class AsonSerializeTest {
     }
 
     @Test public void test_deserialize_string_object() {
-        String input = "{\"name\":\"Aidan\",\"_id\":2,\"age\":21,\"spouse\":{\"name\":\"Waverly\",\"_id\":6,\"age\":19}}";
+        String input = "{\"name\":\"Aidan\",\"_id\":2,\"age\":21," +
+                "\"spouse\":{\"name\":\"Waverly\",\"_id\":6,\"age\":19}}";
         Person object = Ason.deserialize(input, Person.class);
         assertNotNull(object);
     }
 
     @Test public void test_deserialize_string_array() {
-        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
+        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21}," +
+                "{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
         Person[] object = Ason.deserialize(input, Person[].class);
         assertEquals(object.length, 2);
     }
 
     @Test public void test_deserialize_string_list() {
-        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
+        String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21}," +
+                "{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
         List<Person> object = Ason.deserializeList(input, Person.class);
         assertEquals(object.size(), 2);
     }

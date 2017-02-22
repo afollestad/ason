@@ -24,6 +24,9 @@ in the Android SDK. As we all know, those stock classes tend to be a pain. They 
 4. [Parsing and Building Arrays](https://github.com/afollestad/ason#parsing-and-building-arrays)
 5. [Pretty Print](https://github.com/afollestad/ason#pretty-print)
 6. [Paths](https://github.com/afollestad/ason#paths)
+    1. [Dot Notation](https://github.com/afollestad/ason#dot-notation)
+    2. [Index Notation](https://github.com/afollestad/ason#index-notation)
+    3. [Escaping Periods and Dollar Signs](https://github.com/afollestad/ason#escaping-periods-and-dollar-signs)
 7. [Serialization](https://github.com/afollestad/ason#serialization)
     1. [Serializing Objects](https://github.com/afollestad/ason#serializing-objects)
     2. [Serializing Arrays](https://github.com/afollestad/ason#serializing-arrays)
@@ -49,7 +52,7 @@ The dependency is available via jCenter.
 ```Gradle
 dependencies {
     ...
-    compile 'com.afollestad:ason:1.2.0'
+    compile 'com.afollestad:ason:1.3.0'
 }
 ```
 
@@ -60,7 +63,7 @@ Since Android includes `org.json` classes, you'll want to exclude the copies pro
 ```Gradle
 dependencies {
     ...
-    compile('com.afollestad:ason:1.2.0') {
+    compile('com.afollestad:ason:1.3.0') {
         exclude group: 'org.json', module: 'json'
     }
 }
@@ -238,10 +241,12 @@ String formatted = ason.toString(4); // 4 spaces being the indent size
 
 # Paths 
 
-Paths let you quickly add, retrieve, or remove items which are deeper down in your JSON hierarchy without manually 
-traversing.
+Paths use periods and dollar signs to let you quickly add, retrieve, or remove items which are deeper 
+down in your JSON hierarchy without manually traversing.
 
-Lets create an object using path keys:
+### Dot Notation
+
+Lets create an object using a few dot notation keys:
 
 ```java
 Ason ason = new Ason()
@@ -269,7 +274,9 @@ The above would construct this:
 As you can see, a child object is automatically created for you. We only use two levels, but you could create many more 
  just by using more periods to separate child names.
 
-We can use this same dot notation to retrieve these child values:
+---
+
+You can retrieve values from objects using dot notation:
 
 ```java
 Ason ason = // ...
@@ -280,11 +287,21 @@ int day = ason.get("birthday.day");
 int year = ason.get("birthday.year");
 ```
 
-You can quickly check equality in objects...
+You can do the same on arrays, but you need to specify the index of the object to pull from too:
+
+```java
+AsonArray ason = // ...
+String name = ason.get(1, "birthday.month");
+```
+
+As a bonus, you can check equality without doing a manual value comparison:
 
 ```java
 Ason ason = // ...
 boolean birthYearCheck = ason.equal("birthday.year", 1995);
+
+AsonArray ason2 = // ...
+boolean birthYearCheck2 = ason2.equal(2, "birthday.year", 1995);
 ```
 
 And arrays:
@@ -303,11 +320,47 @@ array.put(ason);
 boolean firstItemBirthYearCheck = array.equal(0, "birthday.year", 1995);
 ```
 
----
+### Index Notation
 
-If your keys actually have periods in them, you can escape periods:
+To extend on dot notations in paths, you can use this notation to perform operations on array children.
+
+Take this JSON:
+
+```json
+{
+    "group_id": 1,
+    "title": "Hello, world!",
+    "participants": [
+        {
+            "name": "Aidan",
+            "id": 2
+        },
+        {
+            "name": "Waverly",
+            "id": 1
+        }
+    ]
+}
+```
+
+You can retrieve the value of "name" in the second participant like this:
 
 ```java
+Ason object = // ...
+String name = object.get("participants.$1.name");
+```
+
+The dollar sign followed by the number 1 indicates that you want the item at index 1 (position 2) 
+within the array called "participants".
+
+### Escaping Periods and Dollar Signs
+
+If your keys have literal periods in them, you can escape the periods so that they aren't used when 
+following a path.
+
+Take this JSON: 
+
+```json
 {
     "files": {
         "test.txt": "Hello, world!"
@@ -315,10 +368,41 @@ If your keys actually have periods in them, you can escape periods:
 }
 ```
 
+You can retrieve the value if the inner `test.txt` string like this:
+
 ```java
 Ason ason = // ...
 String value = ason.get("files.test\\.txt");
 ```
+
+We use two forward slashes since Java requires that you escape slashes. The literal string 
+is just *"files.test\.txt"*.
+
+---
+
+You can also escape dollar signs which are normally used with index notation.
+
+Take this JSON:
+
+```json
+{
+    "participants": {
+        "$1": {
+            "name": "Waverly"
+        }
+    }
+}
+```
+
+To retrieve the inner string called "name":
+
+```java
+Ason ason = // ...
+String value = ason.get("participants.\\$1.name");
+```
+
+We use an escaped forward slash (\\) in front of the dollar sign to indicate that the dollar sign 
+is literal, and actually used in the name of a key.
 
 ---
 

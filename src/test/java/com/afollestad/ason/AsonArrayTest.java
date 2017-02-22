@@ -23,7 +23,8 @@ public class AsonArrayTest {
     }
 
     @Test public void builder_test() {
-        String expected = "[{\"name\":\"Aidan\",\"_id\":1,\"attrs\":{\"priority\":2}},{\"name\":\"Waverly\",\"_id\":2,\"attrs\":{\"priority\":1}}]";
+        String expected = "[{\"name\":\"Aidan\",\"_id\":1,\"attrs\":{\"priority\":2}}," +
+                "{\"name\":\"Waverly\",\"_id\":2,\"attrs\":{\"priority\":1}}]";
         assertEquals(array.toString(), expected);
     }
 
@@ -37,5 +38,32 @@ public class AsonArrayTest {
         assertTrue(array.equal(1, "name", "Waverly"));
         assertTrue(array.equal(1, "_id", 2));
         assertTrue(array.equal(1, "attrs.priority", 1));
+    }
+
+    @Test public void remove_test() {
+        Ason one = new Ason()
+                .put("_id", 1)
+                .put("name", "Aidan")
+                .put("attrs.priority", 2);
+        Ason two = new Ason()
+                .put("_id", 2)
+                .put("name", "Waverly")
+                .put("attrs.priority", 1);
+        array = new AsonArray<Ason>()
+                .add(one)
+                .add(two);
+        array.remove(0);
+        assertEquals(two, array.get(0));
+        assertTrue(array.equal(0, two));
+    }
+
+    @Test public void test_pretty_print() {
+        array = new AsonArray<Ason>()
+                .add(new Ason().put("_id", 1))
+                .add(new Ason().put("_id", 2));
+        assertEquals("[\n" +
+                "    {\"_id\": 1},\n" +
+                "    {\"_id\": 2}\n" +
+                "]", array.toString(4));
     }
 }

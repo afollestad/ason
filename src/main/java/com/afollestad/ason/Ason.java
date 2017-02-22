@@ -1,5 +1,7 @@
 package com.afollestad.ason;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,9 +22,7 @@ import static com.afollestad.ason.Util.*;
     private AsonSerializer serializer;
     private boolean loadedMyFields;
 
-    public Ason(JSONObject stock) {
-        if (stock == null)
-            stock = new JSONObject();
+    public Ason(@NotNull JSONObject stock) {
         this.json = stock;
         this.serializer = AsonSerializer.get();
     }
@@ -31,16 +31,15 @@ import static com.afollestad.ason.Util.*;
         this(new JSONObject());
     }
 
-    public Ason(Map<String, Object> map) {
+    public Ason(@NotNull Map<String, Object> map) {
         this();
-        if (map == null) return;
         for (String key : map.keySet()) {
             Object value = map.get(key);
             put(key, value);
         }
     }
 
-    public Ason(String json) {
+    public Ason(@NotNull String json) {
         try {
             this.json = new JSONObject(json);
         } catch (JSONException e) {
@@ -83,9 +82,7 @@ import static com.afollestad.ason.Util.*;
         return this;
     }
 
-    public Ason put(String key, Object... values) {
-        if (key == null)
-            throw new IllegalArgumentException("Key cannot be null.");
+    public Ason put(@NotNull String key, Object... values) {
         Object insertObject;
         if (values == null || values.length == 1) {
             insertObject = values != null ? values[0] : null;
@@ -106,18 +103,17 @@ import static com.afollestad.ason.Util.*;
         return this;
     }
 
-    public Ason remove(String key) {
+    public Ason remove(@NotNull String key) {
         json.remove(key);
         return this;
     }
 
-    public <T> T get(String key) {
+    @Nullable public <T> T get(@NotNull String key) {
         return get(key, (T) null);
     }
 
-    @SuppressWarnings("unchecked") public <T> T get(String key, T defaultValue) {
-        if (key == null)
-            throw new IllegalArgumentException("Key cannot be null.");
+    @SuppressWarnings("unchecked") public <T> T get(
+            @NotNull String key, @Nullable T defaultValue) {
         Object result;
         if (key.contains(".")) {
             final String[] splitKey = splitPath(key);
@@ -139,75 +135,80 @@ import static com.afollestad.ason.Util.*;
         }
     }
 
-    public boolean getBool(String key) {
+    public boolean getBool(@NotNull String key) {
         return getBool(key, false);
     }
 
-    public boolean getBool(String key, boolean defaultValue) {
+    public boolean getBool(@NotNull String key, boolean defaultValue) {
         return get(key, defaultValue);
     }
 
-    public String getString(String key) {
+    public String getString(@NotNull String key) {
         return getString(key, null);
     }
 
-    public String getString(String key, String defaultValue) {
+    @Nullable public String getString(
+            @NotNull String key,
+            @Nullable String defaultValue) {
         return get(key, defaultValue);
     }
 
-    public short getShort(String key) {
+    public short getShort(@NotNull String key) {
         return getShort(key, (short) 0);
     }
 
-    public short getShort(String key, short defaultValue) {
+    public short getShort(@NotNull String key, short defaultValue) {
         return get(key, defaultValue);
     }
 
-    public int getInt(String key) {
+    public int getInt(@NotNull String key) {
         return getInt(key, 0);
     }
 
-    public int getInt(String key, int defaultValue) {
+    public int getInt(@NotNull String key, int defaultValue) {
         return get(key, defaultValue);
     }
 
-    public long getLong(String key) {
+    public long getLong(@NotNull String key) {
         return getLong(key, 0L);
     }
 
-    public long getLong(String key, long defaultValue) {
+    public long getLong(@NotNull String key, long defaultValue) {
         return get(key, defaultValue);
     }
 
-    public float getFloat(String key) {
+    public float getFloat(@NotNull String key) {
         return getFloat(key, 0f);
     }
 
-    public float getFloat(String key, float defaultValue) {
+    public float getFloat(@NotNull String key, float defaultValue) {
         return get(key, defaultValue);
     }
 
-    public double getDouble(String key) {
+    public double getDouble(@NotNull String key) {
         return getDouble(key, 0d);
     }
 
-    public double getDouble(String key, double defaultValue) {
+    public double getDouble(@NotNull String key, double defaultValue) {
         return get(key, defaultValue);
     }
 
-    public Ason getJsonObject(String key) {
+    public Ason getJsonObject(@NotNull String key) {
         return get(key, (Ason) null);
     }
 
-    public AsonArray getJsonArray(String key) {
+    public AsonArray getJsonArray(@NotNull String key) {
         return get(key, (AsonArray) null);
     }
 
-    public <T> T get(String key, Class<T> cls) {
+    public <T> T get(@NotNull String key, @NotNull Class<T> cls) {
         return get(key, cls, null);
     }
 
-    @SuppressWarnings("Duplicates") public <T> T get(String key, Class<T> cls, T defaultValue) {
+    @SuppressWarnings("Duplicates") public <T> T get(
+            @NotNull String key,
+            @NotNull Class<T> cls,
+            @Nullable T defaultValue) {
         Object value = get(key, defaultValue);
         if (value == null) {
             return defaultValue;
@@ -241,13 +242,11 @@ import static com.afollestad.ason.Util.*;
         }
     }
 
-    public boolean has(String key) {
+    public boolean has(@NotNull String key) {
         return get(key) != null;
     }
 
-    public boolean equal(String key, Object value) {
-        if (key == null)
-            throw new IllegalArgumentException("Key cannot be null.");
+    public boolean equal(@NotNull String key, @Nullable Object value) {
         Object actual = get(key);
         if (actual == null) {
             return value == null;

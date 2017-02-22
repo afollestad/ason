@@ -1,5 +1,7 @@
 package com.afollestad.ason;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,7 +15,7 @@ import static com.afollestad.ason.Util.*;
 /**
  * @author Aidan Follestad (afollestad)
  */
-@SuppressWarnings({"unchecked", "WeakerAccess", "unused"})
+@SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
 public class AsonArray<T> implements Iterable<T> {
 
     private final JSONArray array;
@@ -22,7 +24,7 @@ public class AsonArray<T> implements Iterable<T> {
         array = new JSONArray();
     }
 
-    public AsonArray(String json) {
+    public AsonArray(@NotNull String json) {
         try {
             array = new JSONArray(json);
         } catch (JSONException e) {
@@ -30,7 +32,7 @@ public class AsonArray<T> implements Iterable<T> {
         }
     }
 
-    AsonArray(JSONArray internalArray) {
+    AsonArray(@NotNull JSONArray internalArray) {
         this.array = internalArray;
     }
 
@@ -46,7 +48,7 @@ public class AsonArray<T> implements Iterable<T> {
             } else if (object instanceof AsonArray) {
                 insertObject = ((AsonArray) object).toStockJson();
             } else if (object.getClass().isArray()) {
-                insertObject = AsonSerializer.get().serializeArray((Object[]) object);
+                insertObject = AsonSerializer.get().serializeArray(object);
                 if (insertObject != null) insertObject = ((AsonArray) insertObject).toStockJson();
             } else if (isList(object.getClass())) {
                 insertObject = AsonSerializer.get().serializeList((List) object);
@@ -59,13 +61,13 @@ public class AsonArray<T> implements Iterable<T> {
         array.put(insertObject);
     }
 
-    public AsonArray<T> add(T... objects) {
+    public AsonArray<T> add(@NotNull T... objects) {
         for (T obj : objects)
             putInternal(obj);
         return this;
     }
 
-    public T get(int index) {
+    @Nullable public T get(int index) {
         try {
             Object value = array.opt(index);
             if (value instanceof JSONObject) {
@@ -79,19 +81,70 @@ public class AsonArray<T> implements Iterable<T> {
         }
     }
 
-    public Ason getJsonObject(int index) {
-        return new Ason(array.optJSONObject(index));
+    @Nullable public Ason getJsonObject(int index) {
+        if (index < 0 || index > array.length() - 1) {
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
+        }
+        try {
+            JSONObject object = array.optJSONObject(index);
+            if (object == null) {
+                return null;
+            }
+            return new Ason(object);
+        } catch (JSONException e) {
+            throw new IllegalStateException("Could not get a JSON object from this array!", e);
+        }
     }
 
-    public AsonArray getJsonArray(int index) {
-        return new AsonArray(array.getJSONArray(index));
+    @Nullable public AsonArray getJsonArray(int index) {
+        if (index < 0 || index > array.length() - 1) {
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
+        }
+        try {
+            JSONArray ary = array.optJSONArray(index);
+            if (ary == null) {
+                return null;
+            }
+            return new AsonArray(ary);
+        } catch (JSONException e) {
+            throw new IllegalStateException("Could not get a JSON array from this array!", e);
+        }
     }
 
     public T get(int index, Class<T> cls) {
+        return get(index, null, cls);
+    }
+
+    public T get(int index, @Nullable String path) {
+        return get(index, path, null);
+    }
+
+    public T get(int index, @Nullable String path, Class<T> cls) {
+        if (index < 0 || index > array.length() - 1) {
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
+        }
         Object value = array.opt(index);
+        if (path != null) {
+            if (!(value instanceof JSONObject)
+                    && !(value instanceof Ason)) {
+                throw new IllegalArgumentException("Cannot get from an AsonArray using a " +
+                        "path when array items are not JSON objects.");
+            }
+            if (value instanceof JSONObject) {
+                value = getPathValue((JSONObject) value, path, splitPath(path));
+            } else {
+                value = getPathValue(((Ason) value).toStockJson(), path, splitPath(path));
+            }
+            cls = (Class<T>) value.getClass();
+        }
+
         if (value == null) {
             return null;
-        } else if (isPrimitive(cls) ||
+        }
+        if (cls == null) {
+            throw new IllegalArgumentException("cls parameter cannot be null!");
+        }
+        if (isPrimitive(cls) ||
                 cls == JSONObject.class ||
                 cls == JSONArray.class ||
                 cls == Ason.class ||
@@ -99,19 +152,22 @@ public class AsonArray<T> implements Iterable<T> {
             return (T) value;
         } else if (cls.isArray()) {
             if (!(value instanceof JSONArray)) {
-                throw new IllegalStateException("Expected a JSONArray to convert to " + cls.getName() + ", didn't find one.");
+                throw new IllegalStateException("Expected a JSONArray to convert to " +
+                        cls.getName() + ", didn't find one.");
             }
             AsonArray<T> array = new AsonArray<>((JSONArray) value);
             return (T) AsonSerializer.get().deserializeArray(array, cls.getComponentType());
         } else if (isList(cls)) {
             if (!(value instanceof JSONArray)) {
-                throw new IllegalStateException("Expected a JSONArray to convert to " + cls.getName() + ", didn't find one.");
+                throw new IllegalStateException("Expected a JSONArray to convert to " +
+                        cls.getName() + ", didn't find one.");
             }
             AsonArray<T> array = new AsonArray<>((JSONArray) value);
             return (T) AsonSerializer.get().deserializeList(array, cls.getComponentType());
         } else {
             if (!(value instanceof JSONObject)) {
-                throw new IllegalStateException("Expected a JSONObject to convert to " + cls.getName() + ", didn't find one.");
+                throw new IllegalStateException("Expected a JSONObject to convert to " +
+                        cls.getName() + ", didn't find one.");
             }
             Ason object = new Ason((JSONObject) value);
             return AsonSerializer.get().deserialize(object, cls);
@@ -119,11 +175,14 @@ public class AsonArray<T> implements Iterable<T> {
     }
 
     public AsonArray<T> remove(int index) {
+        if (index < 0 || index > array.length() - 1) {
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
+        }
         array.remove(index);
         return this;
     }
 
-    public boolean equal(int index, Object value) {
+    public boolean equal(int index, @Nullable T value) {
         T actual = get(index);
         if (actual == null) {
             return value == null;
@@ -131,13 +190,18 @@ public class AsonArray<T> implements Iterable<T> {
         return actual.equals(value);
     }
 
-    public boolean equal(int index, String path, Object value) {
-        if (index >= size()) {
-            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array of size " + size() + ".");
+    public boolean equal(int index, String path, @Nullable Object value) {
+        if (index < 0 || index > array.length() - 1) {
+            throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
         }
         T arrayEntry = get(index);
+        if (arrayEntry == null) {
+            return value == null;
+        }
         if (!(arrayEntry instanceof JSONObject || arrayEntry instanceof Ason)) {
-            throw new InvalidPathException("You cannot use equal(int, String, Object) in AsonArray<T> when the array contains primitives (" + arrayEntry.getClass().getName() + ").");
+            throw new InvalidPathException("You cannot use equal(int, String, " +
+                    "Object) in AsonArray<T> when the array contains primitives (" +
+                    arrayEntry.getClass().getName() + ").");
         }
         JSONObject encloser;
         if (arrayEntry instanceof JSONObject) {
@@ -160,7 +224,7 @@ public class AsonArray<T> implements Iterable<T> {
         return size() == 0;
     }
 
-    private List<T> toList() {
+    @NotNull private List<T> toList() {
         List<T> list = new ArrayList<>(array.length());
         for (int i = 0; i < array.length(); i++) {
             list.add((T) array.opt(i));

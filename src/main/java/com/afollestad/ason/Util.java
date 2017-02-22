@@ -1,5 +1,6 @@
 package com.afollestad.ason;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.Constructor;
@@ -34,50 +35,99 @@ class Util {
         return result.toArray(new String[result.size()]);
     }
 
-    static JSONObject followPath(JSONObject encloser,
+    private static boolean isNumber(String string) {
+        for (char c : string.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static JSONObject followPath(JSONObject wrapper,
                                  String key,
                                  String[] splitKey,
                                  boolean createMissing) {
-        Object parent = encloser.opt(splitKey[0]);
-        if (parent != null && !(parent instanceof JSONObject)) {
+        // Get value for the first path key
+        Object parent = wrapper.opt(splitKey[0]);
+        if (parent != null
+                && !(parent instanceof JSONObject)
+                && !(parent instanceof JSONArray)) {
             throw new InvalidPathException("First component of key " + key + " refers to " +
-                    splitKey[0] + ", which is not an object (it's a " + parent.getClass().getName() + ").");
+                    splitKey[0] + ", which is not an object or array (it's a " +
+                    parent.getClass().getName() + ").");
         } else if (parent == null) {
             if (createMissing) {
                 parent = new JSONObject();
-                encloser.put(splitKey[0], parent);
+                wrapper.put(splitKey[0], parent);
             } else {
-                throw new InvalidPathException("No object found for the first component of key " +
+                throw new InvalidPathException("No object or array found for the first component of key " +
                         key + " (" + splitKey[0] + ").");
             }
         }
+
+        // Loop through following entries
         for (int i = 1; i < splitKey.length - 1; i++) {
-            Object current = ((JSONObject) parent).opt(splitKey[i]);
-            if (current != null && !(current instanceof JSONObject)) {
+            String currentKey = splitKey[i];
+            if (currentKey.startsWith("\\$")) {
+                // A dollar sign is escaped
+                currentKey = currentKey.substring(1);
+            } else if (currentKey.startsWith("$")) {
+                if (isNumber(currentKey.substring(1))) {
+                    // This is an array index key
+                    final int index = Integer.parseInt(currentKey.substring(1));
+                    Object current = ((JSONArray) parent).opt(index);
+                    if (current != null
+                            && !(current instanceof JSONObject)
+                            && !(current instanceof JSONArray)) {
+                        throw new InvalidPathException("Item at index" + i + " of current entry " +
+                                " refers to " + currentKey + ", which is not an object or array (it's a " +
+                                current.getClass().getName() + ").");
+                    } else if (current == null) {
+                        if (createMissing) {
+                            current = new JSONObject();
+                            ((JSONObject) parent).put(currentKey, current);
+                        } else {
+                            throw new NullPathException("Item at index " + i + " " +
+                                    "of current entry refers to a null or out of bounds entry.");
+                        }
+                    }
+                    parent = current;
+                    continue;
+                }
+            }
+
+            // Key is an object name
+            Object current = ((JSONObject) parent).opt(currentKey);
+            if (current != null
+                    && !(current instanceof JSONObject)
+                    && !(current instanceof JSONArray)) {
                 throw new InvalidPathException("Component " + (i + 1) + " of key " + key +
-                        " refers to " + splitKey[i] + ", which is not an object (most likely a primitive).");
+                        " refers to " + currentKey + ", which is not an object or array (it's a " +
+                        current.getClass().getName() + ").");
             } else if (current == null) {
                 if (createMissing) {
                     current = new JSONObject();
-                    ((JSONObject) parent).put(splitKey[i], current);
+                    ((JSONObject) parent).put(currentKey, current);
                 } else {
-                    throw new InvalidPathException("Component " + (i + 1) + " of key " + key +
-                            " refers to " + splitKey[i] + ", which is not an object (most likely a primitive).");
+                    throw new NullPathException("Item at index " + i + " " +
+                            "of current entry refers to a null or out of bounds entry.");
                 }
             }
             parent = current;
         }
+
         return (JSONObject) parent;
     }
 
     @SuppressWarnings("unchecked") static <T> T getPathValue(
-            JSONObject encloser,
+            JSONObject wrapper,
             String key,
             String[] splitKey) {
         if (splitKey.length == 1) {
-            return (T) encloser.get(key);
+            return (T) wrapper.get(key);
         }
-        JSONObject target = followPath(encloser, key, splitKey, false);
+        JSONObject target = followPath(wrapper, key, splitKey, false);
         return (T) target.opt(splitKey[splitKey.length - 1]);
     }
 
@@ -98,22 +148,30 @@ class Util {
             Map<Class<?>, Constructor<?>> cache) {
         if (cache != null) {
             Constructor ctor = cache.get(cls);
-            if (ctor != null) return ctor;
+            if (ctor != null) {
+                return ctor;
+            }
         }
         final Constructor[] constructorArray = cls.getDeclaredConstructors();
         Constructor constructor = null;
         for (Constructor ct : constructorArray) {
-            if (ct.getParameterTypes() != null && ct.getParameterTypes().length != 0)
+            if (ct.getParameterTypes() != null
+                    && ct.getParameterTypes().length != 0) {
                 continue;
+            }
             constructor = ct;
-            if (constructor.getGenericParameterTypes().length == 0)
+            if (constructor.getGenericParameterTypes().length == 0) {
                 break;
+            }
         }
-        if (constructor == null)
-            throw new IllegalStateException("No default constructor found for " + cls.getName());
+        if (constructor == null) {
+            throw new IllegalStateException(
+                    "No default constructor found for " + cls.getName());
+        }
         constructor.setAccessible(true);
-        if (cache != null)
+        if (cache != null) {
             cache.put(cls, constructor);
+        }
         return constructor;
     }
 
