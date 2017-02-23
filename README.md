@@ -65,6 +65,7 @@ dependencies {
     ...
     compile('com.afollestad:ason:1.3.1') {
         exclude group: 'org.json', module: 'json'
+        // exclude group: 'com.intellij', module: 'annotations' - Enable this, if you use Kotlin, otherwise you may get a DexException
     }
 }
 ```
