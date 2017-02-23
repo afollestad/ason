@@ -18,7 +18,8 @@ in the Android SDK. As we all know, those stock classes tend to be a pain. They 
 1. [Dependency](https://github.com/afollestad/ason#dependency)
     1. [Gradle (Java)](https://github.com/afollestad/ason#gradle-java)
     2. [Gradle (Android)](https://github.com/afollestad/ason#gradle-android)
-    3. [Maven](https://github.com/afollestad/ason#maven)
+    3. [Gradle (Kotlin)](https://github.com/afollestad/ason#gradle-kotlin)
+    4. [Maven](https://github.com/afollestad/ason#maven)
 2. [Parsing and Building Objects](https://github.com/afollestad/ason#parsing-and-building-objects)
 3. [Retrieving Values from Objects](https://github.com/afollestad/ason#retrieving-values-from-objects)
 4. [Parsing and Building Arrays](https://github.com/afollestad/ason#parsing-and-building-arrays)
@@ -52,7 +53,7 @@ The dependency is available via jCenter.
 ```Gradle
 dependencies {
     ...
-    compile 'com.afollestad:ason:1.3.1'
+    compile 'com.afollestad:ason:1.4.0'
 }
 ```
 
@@ -63,9 +64,22 @@ Since Android includes `org.json` classes, you'll want to exclude the copies pro
 ```Gradle
 dependencies {
     ...
-    compile('com.afollestad:ason:1.3.1') {
+    compile('com.afollestad:ason:1.4.0') {
         exclude group: 'org.json', module: 'json'
-        // exclude group: 'com.intellij', module: 'annotations' - Enable this, if you use Kotlin, otherwise you may get a DexException
+    }
+}
+```
+
+### Gradle (Kotlin)
+
+In Kotlin, you'll want to exclude IntelliJ's annotations library to avoid a DexException. *If you are using Kotlin with 
+Android, make sure you also exclude org.json as shown in the section above.*
+
+```Gradle
+dependencies {
+    ...
+    compile('com.afollestad:ason:1.4.0') {
+        exclude group: 'com.intellij', module: 'annotations'
     }
 }
 ```
@@ -76,7 +90,7 @@ dependencies {
 <dependency>
   <groupId>com.afollestad</groupId>
   <artifactId>ason</artifactId>
-  <version>1.3.1</version>
+  <version>1.4.0</version>
   <type>pom</type>
 </dependency>
 ```
@@ -288,12 +302,23 @@ int day = ason.get("birthday.day");
 int year = ason.get("birthday.year");
 ```
 
-You can do the same on arrays, but you need to specify the index of the object to pull from too:
+If you wanted to remove the inner "year" value:
+ 
+```java
+Ason ason = // ...
+ason.remove("birthday.year");
+```
+
+---
+
+You can use dot notation with arrays too, but you need to specify the index of the object to pull from:
 
 ```java
 AsonArray ason = // ...
 String name = ason.get(1, "birthday.month");
 ```
+
+---
 
 As a bonus, you can check equality without doing a manual value comparison:
 
@@ -303,22 +328,6 @@ boolean birthYearCheck = ason.equal("birthday.year", 1995);
 
 AsonArray ason2 = // ...
 boolean birthYearCheck2 = ason2.equal(2, "birthday.year", 1995);
-```
-
-And arrays:
-
-```java
-Ason ason = new Ason()
-    .put("id", 1)
-    .put("name", "Aidan")
-    .put("birthday.month", "July")
-    .put("birthday.day", 28)
-    .put("birthday.year", 1995);
-AsonArray<Ason> array = AsonArray<Ason>();
-array.put(ason);
-
-// The first parameter is the index of the item, the second is a key path, the third is the value you're comparing to
-boolean firstItemBirthYearCheck = array.equal(0, "birthday.year", 1995);
 ```
 
 ### Index Notation
@@ -344,6 +353,23 @@ Take this JSON:
 }
 ```
 
+You could create this using index notation as such:
+
+```java
+Ason ason = new Ason()
+    .put("group_id", 1)
+    .put("title", "Hello, world!")
+    .put("participants.$0.name", "Aidan")
+    .put("participants.$0.id", 2)
+    .put("participants.$1.name", "Waverly")
+    .put("participants.$1.id", 1);
+```
+
+The dollar sign followed by the number 0 indicates that you want the item at index 0 (position 1) 
+within an array called "participants".
+
+---
+
 You can retrieve the value of "name" in the second participant like this:
 
 ```java
@@ -351,8 +377,13 @@ Ason object = // ...
 String name = object.get("participants.$1.name");
 ```
 
-The dollar sign followed by the number 1 indicates that you want the item at index 1 (position 2) 
-within the array called "participants".
+If you wanted to remove the first item from the inner array, you can do that with index notation. This avoids the 
+need to first retrieve the "participants" object:
+
+```java
+Ason object = // ...
+object.remove("participants.$0");
+```
 
 ### Escaping Periods and Dollar Signs
 
