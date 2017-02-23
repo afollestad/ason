@@ -104,6 +104,12 @@ public class AsonSerializeTest {
         assertEquals(21, first.get("age"));
     }
 
+    @Test public void test_primitive_serialize() {
+        int[] ids = new int[]{1, 2, 3, 4};
+        AsonArray<Integer> array = Ason.serializeArray(ids);
+        assertEquals("[1,2,3,4]", array.toString());
+    }
+
     //
     ////// DESERIALIZE
     //
@@ -189,5 +195,15 @@ public class AsonSerializeTest {
         assertEquals(person.name, "Aidan");
         assertEquals(person.id, 1);
         assertEquals(person.age, 21);
+    }
+
+    @Test public void test_primitive_deserialize() {
+        AsonArray<Integer> array = new AsonArray<Integer>()
+                .add(1, 2, 3, 4);
+        int[] primitive = Ason.deserialize(array, int[].class);
+        assertEquals(1, primitive[0]);
+        assertEquals(2, primitive[1]);
+        assertEquals(3, primitive[2]);
+        assertEquals(4, primitive[3]);
     }
 }
