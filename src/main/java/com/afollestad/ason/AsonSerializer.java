@@ -167,7 +167,7 @@ import static com.afollestad.ason.Util.*;
                 cacheEntry.set(newObject, name, ason.get(name));
             } else if (type.isArray()) {
                 AsonArray asonArray = ason.get(name);
-                cacheEntry.set(newObject, name, deserializeArray(asonArray, type.getComponentType()));
+                cacheEntry.set(newObject, name, deserializeArray(asonArray, type));
             } else if (isList(type)) {
                 AsonArray asonArray = ason.get(name);
                 Class<?> listItemType = cacheEntry.listItemType(name);

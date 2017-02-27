@@ -86,28 +86,20 @@ public class PerfTest {
         }
         long end = System.currentTimeMillis();
         long diff = end - start;
-        System.out.println("Finished benchmarking in " + diff + "ms (" + ((float) diff / 1000f) + "s)");
+        System.out.println("Finished benchmarking in " + diff + "ms (" + ((float) diff / 1000f) + "s)\n");
 
-        out.println("RESULTS:");
-
-        out.println("Ason serialization:");
+        out.println("SERIALIZATION...\nSample size | Ason | Gson:");
         for (Integer sampleSize : asonSerializeTimes.keySet()) {
-            out.println("\t" + sampleSize + " => " + asonSerializeTimes.get(sampleSize) + "ms");
+            out.println(sampleSize + " | " +
+                    asonSerializeTimes.get(sampleSize) + "ms | "
+                    + gsonSerializeTimes.get(sampleSize) + "ms");
         }
 
-        out.println("Gson serialization:");
-        for (Integer sampleSize : gsonSerializeTimes.keySet()) {
-            out.println("\t" + sampleSize + " => " + gsonSerializeTimes.get(sampleSize) + "ms");
-        }
-
-        out.println("Ason deserialization:");
+        out.println("\nDESERIALIZATION...\nSample size | Ason | Gson:");
         for (Integer sampleSize : asonDeserializeTimes.keySet()) {
-            out.println("\t" + sampleSize + " => " + asonDeserializeTimes.get(sampleSize) + "ms");
-        }
-
-        out.println("Gson deserialization:");
-        for (Integer sampleSize : gsonDeserializeTimes.keySet()) {
-            out.println("\t" + sampleSize + " => " + gsonDeserializeTimes.get(sampleSize) + "ms");
+            out.println(sampleSize + " | " +
+                    asonDeserializeTimes.get(sampleSize) + "ms | "
+                    + gsonDeserializeTimes.get(sampleSize) + "ms");
         }
     }
 }

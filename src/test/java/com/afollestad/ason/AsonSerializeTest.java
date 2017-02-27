@@ -34,13 +34,27 @@ public class AsonSerializeTest {
     static class Person2 {
 
         @AsonName(name = "_id") int id;
-        List<Person2> family;
+        Person2[] family;
 
-        public Person2() {
+        Person2() {
+        }
+
+        Person2(int id) {
+            this();
+            this.id = id;
+        }
+    }
+
+    static class Person3 {
+
+        @AsonName(name = "_id") int id;
+        List<Person3> family;
+
+        Person3() {
             family = new ArrayList<>(0);
         }
 
-        public Person2(int id) {
+        Person3(int id) {
             this();
             this.id = id;
         }
@@ -125,14 +139,28 @@ public class AsonSerializeTest {
         assertEquals("[1,2,3,4]", array.toString());
     }
 
-    @Test public void test_serialize_with_list() {
+    @Test public void test_serialize_with_array() {
         Person2 person = new Person2(1);
-        person.family.add(new Person2(2));
-        person.family.add(new Person2(3));
-        person.family.add(new Person2(4));
+        person.family = new Person2[]{
+                new Person2(2),
+                new Person2(3),
+                new Person2(4)
+        };
 
         Ason ason = Ason.serialize(person);
-        AsonArray<Person2> array = ason.get("family");
+        AsonArray<Person3> array = ason.get("family");
+        assertNotNull(array);
+        assertEquals(array.size(), 3);
+    }
+
+    @Test public void test_serialize_with_list() {
+        Person3 person = new Person3(1);
+        person.family.add(new Person3(2));
+        person.family.add(new Person3(3));
+        person.family.add(new Person3(4));
+
+        Ason ason = Ason.serialize(person);
+        AsonArray<Person3> array = ason.get("family");
         assertNotNull(array);
         assertEquals(array.size(), 3);
     }
@@ -234,9 +262,18 @@ public class AsonSerializeTest {
         assertEquals(4, primitive[3]);
     }
 
-    @Test public void test_deserialize_with_list() {
+    @Test public void test_deserialize_with_array() {
         String input = "{\"_id\":1,\"family\":[{\"_id\":2},{\"_id\":3},{\"_id\":4}]}";
         Person2 result = Ason.deserialize(input, Person2.class);
+        assertEquals(result.family.length, 3);
+        assertEquals(2, result.family[0].id);
+        assertEquals(3, result.family[1].id);
+        assertEquals(4, result.family[2].id);
+    }
+
+    @Test public void test_deserialize_with_list() {
+        String input = "{\"_id\":1,\"family\":[{\"_id\":2},{\"_id\":3},{\"_id\":4}]}";
+        Person3 result = Ason.deserialize(input, Person3.class);
         assertEquals(result.family.size(), 3);
         assertEquals(2, result.family.get(0).id);
         assertEquals(3, result.family.get(1).id);
@@ -253,6 +290,7 @@ public class AsonSerializeTest {
 
         Ason ason = Ason.serialize(data);
         AsonArray<Integer> array = ason.get("item");
+        assertNotNull(array);
         assertEquals(1, array.get(0).intValue());
         assertEquals(2, array.get(1).intValue());
         assertEquals(3, array.get(2).intValue());
