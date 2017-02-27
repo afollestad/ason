@@ -52,7 +52,9 @@ import static com.afollestad.ason.Util.*;
             final Ason ason = new Ason();
             for (Field field : fields) {
                 field.setAccessible(true);
-                if (shouldIgnore(field)) continue;
+                if (shouldIgnore(field)) {
+                    continue;
+                }
                 Object result = serializeField(field, object);
                 ason.put(fieldName(field), result);
             }
@@ -74,11 +76,14 @@ import static com.afollestad.ason.Util.*;
 
         final AsonArray result = new AsonArray<>();
         final int length = Array.getLength(arrayObject);
-        if (length == 0) return result;
+        if (length == 0) {
+            return result;
+        }
 
         for (int i = 0; i < length; i++) {
             Object value = Array.get(arrayObject, i);
-            if (isPrimitive(cls.getComponentType())) {
+            Class<?> itemCls = value != null ? value.getClass() : cls.getComponentType();
+            if (isPrimitive(itemCls)) {
                 result.add(value);
                 continue;
             }
@@ -94,8 +99,9 @@ import static com.afollestad.ason.Util.*;
         }
         Class<?> componentType = list.get(0).getClass();
         Object array = Array.newInstance(componentType, list.size());
-        for (int i = 0; i < list.size(); i++)
+        for (int i = 0; i < list.size(); i++) {
             Array.set(array, i, list.get(i));
+        }
         return serializeArray(array);
     }
 
@@ -164,9 +170,16 @@ import static com.afollestad.ason.Util.*;
                 setFieldValue(field, newObject, deserializeArray(asonArray, type.getComponentType()));
             } else if (isList(type)) {
                 AsonArray asonArray = ason.get(name);
+                setFieldValue(field, newObject, deserializeList(asonArray, type));
             } else {
-                Ason asonObject = ason.get(name);
-                setFieldValue(field, newObject, deserialize(asonObject, type));
+                Object value = ason.get(name);
+                if (value instanceof Ason) {
+                    Ason asonObject = (Ason) value;
+                    setFieldValue(field, newObject, deserialize(asonObject, type));
+                } else {
+                    AsonArray asonArray = (AsonArray) value;
+                    setFieldValue(field, newObject, deserializeArray(asonArray, type));
+                }
             }
         }
 
@@ -178,31 +191,35 @@ import static com.afollestad.ason.Util.*;
             return null;
         } else if (cls == null) {
             throw new IllegalArgumentException("Class<T> parameter is required.");
-        } else if (!cls.isArray()) {
+        } else if (!cls.isArray() && cls != Object.class) {
             throw new IllegalArgumentException(cls.getName() + " is not an array type.");
         }
 
-        final Class<?> component = cls.getComponentType();
+        final Class<?> component = cls == Object.class ? Object.class : cls.getComponentType();
         final T newArray = (T) Array.newInstance(component, json.size());
         if (json.isEmpty()) {
             return newArray;
         }
 
         for (int i = 0; i < json.size(); i++) {
-            if (isPrimitive(component)) {
-                Object value = json.get(i);
-                if (component == char.class || component == Character.class) {
-                    value = ((String) value).charAt(0);
-                } else if (component == short.class || component == Short.class) {
-                    value = Short.parseShort(Integer.toString((int) value));
+            Object item = json.get(i);
+            Class<?> itemType = item != null ? item.getClass() : component;
+
+            if (item == null) {
+                Array.set(newArray, i, null);
+            } else if (isPrimitive(itemType)) {
+                if (itemType == char.class || itemType == Character.class) {
+                    item = ((String) item).charAt(0);
+                } else if (itemType == short.class || itemType == Short.class) {
+                    item = Short.parseShort(Integer.toString((int) item));
                 }
-                Array.set(newArray, i, value);
-            } else if (component.isArray()) {
-                AsonArray subArray = (AsonArray) json.get(i);
-                Class<?> arrayComponent = component.getComponentType();
+                Array.set(newArray, i, item);
+            } else if (itemType.isArray()) {
+                AsonArray subArray = (AsonArray) item;
+                Class<?> arrayComponent = itemType.getComponentType();
                 Array.set(newArray, i, deserializeArray(subArray, arrayComponent));
-            } else if (isList(component)) {
-                AsonArray subArray = (AsonArray) json.get(i);
+            } else if (isList(itemType)) {
+                AsonArray subArray = (AsonArray) item;
                 if (subArray.isEmpty()) {
                     Array.set(newArray, i, new ArrayList(0));
                 } else {
@@ -210,8 +227,8 @@ import static com.afollestad.ason.Util.*;
                     Array.set(newArray, i, deserializeList(subArray, listComponent));
                 }
             } else {
-                Ason subObject = (Ason) json.get(i);
-                Array.set(newArray, i, deserialize(subObject, component));
+                Ason subObject = (Ason) item;
+                Array.set(newArray, i, deserialize(subObject, itemType));
             }
         }
 
@@ -233,8 +250,9 @@ import static com.afollestad.ason.Util.*;
 
         int length = Array.getLength(array);
         List<T> result = new ArrayList<>();
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < length; i++) {
             result.add((T) Array.get(array, i));
+        }
 
         return result;
     }

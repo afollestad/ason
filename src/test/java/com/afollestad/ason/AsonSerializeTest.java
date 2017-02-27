@@ -3,10 +3,10 @@ package com.afollestad.ason;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -189,5 +189,23 @@ public class AsonSerializeTest {
         assertEquals(person.name, "Aidan");
         assertEquals(person.id, 1);
         assertEquals(person.age, 21);
+    }
+
+    //
+    ////// TEST FOR ISSUE #10
+    //
+
+    @Test public void test_issue10_serialize() {
+        Issue10Example data = new Issue10Example();
+        data.item = new Object[]{1, 2, 3, 4};
+        Ason ason = Ason.serialize(data);
+        assertEquals("{\"item\":[1,2,3,4]}", ason.toString());
+    }
+
+    @Test public void test_issue10_deserialize() {
+        Ason ason = new Ason("{\"item\": [1, 2, 3, 4]}");
+        Issue10Example result = Ason.deserialize(ason, Issue10Example.class);
+        Object[] array = (Object[]) result.item;
+        assertTrue(Arrays.equals(new Integer[]{1, 2, 3, 4}, array));
     }
 }
