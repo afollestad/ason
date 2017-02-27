@@ -9,7 +9,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -155,27 +154,7 @@ class Util {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    static <T> T newInstance(
-            Class<?> cls,
-            Map<Class<?>, Constructor<?>> cache) {
-        final Constructor ctor = getDefaultConstructor(cls, cache);
-        try {
-            return (T) ctor.newInstance();
-        } catch (Throwable t) {
-            throw new RuntimeException("Failed to instantiate " + cls.getName(), t);
-        }
-    }
-
-    private static Constructor<?> getDefaultConstructor(
-            Class<?> cls,
-            Map<Class<?>, Constructor<?>> cache) {
-        if (cache != null) {
-            Constructor ctor = cache.get(cls);
-            if (ctor != null) {
-                return ctor;
-            }
-        }
+    static Constructor<?> getDefaultConstructor(Class<?> cls) {
         final Constructor[] constructorArray = cls.getDeclaredConstructors();
         Constructor constructor = null;
         for (Constructor ct : constructorArray) {
@@ -193,9 +172,6 @@ class Util {
                     "No default constructor found for " + cls.getName());
         }
         constructor.setAccessible(true);
-        if (cache != null) {
-            cache.put(cls, constructor);
-        }
         return constructor;
     }
 

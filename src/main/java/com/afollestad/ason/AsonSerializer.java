@@ -5,7 +5,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,15 +19,16 @@ import static com.afollestad.ason.Util.*;
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused"}) class AsonSerializer {
 
     private static AsonSerializer serializer;
-    private final Map<Class<?>, Constructor<?>> constructorCacheMap;
+    private Map<Class<?>, ClassCacheEntry> classCache;
 
     AsonSerializer() {
-        constructorCacheMap = new HashMap<>(0);
+        classCache = new HashMap<>(0);
     }
 
     public static AsonSerializer get() {
-        if (serializer == null)
+        if (serializer == null) {
             serializer = new AsonSerializer();
+        }
         return serializer;
     }
 
@@ -152,36 +152,35 @@ import static com.afollestad.ason.Util.*;
             throw new IllegalArgumentException("You cannot deserialize an object to a JSON array.");
         }
 
-        final Field[] fields = cls.getDeclaredFields();
-        final T newObject = newInstance(cls, constructorCacheMap);
+        ClassCacheEntry<T> cacheEntry = classCache.get(cls);
+        if (cacheEntry == null) {
+            cacheEntry = new ClassCacheEntry<>(cls);
+        }
+        final T newObject = cacheEntry.newInstance();
 
-        for (Field field : fields) {
-            field.setAccessible(true);
-            if (shouldIgnore(field)) continue;
-            final String name = fieldName(field);
-            final Class<?> type = field.getType();
-
+        for (String name : cacheEntry.fields()) {
+            final Class<?> type = cacheEntry.fieldType(name);
             if (isPrimitive(type) ||
                     type == JSONObject.class ||
                     type == JSONArray.class ||
                     type == Ason.class ||
                     type == AsonArray.class) {
-                setFieldValue(field, newObject, ason.get(name));
+                cacheEntry.set(newObject, name, ason.get(name));
             } else if (type.isArray()) {
                 AsonArray asonArray = ason.get(name);
-                setFieldValue(field, newObject, deserializeArray(asonArray, type.getComponentType()));
+                cacheEntry.set(newObject, name, deserializeArray(asonArray, type.getComponentType()));
             } else if (isList(type)) {
                 AsonArray asonArray = ason.get(name);
-                Class<?> listItemType = listGenericType(field);
-                setFieldValue(field, newObject, deserializeList(asonArray, listItemType));
+                Class<?> listItemType = cacheEntry.listItemType(name);
+                cacheEntry.set(newObject, name, deserializeList(asonArray, listItemType));
             } else {
                 Object value = ason.get(name);
                 if (value instanceof Ason) {
                     Ason asonObject = (Ason) value;
-                    setFieldValue(field, newObject, deserialize(asonObject, type));
+                    cacheEntry.set(newObject, name, deserialize(asonObject, type));
                 } else {
                     AsonArray asonArray = (AsonArray) value;
-                    setFieldValue(field, newObject, deserializeArray(asonArray, type));
+                    cacheEntry.set(newObject, name, deserializeArray(asonArray, type));
                 }
             }
         }
@@ -244,7 +243,7 @@ import static com.afollestad.ason.Util.*;
             return null;
         } else if (cls == null) {
             throw new IllegalArgumentException("Class<T> parameter is required.");
-        } else if(json.isEmpty()) {
+        } else if (json.isEmpty()) {
             return new ArrayList<>(0);
         }
 
