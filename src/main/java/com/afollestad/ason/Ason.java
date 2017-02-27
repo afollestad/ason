@@ -55,6 +55,10 @@ import static com.afollestad.ason.Util.*;
         try {
             if (value == null) {
                 return this;
+            } else if (JSONObject.NULL.equals(value)
+                    || JSONObject.NULL == value) {
+                json.put(key, JSONObject.NULL);
+                return this;
             } else if (isPrimitive(value) ||
                     value instanceof JSONObject ||
                     value instanceof JSONArray) {
@@ -82,10 +86,14 @@ import static com.afollestad.ason.Util.*;
         return this;
     }
 
+    public Ason putNull(@NotNull String key) {
+        return put(key, JSONObject.NULL);
+    }
+
     public Ason put(@NotNull String key, Object... values) {
         Object insertObject;
         if (values == null || values.length == 1) {
-            insertObject = values != null ? values[0] : null;
+            insertObject = values != null ? values[0] : JSONObject.NULL;
         } else {
             JSONArray newArray = new JSONArray();
             for (Object value : values) {
@@ -145,6 +153,9 @@ import static com.afollestad.ason.Util.*;
             result = json.opt(key);
         }
         if (result == null) {
+            return defaultValue;
+        } else if (JSONObject.NULL.equals(result)
+                || JSONObject.NULL == result) {
             return defaultValue;
         } else if (result instanceof JSONObject) {
             result = new Ason((JSONObject) result);
@@ -278,7 +289,10 @@ import static com.afollestad.ason.Util.*;
     }
 
     public boolean isNull(String key) {
-        return get(key) == null;
+        Object value = get(key);
+        return value == null
+                || JSONObject.NULL.equals(value)
+                || JSONObject.NULL == value;
     }
 
     @Override public int hashCode() {

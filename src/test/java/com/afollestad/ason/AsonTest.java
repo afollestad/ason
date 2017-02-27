@@ -1,6 +1,8 @@
 package com.afollestad.ason;
 
+import org.json.JSONObject;
 import org.junit.Test;
+import sun.text.resources.no.JavaTimeSupplementary_no;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -22,12 +24,25 @@ public class AsonTest {
         }
     }
 
-    @SuppressWarnings({"FieldCanBeLocal", "unused"}) private List<Ason> listField;
+    @SuppressWarnings({"FieldCanBeLocal", "unused", "MismatchedQueryAndUpdateOfCollection"}) private List<Ason> listField;
 
     @Test public void generic_list_type_test() throws Exception {
         listField = new ArrayList<>(0);
         Field field = AsonTest.class.getDeclaredField("listField");
         assertEquals(Ason.class, listGenericType(field));
+    }
+
+    @Test public void json_null_test() {
+        Ason ason = new Ason()
+                .putNull("test")
+                .put("test2", null);
+        assertTrue(ason.isNull("test"));
+        assertTrue(ason.isNull("test2"));
+        assertEquals(null, ason.get("test"));
+        assertEquals(null, ason.get("test2"));
+        JSONObject stock = ason.toStockJson();
+        assertEquals(JSONObject.NULL, stock.get("test"));
+        assertEquals(JSONObject.NULL, stock.get("test2"));
     }
 
     @Test public void test_is_number_true() {
