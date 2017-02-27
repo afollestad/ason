@@ -1,5 +1,6 @@
 package com.afollestad.ason;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -35,7 +36,7 @@ class Util {
         return result.toArray(new String[result.size()]);
     }
 
-    private static boolean isNumber(String string) {
+    static boolean isNumber(String string) {
         for (char c : string.toCharArray()) {
             if (!Character.isDigit(c)) {
                 return false;
@@ -44,10 +45,11 @@ class Util {
         return true;
     }
 
-    static JSONObject followPath(JSONObject wrapper,
-                                 String key,
-                                 String[] splitKey,
-                                 boolean createMissing) {
+    @NotNull static Object followPath(
+            JSONObject wrapper,
+            String key,
+            String[] splitKey,
+            boolean createMissing) {
         // Get value for the first path key
         Object parent = wrapper.opt(splitKey[0]);
         if (parent != null
@@ -58,7 +60,13 @@ class Util {
                     parent.getClass().getName() + ").");
         } else if (parent == null) {
             if (createMissing) {
-                parent = new JSONObject();
+                if (splitKey[0].startsWith("$")
+                        || (splitKey.length > 1
+                        && splitKey[1].startsWith("$"))) {
+                    parent = new JSONArray();
+                } else {
+                    parent = new JSONObject();
+                }
                 wrapper.put(splitKey[0], parent);
             } else {
                 throw new InvalidPathException("No object or array found for the first component of key " +
@@ -85,8 +93,14 @@ class Util {
                                 current.getClass().getName() + ").");
                     } else if (current == null) {
                         if (createMissing) {
-                            current = new JSONObject();
-                            ((JSONObject) parent).put(currentKey, current);
+                            if (i < splitKey.length - 1
+                                    && splitKey[i + 1].startsWith("$")) {
+                                current = new JSONArray();
+                                ((JSONArray) parent).put(current);
+                            } else {
+                                current = new JSONObject();
+                                ((JSONArray) parent).put(current);
+                            }
                         } else {
                             throw new NullPathException("Item at index " + i + " " +
                                     "of current entry refers to a null or out of bounds entry.");
@@ -107,7 +121,12 @@ class Util {
                         current.getClass().getName() + ").");
             } else if (current == null) {
                 if (createMissing) {
-                    current = new JSONObject();
+                    if (i < splitKey.length - 1
+                            && splitKey[i + 1].startsWith("$")) {
+                        current = new JSONArray();
+                    } else {
+                        current = new JSONObject();
+                    }
                     ((JSONObject) parent).put(currentKey, current);
                 } else {
                     throw new NullPathException("Item at index " + i + " " +
@@ -117,7 +136,7 @@ class Util {
             parent = current;
         }
 
-        return (JSONObject) parent;
+        return parent;
     }
 
     @SuppressWarnings("unchecked") static <T> T getPathValue(
@@ -127,8 +146,12 @@ class Util {
         if (splitKey.length == 1) {
             return (T) wrapper.get(key);
         }
-        JSONObject target = followPath(wrapper, key, splitKey, false);
-        return (T) target.opt(splitKey[splitKey.length - 1]);
+        Object target = followPath(wrapper, key, splitKey, false);
+        if (target instanceof JSONObject) {
+            return (T) ((JSONObject) target).opt(splitKey[splitKey.length - 1]);
+        } else {
+            throw new InvalidPathException("Cannot get a value from a JSONArray using a key.");
+        }
     }
 
     @SuppressWarnings("unchecked")

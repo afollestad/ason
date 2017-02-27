@@ -3,10 +3,10 @@ package com.afollestad.ason;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -104,6 +104,12 @@ public class AsonSerializeTest {
         assertEquals(21, first.get("age"));
     }
 
+    @Test public void test_primitive_serialize() {
+        int[] ids = new int[]{1, 2, 3, 4};
+        AsonArray<Integer> array = Ason.serializeArray(ids);
+        assertEquals("[1,2,3,4]", array.toString());
+    }
+
     //
     ////// DESERIALIZE
     //
@@ -189,5 +195,33 @@ public class AsonSerializeTest {
         assertEquals(person.name, "Aidan");
         assertEquals(person.id, 1);
         assertEquals(person.age, 21);
+    }
+
+    @Test public void test_primitive_deserialize() {
+        AsonArray<Integer> array = new AsonArray<Integer>()
+                .add(1, 2, 3, 4);
+        int[] primitive = Ason.deserialize(array, int[].class);
+        assertEquals(1, primitive[0]);
+        assertEquals(2, primitive[1]);
+        assertEquals(3, primitive[2]);
+        assertEquals(4, primitive[3]);
+    }
+
+    //
+    ////// TEST FOR ISSUE #10
+    //
+
+    @Test public void test_issue10_serialize() {
+        Issue10Example data = new Issue10Example();
+        data.item = new Object[]{1, 2, 3, 4};
+        Ason ason = Ason.serialize(data);
+        assertEquals("{\"item\":[1,2,3,4]}", ason.toString());
+    }
+
+    @Test public void test_issue10_deserialize() {
+        Ason ason = new Ason("{\"item\": [1, 2, 3, 4]}");
+        Issue10Example result = Ason.deserialize(ason, Issue10Example.class);
+        Object[] array = (Object[]) result.item;
+        assertTrue(Arrays.equals(new Integer[]{1, 2, 3, 4}, array));
     }
 }
