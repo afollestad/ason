@@ -95,8 +95,19 @@ import static com.afollestad.ason.Util.*;
         }
         if (key.contains(".")) {
             final String[] splitKey = splitPath(key);
-            JSONObject target = followPath(json, key, splitKey, true);
-            target.put(splitKey[splitKey.length - 1], insertObject);
+            Object target = followPath(json, key, splitKey, true);
+            if (target instanceof JSONArray) {
+                JSONArray arrayTarget = (JSONArray) target;
+                String indexKey = splitKey[splitKey.length - 1].substring(1);
+                int insertIndex = Integer.parseInt(indexKey);
+                if (insertIndex > arrayTarget.length() - 1) {
+                    arrayTarget.put(insertObject);
+                } else {
+                    arrayTarget.put(insertIndex, insertObject);
+                }
+            } else {
+                ((JSONObject) target).put(splitKey[splitKey.length - 1], insertObject);
+            }
         } else {
             putInternal(null, null, key, insertObject);
         }
@@ -104,7 +115,19 @@ import static com.afollestad.ason.Util.*;
     }
 
     public Ason remove(@NotNull String key) {
-        json.remove(key);
+        String[] splitKey = splitPath(key);
+        if (splitKey.length == 1) {
+            json.remove(key);
+        } else {
+            Object followed = followPath(json, key, splitKey, false);
+            if (followed instanceof JSONArray) {
+                JSONArray followedArray = (JSONArray) followed;
+                int insertIndex = Integer.parseInt(splitKey[splitKey.length - 1].substring(1));
+                followedArray.remove(insertIndex);
+            } else {
+                ((JSONObject) followed).remove(splitKey[splitKey.length - 1]);
+            }
+        }
         return this;
     }
 

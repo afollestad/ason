@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.afollestad.ason.Util.isNumber;
 import static org.junit.Assert.*;
 
 public class AsonTest {
@@ -15,6 +16,17 @@ public class AsonTest {
             assertFalse("No exception thrown for invalid JSON!", false);
         } catch (InvalidJsonException ignored) {
         }
+    }
+
+    @Test public void test_is_number_true() {
+        assertTrue(isNumber("1234"));
+        assertTrue(isNumber("67891023231"));
+    }
+
+    @Test public void test_is_number_false() {
+        assertFalse(isNumber("hi"));
+        assertFalse(isNumber("@1234"));
+        assertFalse(isNumber("1234!%"));
     }
 
     @Test public void builder_test() {
@@ -47,7 +59,7 @@ public class AsonTest {
     @Test public void test_is_null() {
         Ason ason = new Ason()
                 .put("_id", 3)
-                .put("name", null)
+                .put("name", (Object[]) null)
                 .put("age", 21);
         assertTrue(ason.isNull("name"));
         assertFalse(ason.isNull("age"));

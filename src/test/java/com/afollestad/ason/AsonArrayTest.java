@@ -66,4 +66,17 @@ public class AsonArrayTest {
                 "    {\"_id\": 2}\n" +
                 "]", array.toString(4));
     }
+
+    @Test public void test_string_array() {
+        AsonArray<String> array = new AsonArray<String>()
+                .add("Hello", "World!");
+        assertEquals("[\"Hello\",\"World!\"]", array.toString());
+
+    }
+
+    @Test public void test_primitive_array() {
+        AsonArray<Integer> array = new AsonArray<Integer>()
+                .add(1, 2, 3, 4);
+        assertEquals("[1,2,3,4]", array.toString());
+    }
 }
