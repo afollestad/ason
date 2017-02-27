@@ -20,7 +20,7 @@ import static com.afollestad.ason.Util.*;
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused"}) class AsonSerializer {
 
     private static AsonSerializer serializer;
-    private Map<Class<?>, ClassCacheEntry> classCache;
+    private Map<String, ClassCacheEntry> classCache;
 
     AsonSerializer() {
         classCache = new HashMap<>(0);
@@ -151,9 +151,10 @@ import static com.afollestad.ason.Util.*;
             throw new IllegalArgumentException("You cannot deserialize an object to a JSON array.");
         }
 
-        ClassCacheEntry<T> cacheEntry = classCache.get(cls);
+        ClassCacheEntry<T> cacheEntry = classCache.get(cls.getName());
         if (cacheEntry == null) {
             cacheEntry = new ClassCacheEntry<>(cls);
+            classCache.put(cls.getName(), cacheEntry);
         }
         final T newObject = cacheEntry.newInstance();
 
