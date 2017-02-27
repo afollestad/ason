@@ -1,5 +1,6 @@
 package com.afollestad.ason;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,7 +26,7 @@ import static com.afollestad.ason.Util.*;
         classCache = new HashMap<>(0);
     }
 
-    public static AsonSerializer get() {
+    @NotNull public static AsonSerializer get() {
         if (serializer == null) {
             serializer = new AsonSerializer();
         }
@@ -36,7 +37,7 @@ import static com.afollestad.ason.Util.*;
     ////// SERIALIZE
     //
 
-    public Ason serialize(Object object) {
+    @Nullable public Ason serialize(@Nullable Object object) {
         if (object == null) {
             return null;
         } else if (object instanceof Ason || object instanceof AsonArray ||
@@ -63,9 +64,9 @@ import static com.afollestad.ason.Util.*;
         }
     }
 
-    public AsonArray serializeArray(Object arrayObject) {
+    @Nullable public AsonArray serializeArray(@Nullable Object arrayObject) {
         if (arrayObject == null) {
-            return new AsonArray();
+            return null;
         }
 
         Class<?> cls = arrayObject.getClass();
@@ -95,7 +96,7 @@ import static com.afollestad.ason.Util.*;
         return result;
     }
 
-    @Nullable public AsonArray serializeList(List list) {
+    @Nullable public AsonArray serializeList(@Nullable List list) {
         if (list == null || list.isEmpty()) {
             return null;
         }
@@ -137,11 +138,9 @@ import static com.afollestad.ason.Util.*;
     ////// DESERIALIZE
     //
 
-    public <T> T deserialize(Ason ason, Class<T> cls) {
+    @Nullable public <T> T deserialize(@Nullable Ason ason, @NotNull Class<T> cls) {
         if (ason == null) {
             return null;
-        } else if (cls == null) {
-            throw new IllegalArgumentException("Class<T> parameter is required.");
         } else if (isPrimitive(cls)) {
             throw new IllegalArgumentException("You cannot deserialize an object to a primitive type (" + cls.getName() + ").");
         } else if (cls == Ason.class || cls == JSONObject.class) {
@@ -160,11 +159,11 @@ import static com.afollestad.ason.Util.*;
 
         for (String name : cacheEntry.fields()) {
             final Class<?> type = cacheEntry.fieldType(name);
-            if (isPrimitive(type) ||
-                    type == JSONObject.class ||
-                    type == JSONArray.class ||
-                    type == Ason.class ||
-                    type == AsonArray.class) {
+            if (isPrimitive(type)
+                    || type == JSONObject.class
+                    || type == JSONArray.class
+                    || type == Ason.class
+                    || type == AsonArray.class) {
                 cacheEntry.set(newObject, name, ason.get(name));
             } else if (type.isArray()) {
                 AsonArray asonArray = ason.get(name);
@@ -188,11 +187,9 @@ import static com.afollestad.ason.Util.*;
         return newObject;
     }
 
-    public <T> T deserializeArray(AsonArray json, Class<T> cls) {
+    @Nullable public <T> T deserializeArray(@Nullable AsonArray json, @NotNull Class<T> cls) {
         if (json == null) {
             return null;
-        } else if (cls == null) {
-            throw new IllegalArgumentException("Class<T> parameter is required.");
         } else if (!cls.isArray() && cls != Object.class) {
             throw new IllegalArgumentException(cls.getName() + " is not an array type.");
         }
@@ -238,11 +235,9 @@ import static com.afollestad.ason.Util.*;
         return newArray;
     }
 
-    public <T> List<T> deserializeList(AsonArray json, Class<T> cls) {
+    @Nullable public <T> List<T> deserializeList(@Nullable AsonArray json, @NotNull Class<T> cls) {
         if (json == null) {
             return null;
-        } else if (cls == null) {
-            throw new IllegalArgumentException("Class<T> parameter is required.");
         } else if (json.isEmpty()) {
             return new ArrayList<>(0);
         }
