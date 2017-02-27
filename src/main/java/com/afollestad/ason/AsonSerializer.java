@@ -119,11 +119,11 @@ import static com.afollestad.ason.Util.*;
         if (fieldValue == null) {
             return null;
         }
-        if (isPrimitive(fieldValue) ||
-                fieldValue instanceof JSONObject ||
-                fieldValue instanceof JSONArray ||
-                fieldValue instanceof Ason ||
-                fieldValue instanceof AsonArray) {
+        if (isPrimitive(fieldValue)
+                || fieldValue instanceof JSONObject
+                || fieldValue instanceof JSONArray
+                || fieldValue instanceof Ason
+                || fieldValue instanceof AsonArray) {
             return fieldValue;
         } else if (fieldValue.getClass().isArray()) {
             return serializeArray(fieldValue);
