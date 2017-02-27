@@ -214,8 +214,13 @@ public class AsonSerializeTest {
     @Test public void test_issue10_serialize() {
         Issue10Example data = new Issue10Example();
         data.item = new Object[]{1, 2, 3, 4};
+
         Ason ason = Ason.serialize(data);
-        assertEquals("{\"item\":[1,2,3,4]}", ason.toString());
+        AsonArray<Integer> array = ason.get("item");
+        assertEquals(1, array.get(0).intValue());
+        assertEquals(2, array.get(1).intValue());
+        assertEquals(3, array.get(2).intValue());
+        assertEquals(4, array.get(3).intValue());
     }
 
     @Test public void test_issue10_deserialize() {
