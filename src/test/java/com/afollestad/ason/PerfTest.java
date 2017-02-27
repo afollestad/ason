@@ -80,7 +80,7 @@ public class PerfTest {
         out.println("Benchmarking, please wait...");
 
         long start = System.currentTimeMillis();
-        for (int i = 1; i < 6000000; i *= 2) {
+        for (int i = 1; i < 7000000; i *= 2) {
             asonTest(i);
             gsonTest(i);
         }
