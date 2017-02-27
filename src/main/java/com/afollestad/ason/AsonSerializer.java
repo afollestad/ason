@@ -82,7 +82,8 @@ import static com.afollestad.ason.Util.*;
 
         for (int i = 0; i < length; i++) {
             Object value = Array.get(arrayObject, i);
-            Class<?> itemCls = value != null ? value.getClass() : cls.getComponentType();
+            Class<?> itemCls = cls.getComponentType() == Object.class
+                    && value != null ? value.getClass() : cls.getComponentType();
             if (isPrimitive(itemCls)) {
                 result.add(value);
                 continue;
@@ -203,7 +204,8 @@ import static com.afollestad.ason.Util.*;
 
         for (int i = 0; i < json.size(); i++) {
             Object item = json.get(i);
-            Class<?> itemType = item != null ? item.getClass() : component;
+            Class<?> itemType = component == Object.class
+                    && item != null ? item.getClass() : component;
 
             if (item == null) {
                 Array.set(newArray, i, null);
