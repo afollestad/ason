@@ -2,10 +2,14 @@ package com.afollestad.ason;
 
 import org.junit.Test;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.afollestad.ason.Util.isNumber;
+import static com.afollestad.ason.Util.listGenericType;
 import static org.junit.Assert.*;
 
 public class AsonTest {
@@ -16,6 +20,14 @@ public class AsonTest {
             assertFalse("No exception thrown for invalid JSON!", false);
         } catch (InvalidJsonException ignored) {
         }
+    }
+
+    @SuppressWarnings({"FieldCanBeLocal", "unused"}) private List<Ason> listField;
+
+    @Test public void generic_list_type_test() throws Exception {
+        listField = new ArrayList<>(0);
+        Field field = AsonTest.class.getDeclaredField("listField");
+        assertEquals(Ason.class, listGenericType(field));
     }
 
     @Test public void test_is_number_true() {

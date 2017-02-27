@@ -53,7 +53,7 @@ The dependency is available via jCenter.
 ```Gradle
 dependencies {
     ...
-    compile 'com.afollestad:ason:1.4.1'
+    compile 'com.afollestad:ason:1.4.2'
 }
 ```
 
@@ -64,7 +64,7 @@ Since Android includes `org.json` classes, you'll want to exclude the copies pro
 ```Gradle
 dependencies {
     ...
-    compile('com.afollestad:ason:1.4.1') {
+    compile('com.afollestad:ason:1.4.2') {
         exclude group: 'org.json', module: 'json'
     }
 }
@@ -78,7 +78,7 @@ Android, make sure you also exclude org.json as shown in the section above.*
 ```Gradle
 dependencies {
     ...
-    compile('com.afollestad:ason:1.4.1') {
+    compile('com.afollestad:ason:1.4.2') {
         exclude group: 'com.intellij', module: 'annotations'
     }
 }
@@ -90,7 +90,7 @@ dependencies {
 <dependency>
   <groupId>com.afollestad</groupId>
   <artifactId>ason</artifactId>
-  <version>1.4.1</version>
+  <version>1.4.2</version>
   <type>pom</type>
 </dependency>
 ```

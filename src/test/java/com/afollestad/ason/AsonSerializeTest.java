@@ -31,6 +31,21 @@ public class AsonSerializeTest {
         }
     }
 
+    static class Person2 {
+
+        @AsonName(name = "_id") int id;
+        List<Person2> family;
+
+        public Person2() {
+            family = new ArrayList<>(0);
+        }
+
+        public Person2(int id) {
+            this();
+            this.id = id;
+        }
+    }
+
     //
     ////// SERIALIZE
     //
@@ -108,6 +123,18 @@ public class AsonSerializeTest {
         int[] ids = new int[]{1, 2, 3, 4};
         AsonArray<Integer> array = Ason.serializeArray(ids);
         assertEquals("[1,2,3,4]", array.toString());
+    }
+
+    @Test public void test_serialize_with_list() {
+        Person2 person = new Person2(1);
+        person.family.add(new Person2(2));
+        person.family.add(new Person2(3));
+        person.family.add(new Person2(4));
+
+        Ason ason = Ason.serialize(person);
+        AsonArray<Person2> array = ason.get("family");
+        assertNotNull(array);
+        assertEquals(array.size(), 3);
     }
 
     //
@@ -205,6 +232,15 @@ public class AsonSerializeTest {
         assertEquals(2, primitive[1]);
         assertEquals(3, primitive[2]);
         assertEquals(4, primitive[3]);
+    }
+
+    @Test public void test_deserialize_with_list() {
+        String input = "{\"_id\":1,\"family\":[{\"_id\":2},{\"_id\":3},{\"_id\":4}]}";
+        Person2 result = Ason.deserialize(input, Person2.class);
+        assertEquals(result.family.size(), 3);
+        assertEquals(2, result.family.get(0).id);
+        assertEquals(3, result.family.get(1).id);
+        assertEquals(4, result.family.get(2).id);
     }
 
     //

@@ -6,6 +6,7 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -267,5 +268,10 @@ class Util {
             }
         }
         return false;
+    }
+
+    static Class<?> listGenericType(Field field) {
+        ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
+        return (Class<?>) stringListType.getActualTypeArguments()[0];
     }
 }

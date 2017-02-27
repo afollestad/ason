@@ -70,7 +70,7 @@ import static com.afollestad.ason.Util.*;
             } else if (value instanceof AsonArray) {
                 putInternal(intoArray, intoObject, key, ((AsonArray) value).toStockJson());
             } else if (value.getClass().isArray()) {
-                putInternal(intoArray, intoObject, key, serializer.serializeArray((Object[]) value));
+                putInternal(intoArray, intoObject, key, serializer.serializeArray(value));
             } else if (isList(value.getClass())) {
                 putInternal(intoArray, intoObject, key, serializer.serializeList((List) value));
             } else {

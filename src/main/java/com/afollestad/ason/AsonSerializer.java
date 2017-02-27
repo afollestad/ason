@@ -1,5 +1,6 @@
 package com.afollestad.ason;
 
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -94,9 +95,9 @@ import static com.afollestad.ason.Util.*;
         return result;
     }
 
-    public AsonArray serializeList(List list) {
+    @Nullable public AsonArray serializeList(List list) {
         if (list == null || list.isEmpty()) {
-            return new AsonArray<>();
+            return null;
         }
         Class<?> componentType = list.get(0).getClass();
         Object array = Array.newInstance(componentType, list.size());
@@ -171,7 +172,8 @@ import static com.afollestad.ason.Util.*;
                 setFieldValue(field, newObject, deserializeArray(asonArray, type.getComponentType()));
             } else if (isList(type)) {
                 AsonArray asonArray = ason.get(name);
-                setFieldValue(field, newObject, deserializeList(asonArray, type));
+                Class<?> listItemType = listGenericType(field);
+                setFieldValue(field, newObject, deserializeList(asonArray, listItemType));
             } else {
                 Object value = ason.get(name);
                 if (value instanceof Ason) {
@@ -242,6 +244,8 @@ import static com.afollestad.ason.Util.*;
             return null;
         } else if (cls == null) {
             throw new IllegalArgumentException("Class<T> parameter is required.");
+        } else if(json.isEmpty()) {
+            return new ArrayList<>(0);
         }
 
         Class<?> arrayType = Array.newInstance(cls, 0).getClass();
