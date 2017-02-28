@@ -151,6 +151,9 @@ Ason ason = // ...
 String str = ason.getString("name");
 String strWithDefault = ason.getString("name", null);
 
+Character chr = ason.getChar("name");
+Character chrWithDefault = ason.getChar("name", null);
+
 boolean bool = ason.getBool("name");
 boolean boolWithDefault = ason.getBool("name", true);
 
@@ -168,6 +171,9 @@ float fltWithDefault = ason.getFloat("name", 0f);
 
 double doub = ason.getDouble("name");
 double doubWithDefault = ason.getDouble("name", 0d);
+
+byte byt = ason.getByte("name");
+byte bytWithDefault = ason.getByte("name", 0d);
 
 Ason obj = ason.getAsonObject("name");
 AsonArray ary = ason.getAsonArray("name");

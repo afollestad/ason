@@ -1,5 +1,6 @@
 package com.afollestad.ason;
 
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -53,15 +54,19 @@ import static com.afollestad.ason.Util.*;
                              Object value) {
         invalidateLoadedFields();
         try {
-            if (value == null) {
-                return this;
-            } else if (JSONObject.NULL.equals(value)
+            if (value == null
+                    || JSONObject.NULL.equals(value)
                     || JSONObject.NULL == value) {
                 json.put(key, JSONObject.NULL);
                 return this;
             } else if (isPrimitive(value) ||
                     value instanceof JSONObject ||
                     value instanceof JSONArray) {
+                if (value instanceof Byte) {
+                    value = ((Byte) value).intValue();
+                } else if (value instanceof Character) {
+                    value = value.toString();
+                }
                 if (intoArray != null) {
                     intoArray.put(value);
                 } else if (intoObject != null) {
@@ -90,10 +95,11 @@ import static com.afollestad.ason.Util.*;
         return put(key, JSONObject.NULL);
     }
 
-    public Ason put(@NotNull String key, Object... values) {
+    public Ason put(@NotNull String key, @Nullable Object... values) {
         Object insertObject;
         if (values == null || values.length == 1) {
-            insertObject = values != null ? values[0] : JSONObject.NULL;
+            insertObject = values != null
+                    ? values[0] : JSONObject.NULL;
         } else {
             JSONArray newArray = new JSONArray();
             for (Object value : values) {
@@ -177,7 +183,7 @@ import static com.afollestad.ason.Util.*;
         return get(key, defaultValue);
     }
 
-    public String getString(@NotNull String key) {
+    @Nullable public String getString(@NotNull String key) {
         return getString(key, null);
     }
 
@@ -225,6 +231,26 @@ import static com.afollestad.ason.Util.*;
 
     public double getDouble(@NotNull String key, double defaultValue) {
         return get(key, defaultValue);
+    }
+
+    @Nullable public Character getChar(@NotNull String key) {
+        return getChar(key, null);
+    }
+
+    @Nullable public Character getChar(@NotNull String key, @Nullable Character defaultValue) {
+        String value = getString(key);
+        if (value == null || value.length() == 0) {
+            return defaultValue;
+        }
+        return value.charAt(0);
+    }
+
+    public byte getByte(@NonNls String key) {
+        return getByte(key, (byte) 0);
+    }
+
+    public byte getByte(@NonNls String key, byte defaultValue) {
+        return (byte) getInt(key, defaultValue);
     }
 
     public Ason getJsonObject(@NotNull String key) {

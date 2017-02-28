@@ -2,7 +2,6 @@ package com.afollestad.ason;
 
 import org.json.JSONObject;
 import org.junit.Test;
-import sun.text.resources.no.JavaTimeSupplementary_no;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -24,6 +23,33 @@ public class AsonTest {
         }
     }
 
+    @Test public void get_object_array() {
+        Ason object = new Ason()
+                .put("hello", "world!");
+        AsonArray<Integer> array = new AsonArray<Integer>()
+                .add(1, 2, 3, 4);
+        Ason ason = new Ason()
+                .put("object", object)
+                .put("array", array);
+
+        Ason getObject = ason.getJsonObject("object");
+        assertNotNull(getObject);
+        assertEquals("world!", getObject.get("hello"));
+
+        AsonArray getArray = ason.getJsonArray("array");
+        assertNotNull(getArray);
+        assertEquals(1, getArray.get(0));
+        assertEquals(2, getArray.get(1));
+        assertEquals(3, getArray.get(2));
+        assertEquals(4, getArray.get(3));
+    }
+
+    @Test public void get_object_array_null() {
+        Ason ason = new Ason();
+        assertNull(ason.getJsonObject("hello"));
+        assertNull(ason.getJsonArray("hey"));
+    }
+
     @SuppressWarnings({"FieldCanBeLocal", "unused", "MismatchedQueryAndUpdateOfCollection"}) private List<Ason> listField;
 
     @Test public void generic_list_type_test() throws Exception {
@@ -35,7 +61,7 @@ public class AsonTest {
     @Test public void json_null_test() {
         Ason ason = new Ason()
                 .putNull("test")
-                .put("test2", null);
+                .put("test2", (Object[]) null);
         assertTrue(ason.isNull("test"));
         assertTrue(ason.isNull("test2"));
         assertEquals(null, ason.get("test"));
@@ -90,6 +116,7 @@ public class AsonTest {
                 .put("age", 21);
         assertTrue(ason.isNull("name"));
         assertFalse(ason.isNull("age"));
+        assertTrue(ason.equal("name", null));
     }
 
     @Test public void test_remove_key() {

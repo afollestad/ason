@@ -36,9 +36,13 @@ public class AsonArray<T> implements Iterable<T> {
         this.array = internalArray;
     }
 
-    private void putInternal(T object) {
-        Object insertObject = null;
-        if (object != null) {
+    private void putInternal(Object object) {
+        Object insertObject;
+        if (object == null
+                || JSONObject.NULL.equals(object)
+                || JSONObject.NULL == object) {
+            insertObject = JSONObject.NULL;
+        } else {
             if (isPrimitive(object.getClass()) ||
                     object instanceof JSONObject ||
                     object instanceof JSONArray) {
@@ -49,21 +53,37 @@ public class AsonArray<T> implements Iterable<T> {
                 insertObject = ((AsonArray) object).toStockJson();
             } else if (object.getClass().isArray()) {
                 insertObject = AsonSerializer.get().serializeArray(object);
-                if (insertObject != null) insertObject = ((AsonArray) insertObject).toStockJson();
+                if (insertObject != null) {
+                    insertObject = ((AsonArray) insertObject).toStockJson();
+                }
             } else if (isList(object.getClass())) {
                 insertObject = AsonSerializer.get().serializeList((List) object);
-                if (insertObject != null) insertObject = ((AsonArray) insertObject).toStockJson();
+                if (insertObject != null) {
+                    insertObject = ((AsonArray) insertObject).toStockJson();
+                }
             } else {
                 insertObject = AsonSerializer.get().serialize(object);
-                if (insertObject != null) insertObject = ((Ason) insertObject).toStockJson();
+                if (insertObject != null) {
+                    insertObject = ((Ason) insertObject).toStockJson();
+                }
             }
         }
         array.put(insertObject);
     }
 
-    public AsonArray<T> add(@NotNull T... objects) {
-        for (T obj : objects)
-            putInternal(obj);
+    public AsonArray<T> addNull() {
+        putInternal(JSONObject.NULL);
+        return this;
+    }
+
+    public AsonArray<T> add(@Nullable T... objects) {
+        if (objects != null) {
+            for (T obj : objects) {
+                putInternal(obj);
+            }
+        } else {
+            putInternal(JSONObject.NULL);
+        }
         return this;
     }
 
@@ -85,30 +105,22 @@ public class AsonArray<T> implements Iterable<T> {
         if (index < 0 || index > array.length() - 1) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
         }
-        try {
-            JSONObject object = array.optJSONObject(index);
-            if (object == null) {
-                return null;
-            }
-            return new Ason(object);
-        } catch (JSONException e) {
-            throw new IllegalStateException("Could not get a JSON object from this array!", e);
+        JSONObject object = array.optJSONObject(index);
+        if (object == null) {
+            return null;
         }
+        return new Ason(object);
     }
 
     @Nullable public AsonArray getJsonArray(int index) {
         if (index < 0 || index > array.length() - 1) {
             throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
         }
-        try {
-            JSONArray ary = array.optJSONArray(index);
-            if (ary == null) {
-                return null;
-            }
-            return new AsonArray(ary);
-        } catch (JSONException e) {
-            throw new IllegalStateException("Could not get a JSON array from this array!", e);
+        JSONArray ary = array.optJSONArray(index);
+        if (ary == null) {
+            return null;
         }
+        return new AsonArray(ary);
     }
 
     public T get(int index, Class<T> cls) {
@@ -224,7 +236,7 @@ public class AsonArray<T> implements Iterable<T> {
         return size() == 0;
     }
 
-    @NotNull private List<T> toList() {
+    @NotNull public List<T> toList() {
         List<T> list = new ArrayList<>(array.length());
         for (int i = 0; i < array.length(); i++) {
             list.add((T) array.opt(i));

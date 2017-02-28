@@ -2,9 +2,13 @@ package com.afollestad.ason;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class AsonPrimitivesTest {
+
+    //
+    ////// SERIALIZATION
+    //
 
     @Test public void short_test() {
         AsonArray<Short> result = Ason.serializeArray(new short[]{1, 2, 3, 4});
@@ -100,5 +104,85 @@ public class AsonPrimitivesTest {
         assertEquals(false, parsed[1]);
         assertEquals(true, parsed[2]);
         assertEquals(false, parsed[3]);
+    }
+
+    //
+    ////// GET/PUT
+    //
+
+    @Test public void put_deep_test() {
+        Ason inside = new Ason()
+                .put("id", 2);
+        Ason ason = new Ason()
+                .put("id", 1)
+                .put("inside", inside)
+                .put("inside.test", "Hello, world!");
+        assertEquals(1, ason.get("id"));
+        assertEquals(2, ason.get("inside.id"));
+        assertEquals("Hello, world!", ason.get("inside.test"));
+    }
+
+    @Test public void get_short_test() {
+        Ason ason = new Ason()
+                .put("test", (short) 22);
+        assertEquals((short) 22, ason.get("test"));
+        assertEquals((short) 22, ason.getShort("test"));
+        assertEquals((short) 69, ason.getShort("test2", (short) 69));
+    }
+
+    @Test public void get_int_test() {
+        Ason ason = new Ason()
+                .put("test", 1995);
+        assertEquals(1995, ason.get("test"));
+        assertEquals(1995, ason.getInt("test"));
+        assertEquals(1996, ason.getInt("test2", 1996));
+    }
+
+    @Test public void get_long_test() {
+        Ason ason = new Ason()
+                .put("test", 1995L);
+        assertEquals(1995L, ason.get("test"));
+        assertEquals(1995L, ason.getLong("test"));
+        assertEquals(1996L, ason.getLong("test2", 1996L));
+    }
+
+    @Test public void get_float_test() {
+        Ason ason = new Ason()
+                .put("test", 1995.5f);
+        assertEquals(1995.5f, ason.get("test"));
+        assertEquals(1995.5f, ason.getFloat("test"), 0f);
+        assertEquals(1996f, ason.getFloat("test2", 1996f), 0f);
+    }
+
+    @Test public void get_double_test() {
+        Ason ason = new Ason()
+                .put("test", 1995d);
+        assertEquals(1995d, ason.get("test"));
+        assertEquals(1995d, ason.getDouble("test"), 0d);
+        assertEquals(1996d, ason.getDouble("test2", 1996d), 0d);
+    }
+
+    @Test public void get_char_test() {
+        Ason ason = new Ason()
+                .put("test", 'a');
+        assertEquals('a', ason.getChar("test").charValue());
+        assertEquals('b', ason.getChar("test2", 'b').charValue());
+    }
+
+    @Test public void get_byte_test() {
+        Ason ason = new Ason()
+                .put("test", (byte) 255);
+        assertEquals((byte) 255, ason.getByte("test"));
+        assertEquals((byte) 124, ason.getByte("test2", (byte) 124));
+    }
+
+    @Test public void get_boolean_test() {
+        Ason ason = new Ason()
+                .put("test1", true)
+                .put("test2", false);
+        assertEquals(true, ason.get("test1"));
+        assertTrue(ason.getBool("test1"));
+        assertFalse(ason.getBool("test2"));
+        assertTrue(ason.getBool("test3", true));
     }
 }
