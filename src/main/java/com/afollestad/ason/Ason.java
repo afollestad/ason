@@ -40,7 +40,11 @@ import static com.afollestad.ason.Util.*;
         }
     }
 
-    public Ason(@NotNull String json) {
+    public Ason(@Nullable String json) {
+        if (json == null) {
+            this.json = new JSONObject();
+            return;
+        }
         try {
             this.json = new JSONObject(json);
         } catch (JSONException e) {
@@ -166,11 +170,7 @@ import static com.afollestad.ason.Util.*;
         } else if (result instanceof JSONArray) {
             result = new AsonArray((JSONArray) result);
         }
-        try {
-            return (T) result;
-        } catch (ClassCastException e) {
-            throw new IllegalStateException("Did you mean to use get(String, Class<T>)?", e);
-        }
+        return (T) result;
     }
 
     public boolean getBool(@NotNull String key) {
@@ -282,7 +282,7 @@ import static com.afollestad.ason.Util.*;
                         cls.getName() + ", found " + value.getClass().getName() + ".");
             }
             AsonArray<T> array = (AsonArray<T>) value;
-            return (T) AsonSerializer.get().deserializeArray(array, cls.getComponentType());
+            return AsonSerializer.get().deserializeArray(array, cls);
         } else if (isList(cls)) {
             if (!(value instanceof AsonArray)) {
                 throw new IllegalStateException("Expected a AsonArray to convert to " +
@@ -376,15 +376,15 @@ import static com.afollestad.ason.Util.*;
     ////// SERIALIZATION
     //
 
-    public static Ason serialize(Object object) {
+    public static Ason serialize(@Nullable Object object) {
         return AsonSerializer.get().serialize(object);
     }
 
-    public static <T> AsonArray<T> serializeArray(Object object) {
+    public static <T> AsonArray<T> serializeArray(@Nullable Object object) {
         return AsonSerializer.get().serializeArray(object);
     }
 
-    public static <T> AsonArray<T> serializeList(List<T> object) {
+    public static <T> AsonArray<T> serializeList(@Nullable List<T> object) {
         return AsonSerializer.get().serializeList(object);
     }
 
@@ -392,11 +392,11 @@ import static com.afollestad.ason.Util.*;
     ////// DESERIALIZATION
     //
 
-    public <T> T deserialize(Class<T> cls) {
+    public <T> T deserialize(@NonNls Class<T> cls) {
         return deserialize(this, cls);
     }
 
-    public static <T> T deserialize(String json, Class<T> cls) {
+    public static <T> T deserialize(@Nullable String json, @NotNull Class<T> cls) {
         if (isJsonArray(json)) {
             AsonArray ason = new AsonArray(json);
             return AsonSerializer.get().deserializeArray(ason, cls);
@@ -406,28 +406,20 @@ import static com.afollestad.ason.Util.*;
         }
     }
 
-    public static <T> T deserialize(Ason json, Class<T> cls) {
+    public static <T> T deserialize(@Nullable Ason json, @NonNls Class<T> cls) {
         return AsonSerializer.get().deserialize(json, cls);
     }
 
-    public static <T> T deserialize(AsonArray json, Class<T> cls) {
-        if (cls == null) {
-            throw new IllegalArgumentException("cls parameter cannot be null.");
-        } else if (!cls.isArray()) {
-            if (isList(cls)) {
-                throw new IllegalStateException("Use Ason.deserializeList() for Lists, not deserialize().");
-            }
-            throw new IllegalArgumentException(cls.getName() + " is not an array type.");
-        }
+    public static <T> T deserialize(@Nullable AsonArray json, @NonNls Class<T> cls) {
         return AsonSerializer.get().deserializeArray(json, cls);
     }
 
-    public static <T> List<T> deserializeList(String json, Class<T> cls) {
+    public static <T> List<T> deserializeList(@Nullable String json, @NotNull Class<T> cls) {
         AsonArray array = new AsonArray(json);
         return AsonSerializer.get().deserializeList(array, cls);
     }
 
-    public static <T> List<T> deserializeList(AsonArray json, Class<T> cls) {
+    public static <T> List<T> deserializeList(@Nullable AsonArray json, @NotNull Class<T> cls) {
         return AsonSerializer.get().deserializeList(json, cls);
     }
 }

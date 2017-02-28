@@ -3,14 +3,9 @@ package com.afollestad.ason;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static com.afollestad.ason.Util.isNumber;
-import static com.afollestad.ason.Util.listGenericType;
 import static org.junit.Assert.*;
 
 public class AsonTest {
@@ -21,6 +16,11 @@ public class AsonTest {
             assertFalse("No exception thrown for invalid JSON!", false);
         } catch (InvalidJsonException ignored) {
         }
+    }
+
+    @Test public void null_json_test() {
+        Ason ason = new Ason((String) null);
+        assertEquals("{}", ason.toString(4));
     }
 
     @Test public void get_object_array() {

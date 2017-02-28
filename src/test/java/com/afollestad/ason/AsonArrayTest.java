@@ -31,6 +31,11 @@ public class AsonArrayTest {
         }
     }
 
+    @Test public void empty_json_test() {
+        AsonArray<Integer> array = new AsonArray<>((String) null);
+        assertTrue(array.isEmpty());
+    }
+
     @Test public void out_of_bounds_test() {
         AsonArray<Integer> array = new AsonArray<Integer>()
                 .add(1, 2, 3, 4);

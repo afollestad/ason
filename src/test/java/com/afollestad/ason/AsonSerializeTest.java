@@ -1,7 +1,10 @@
 package com.afollestad.ason;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -278,6 +281,156 @@ public class AsonSerializeTest {
         assertEquals(2, result.family.get(0).id);
         assertEquals(3, result.family.get(1).id);
         assertEquals(4, result.family.get(2).id);
+    }
+
+    @Test public void test_serialize_deserialize_null() {
+        assertNull(Ason.serialize(null));
+        assertNull(Ason.deserialize((Ason) null, Issue10Example.class));
+        assertNull(Ason.serializeArray(null));
+        assertNull(Ason.serializeList(null));
+    }
+
+    @Test public void test_serialize_primitive() {
+        try {
+            Ason.serialize(1);
+            assertFalse("No exception thrown when serializing primitive!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    @Test public void test_serialize_ason_object_array() {
+        try {
+            Ason.serialize(new Ason());
+            assertFalse("No exception thrown when serializing Ason class!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+        try {
+            Ason.serialize(new AsonArray());
+            assertFalse("No exception thrown when serializing Ason class!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+        try {
+            Ason.serialize(new JSONObject());
+            assertFalse("No exception thrown when serializing org.json class!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+        try {
+            Ason.serialize(new JSONArray());
+            assertFalse("No exception thrown when serializing org.json class!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    @Test public void test_serialize_array_list_wrong_method() {
+        try {
+            Ason.serialize(new int[]{1, 2, 3, 4});
+            assertFalse("No exception thrown when using serialize() on array!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+        try {
+            List<Integer> list = new ArrayList<>(0);
+            Ason.serialize(list);
+            assertFalse("No exception thrown when using serialize() on List!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+        try {
+            Ason.serializeArray("Hello");
+            assertFalse("No exception thrown when using serializeArray() on non-array!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    @Test public void test_serialize_empty_array() {
+        AsonArray array = Ason.serializeArray(new int[]{});
+        assertTrue(array.isEmpty());
+    }
+
+    @SuppressWarnings("unused") class One {
+        String hi = "hello";
+    }
+
+    @SuppressWarnings({"unused", "WeakerAccess"}) class Two {
+    }
+
+    @Test public void test_serialize_inaccessible_field() throws Exception {
+        Field hi = One.class.getDeclaredField("hi");
+        try {
+            AsonSerializer.get().serializeField(hi, new Two());
+            assertFalse("No exception thrown when trying to serialize inaccessible field!", false);
+        } catch (RuntimeException ignored) {
+        }
+    }
+
+    @Test public void test_deserialize_primitive_cls() {
+        try {
+            Ason.deserialize("{\"hi\":\"hello\"}", Integer.class);
+            assertFalse("No exception thrown when passing primitive class to deserialize()!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    @Test public void test_deserialize_ason_json() {
+        Ason ason = new Ason("{\"hello\":\"hi\"}");
+        Ason deserializeAson = Ason.deserialize(ason, Ason.class);
+        JSONObject deserializeJson = Ason.deserialize(ason, JSONObject.class);
+        assertEquals(deserializeAson, ason);
+        assertEquals("hi", deserializeJson.optString("hello"));
+    }
+
+    @Test public void test_deserialize_object_to_array() {
+        Ason ason = new Ason();
+        try {
+            Ason.deserialize(ason, AsonArray.class);
+            assertFalse("No exception thrown when deserializing object to array!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+        try {
+            Ason.deserialize(ason, JSONArray.class);
+            assertFalse("No exception thrown when deserializing object to array!", false);
+        } catch (IllegalArgumentException ignored) {
+        }
+    }
+
+    @Test public void test_deserialize_empty_array() {
+        int[] test = Ason.deserialize(new AsonArray(), int[].class);
+        assertEquals(0, test.length);
+    }
+
+    @Test public void test_deserialize_empty_list() {
+        List<Integer> test = Ason.deserializeList(new AsonArray(), Integer.class);
+        assertTrue(test.isEmpty());
+    }
+
+    @Test public void test_deserialize_null_json() {
+        One one = AsonSerializer.get().deserialize(null, One.class);
+        assertNull(one);
+    }
+
+    @Test public void test_deserialize_wrong_object_target() {
+        Ason ason = new Ason("{\"obj\":{\"hi\":\"hello\"}}");
+        try {
+            ason.get("obj.hi", One.class);
+            assertFalse("No exception thrown for wrong get() cast.", false);
+        } catch (IllegalStateException ignored) {
+        }
+    }
+
+    @Test public void test_deserialize_wrong_array_target() {
+        Ason ason = new Ason("{\"obj\":[\"hi\",\"hello\"]}");
+        try {
+            ason.get("obj", One[].class);
+            assertFalse("No exception thrown for wrong get() cast.", false);
+        } catch (IllegalStateException ignored) {
+        }
+    }
+
+    @Test public void test_deserialize_null_items() {
+        Ason ason = new Ason("{\"array\":[null,null,null]}");
+        AsonArray array = ason.get("array");
+        assertNotNull(array);
+        assertNotNull(array.get(0));
+        assertNotNull(array.get(1));
+        assertNotNull(array.get(2));
     }
 
     //

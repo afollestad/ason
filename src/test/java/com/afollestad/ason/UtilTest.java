@@ -70,6 +70,7 @@ public class UtilTest {
     }
 
     @Test public void test_is_json_array_false() {
+        assertFalse(isJsonArray(null));
         assertFalse(isJsonArray(""));
         assertFalse(isJsonArray("{}"));
         assertFalse(isJsonArray("  abc"));
@@ -109,7 +110,7 @@ public class UtilTest {
             cacheEntry.newInstance();
             assertFalse("No exception was thrown when constructing a " +
                     "class which throws an error on purpose!", false);
-        } catch(Throwable ignored) {
+        } catch (Throwable ignored) {
         }
     }
 }

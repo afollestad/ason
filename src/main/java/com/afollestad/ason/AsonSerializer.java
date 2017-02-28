@@ -70,9 +70,7 @@ import static com.afollestad.ason.Util.*;
         }
 
         Class<?> cls = arrayObject.getClass();
-        if (cls == null) {
-            throw new IllegalArgumentException("cls parameter is required.");
-        } else if (!cls.isArray()) {
+        if (!cls.isArray()) {
             throw new IllegalArgumentException(cls.getName() + " is not an array type.");
         }
 
@@ -108,7 +106,7 @@ import static com.afollestad.ason.Util.*;
         return serializeArray(array);
     }
 
-    private Object serializeField(final Field field, final Object object) {
+    Object serializeField(final Field field, final Object object) {
         field.setAccessible(true);
         final Object fieldValue;
         try {
@@ -143,12 +141,13 @@ import static com.afollestad.ason.Util.*;
             return null;
         } else if (isPrimitive(cls)) {
             throw new IllegalArgumentException("You cannot deserialize an object to a primitive type (" + cls.getName() + ").");
-        } else if (cls == Ason.class || cls == JSONObject.class) {
-            if (cls == JSONObject.class)
-                return (T) ason.toStockJson();
-            return (T) ason;
         } else if (cls == AsonArray.class || cls == JSONArray.class) {
             throw new IllegalArgumentException("You cannot deserialize an object to a JSON array.");
+        } else if (cls == Ason.class || cls == JSONObject.class) {
+            if (cls == JSONObject.class) {
+                return (T) ason.toStockJson();
+            }
+            return (T) ason;
         }
 
         ClassCacheEntry<T> cacheEntry = classCache.get(cls.getName());
@@ -192,6 +191,9 @@ import static com.afollestad.ason.Util.*;
         if (json == null) {
             return null;
         } else if (!cls.isArray() && cls != Object.class) {
+            if (isList(cls)) {
+                throw new IllegalStateException("Use Ason.deserializeList() for Lists, not deserializeArray().");
+            }
             throw new IllegalArgumentException(cls.getName() + " is not an array type.");
         }
 
@@ -203,12 +205,14 @@ import static com.afollestad.ason.Util.*;
 
         for (int i = 0; i < json.size(); i++) {
             Object item = json.get(i);
-            Class<?> itemType = component == Object.class
-                    && item != null ? item.getClass() : component;
-
-            if (item == null) {
+            if (isNull(item)) {
                 Array.set(newArray, i, null);
-            } else if (isPrimitive(itemType)) {
+                continue;
+            }
+
+            final Class<?> itemType = component == Object.class
+                    ? item.getClass() : component;
+            if (isPrimitive(itemType)) {
                 if (itemType == char.class || itemType == Character.class) {
                     item = ((String) item).charAt(0);
                 } else if (itemType == short.class || itemType == Short.class) {
@@ -227,6 +231,10 @@ import static com.afollestad.ason.Util.*;
                     Class<?> listComponent = subArray.get(0).getClass();
                     Array.set(newArray, i, deserializeList(subArray, listComponent));
                 }
+            } else if (!(item instanceof Ason)) {
+                throw new IllegalStateException("Expected JSON array to contain JSON objects " +
+                        "to deserialize to " + itemType.getName() + ", found " +
+                        item.getClass().getName() + " objects instead.");
             } else {
                 Ason subObject = (Ason) item;
                 Array.set(newArray, i, deserialize(subObject, itemType));

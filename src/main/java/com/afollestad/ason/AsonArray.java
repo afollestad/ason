@@ -24,7 +24,11 @@ public class AsonArray<T> implements Iterable<T> {
         array = new JSONArray();
     }
 
-    public AsonArray(@NotNull String json) {
+    public AsonArray(@Nullable String json) {
+        if (json == null) {
+            array = new JSONArray();
+            return;
+        }
         try {
             array = new JSONArray(json);
         } catch (JSONException e) {
@@ -147,7 +151,7 @@ public class AsonArray<T> implements Iterable<T> {
             } else {
                 value = getPathValue(((Ason) value).toStockJson(), path, splitPath(path));
             }
-            if(value == null
+            if (value == null
                     || JSONObject.NULL.equals(value)
                     || JSONObject.NULL == value) {
                 return null;
@@ -155,7 +159,7 @@ public class AsonArray<T> implements Iterable<T> {
             cls = (Class<T>) value.getClass();
         }
 
-        if(value == null
+        if (value == null
                 || JSONObject.NULL.equals(value)
                 || JSONObject.NULL == value) {
             return null;

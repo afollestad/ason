@@ -242,7 +242,10 @@ class Util {
         }
     }
 
-    static boolean isJsonArray(String json) {
+    static boolean isJsonArray(@Nullable String json) {
+        if (json == null) {
+            return false;
+        }
         for (int i = 0; i < json.length(); i++) {
             char c = json.charAt(i);
             if (Character.isAlphabetic(c) || c == '{') {
