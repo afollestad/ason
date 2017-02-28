@@ -122,6 +122,18 @@ public class AsonPrimitivesTest {
         assertEquals("Hello, world!", ason.get("inside.test"));
     }
 
+    @Test public void put_primitive_array_test() {
+        Ason ason = new Ason()
+                .put("test", 1, 2, 3, 4);
+        AsonArray<Integer> array = ason.get("test");
+        assertNotNull(array);
+        assertEquals(4, array.size());
+        assertEquals(1, array.get(0).intValue());
+        assertEquals(2, array.get(1).intValue());
+        assertEquals(3, array.get(2).intValue());
+        assertEquals(4, array.get(3).intValue());
+    }
+
     @Test public void get_short_test() {
         Ason ason = new Ason()
                 .put("test", (short) 22);

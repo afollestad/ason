@@ -54,6 +54,21 @@ public class AsonArrayTest {
             assertFalse("No exception was thrown for an out of bounds index!", false);
         } catch (IndexOutOfBoundsException ignored) {
         }
+        try {
+            array.remove(20);
+            assertFalse("No exception was thrown for an out of bounds index!", false);
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+        try {
+            array.equal(21, "name", "Aidan");
+            assertFalse("No exception was thrown for an out of bounds index!", false);
+        } catch (IndexOutOfBoundsException ignored) {
+        }
+        try {
+            array.get(21, "name", Integer.class);
+            assertFalse("No exception was thrown for an out of bounds index!", false);
+        } catch (IndexOutOfBoundsException ignored) {
+        }
     }
 
     @Test public void get_object_test() {
@@ -188,5 +203,31 @@ public class AsonArrayTest {
             index++;
         }
         assertEquals(4, index);
+    }
+
+    @Test public void deep_equal_test() {
+        Ason one = new Ason()
+                .put("name", "Aidan")
+                .put("born", 1995);
+        Ason two = new Ason()
+                .put("name", "Waverly")
+                .put("born", 1997);
+        AsonArray<Ason> array = new AsonArray<Ason>()
+                .add(one, two)
+                .addNull();
+        assertTrue(array.equal(0, "name", "Aidan"));
+        assertTrue(array.equal(1, "name", "Waverly"));
+        assertTrue(array.equal(0, "idk", null));
+        assertTrue(array.equal(2, "idk", null));
+    }
+
+    @Test public void primitive_equal_deep_error_test() {
+        AsonArray<Integer> idk = new AsonArray<Integer>()
+                .add(1, 2, 3, 4);
+        try {
+            idk.equal(0, "name", "Aidan");
+            assertFalse("An exception was not thrown when using path equality on a primitive array!", false);
+        } catch (InvalidPathException ignored) {
+        }
     }
 }

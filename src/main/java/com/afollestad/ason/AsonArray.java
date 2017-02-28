@@ -156,6 +156,7 @@ public class AsonArray<T> implements Iterable<T> {
         if (cls == null) {
             throw new IllegalArgumentException("cls parameter cannot be null!");
         }
+        
         if (isPrimitive(cls) ||
                 cls == JSONObject.class ||
                 cls == JSONArray.class ||
@@ -207,7 +208,9 @@ public class AsonArray<T> implements Iterable<T> {
             throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
         }
         T arrayEntry = get(index);
-        if (arrayEntry == null) {
+        if (arrayEntry == null
+                || JSONObject.NULL.equals(arrayEntry)
+                || JSONObject.NULL == arrayEntry) {
             return value == null;
         }
         if (!(arrayEntry instanceof JSONObject || arrayEntry instanceof Ason)) {

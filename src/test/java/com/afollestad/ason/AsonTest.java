@@ -50,14 +50,6 @@ public class AsonTest {
         assertNull(ason.getJsonArray("hey"));
     }
 
-    @SuppressWarnings({"FieldCanBeLocal", "unused", "MismatchedQueryAndUpdateOfCollection"}) private List<Ason> listField;
-
-    @Test public void generic_list_type_test() throws Exception {
-        listField = new ArrayList<>(0);
-        Field field = AsonTest.class.getDeclaredField("listField");
-        assertEquals(Ason.class, listGenericType(field));
-    }
-
     @Test public void json_null_test() {
         Ason ason = new Ason()
                 .putNull("test")
@@ -69,17 +61,6 @@ public class AsonTest {
         JSONObject stock = ason.toStockJson();
         assertEquals(JSONObject.NULL, stock.get("test"));
         assertEquals(JSONObject.NULL, stock.get("test2"));
-    }
-
-    @Test public void test_is_number_true() {
-        assertTrue(isNumber("1234"));
-        assertTrue(isNumber("67891023231"));
-    }
-
-    @Test public void test_is_number_false() {
-        assertFalse(isNumber("hi"));
-        assertFalse(isNumber("@1234"));
-        assertFalse(isNumber("1234!%"));
     }
 
     @Test public void builder_test() {

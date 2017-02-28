@@ -53,40 +53,36 @@ import static com.afollestad.ason.Util.*;
                              String key,
                              Object value) {
         invalidateLoadedFields();
-        try {
-            if (value == null
-                    || JSONObject.NULL.equals(value)
-                    || JSONObject.NULL == value) {
-                json.put(key, JSONObject.NULL);
-                return this;
-            } else if (isPrimitive(value) ||
-                    value instanceof JSONObject ||
-                    value instanceof JSONArray) {
-                if (value instanceof Byte) {
-                    value = ((Byte) value).intValue();
-                } else if (value instanceof Character) {
-                    value = value.toString();
-                }
-                if (intoArray != null) {
-                    intoArray.put(value);
-                } else if (intoObject != null) {
-                    intoObject.put(key, value);
-                } else {
-                    json.put(key, value);
-                }
-            } else if (value instanceof Ason) {
-                putInternal(intoArray, intoObject, key, ((Ason) value).toStockJson());
-            } else if (value instanceof AsonArray) {
-                putInternal(intoArray, intoObject, key, ((AsonArray) value).toStockJson());
-            } else if (value.getClass().isArray()) {
-                putInternal(intoArray, intoObject, key, serializer.serializeArray(value));
-            } else if (isList(value.getClass())) {
-                putInternal(intoArray, intoObject, key, serializer.serializeList((List) value));
-            } else {
-                putInternal(intoArray, intoObject, key, serializer.serialize(value));
+        if (value == null
+                || JSONObject.NULL.equals(value)
+                || JSONObject.NULL == value) {
+            json.put(key, JSONObject.NULL);
+            return this;
+        } else if (isPrimitive(value) ||
+                value instanceof JSONObject ||
+                value instanceof JSONArray) {
+            if (value instanceof Byte) {
+                value = ((Byte) value).intValue();
+            } else if (value instanceof Character) {
+                value = value.toString();
             }
-        } catch (JSONException e) {
-            throw new IllegalStateException(e);
+            if (intoArray != null) {
+                intoArray.put(value);
+            } else if (intoObject != null) {
+                intoObject.put(key, value);
+            } else {
+                json.put(key, value);
+            }
+        } else if (value instanceof Ason) {
+            putInternal(intoArray, intoObject, key, ((Ason) value).toStockJson());
+        } else if (value instanceof AsonArray) {
+            putInternal(intoArray, intoObject, key, ((AsonArray) value).toStockJson());
+        } else if (value.getClass().isArray()) {
+            putInternal(intoArray, intoObject, key, serializer.serializeArray(value));
+        } else if (isList(value.getClass())) {
+            putInternal(intoArray, intoObject, key, serializer.serializeList((List) value));
+        } else {
+            putInternal(intoArray, intoObject, key, serializer.serialize(value));
         }
         return this;
     }

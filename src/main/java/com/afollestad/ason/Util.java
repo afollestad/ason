@@ -15,9 +15,6 @@ import java.util.List;
  */
 class Util {
 
-    private Util() {
-    }
-
     static String[] splitPath(String key) {
         List<String> result = new ArrayList<>(4);
         int start = 0;
@@ -144,7 +141,7 @@ class Util {
             String key,
             String[] splitKey) {
         if (splitKey.length == 1) {
-            return (T) wrapper.get(key);
+            return (T) wrapper.opt(key);
         }
         Object target = followPath(wrapper, key, splitKey, false);
         if (target instanceof JSONObject) {
@@ -203,9 +200,11 @@ class Util {
         if (cls.equals(List.class))
             return true;
         Class[] is = cls.getInterfaces();
-        for (Class i : is)
-            if (i.equals(List.class))
+        for (Class i : is) {
+            if (i.equals(List.class)) {
                 return true;
+            }
+        }
         return false;
     }
 
