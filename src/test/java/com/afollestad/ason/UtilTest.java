@@ -29,6 +29,13 @@ public class UtilTest {
         }
     }
 
+    @SuppressWarnings("unused") static class DefaultCtorErrorClass {
+
+        @SuppressWarnings("unused") public DefaultCtorErrorClass() {
+            throw new IllegalStateException("Here's an exception!");
+        }
+    }
+
     @Test public void test_ctor() {
         try {
             new Util();
@@ -93,5 +100,16 @@ public class UtilTest {
         assertFalse(isNull("Hello"));
         assertFalse(isNull(new Ason()));
         assertFalse(isNull(new AsonArray<>()));
+    }
+
+    @Test public void test_class_cache_new_instance() {
+        ClassCacheEntry<DefaultCtorErrorClass> cacheEntry
+                = new ClassCacheEntry<>(DefaultCtorErrorClass.class);
+        try {
+            cacheEntry.newInstance();
+            assertFalse("No exception was thrown when constructing a " +
+                    "class which throws an error on purpose!", false);
+        } catch(Throwable ignored) {
+        }
     }
 }
