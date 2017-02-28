@@ -88,6 +88,20 @@ public class AsonPathTest {
                 "\"id\":1}]}", ason.toString());
     }
 
+    @Test public void builder_index_test_five() {
+        Ason ason = new Ason()
+                .put("_id", 1)
+                .put("props.$0", 1, 2, 3, 4);
+        assertEquals("{\"_id\":1,\"props\":[[1,2,3,4]]}", ason.toString());
+    }
+
+    @Test public void builder_index_test_six() {
+        Ason ason = new Ason()
+                .put("_id", 1)
+                .put("props.$0.$0", 1, 2, 3, 4);
+        assertEquals("{\"_id\":1,\"props\":[[[1,2,3,4]]]}", ason.toString());
+    }
+
     @Test public void from_string_test() {
         String input = "{\"person\":{\"name\":\"Aidan\",\"_id\":3,\"age\":21}}";
         Ason ason = new Ason(input);
@@ -174,7 +188,12 @@ public class AsonPathTest {
 
     @Test public void test_put_null_path() {
         Ason ason = new Ason()
+                .putNull("test1")
+                .putNull("test2.test3")
                 .putNull("person.spouse.name");
+        assertNull(ason.get("test.test3"));
+        assertNull(ason.get("test1.test"));
+        assertNull(ason.get("test2.test3.test4"));
         assertNotNull(ason.getJsonObject("person"));
         assertNotNull(ason.getJsonObject("person")
                 .getJsonObject("spouse"));
@@ -244,10 +263,27 @@ public class AsonPathTest {
 
     @Test public void test_path_on_primitive() {
         Ason ason = new Ason()
-                .put("id", 2);
+                .put("id", 2)
+                .put("test.id", 3);
         try {
             ason.get("id.name");
             assertFalse("No exception was thrown for using a path on a primitive entry!", false);
+        } catch(InvalidPathException ignored) {
+        }
+        try {
+            ason.get("test.id.hello");
+            assertFalse("No exception was thrown for using a path on a primitive entry!", false);
+        } catch(InvalidPathException ignored) {
+        }
+    }
+
+    @Test public void test_index_notation_on_parent_object() {
+        Ason ason = new Ason()
+                .put("person.name", "Aidan")
+                .put("person.born", 1995);
+        try {
+            ason.get("person.$0.test");
+            assertFalse("No exception thrown for using index notation on a parent object!", false);
         } catch(InvalidPathException ignored) {
         }
     }

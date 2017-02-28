@@ -15,6 +15,10 @@ import java.util.List;
  */
 class Util {
 
+    Util() {
+        throw new IllegalStateException("Util shouldn't be constructed!");
+    }
+
     static String[] splitPath(String key) {
         List<String> result = new ArrayList<>(4);
         int start = 0;
@@ -49,13 +53,13 @@ class Util {
             boolean createMissing) {
         // Get value for the first path key
         Object parent = wrapper.opt(splitKey[0]);
-        if (parent != null
+        if (!isNull(parent)
                 && !(parent instanceof JSONObject)
                 && !(parent instanceof JSONArray)) {
             throw new InvalidPathException("First component of key " + key + " refers to " +
                     splitKey[0] + ", which is not an object or array (it's a " +
                     parent.getClass().getName() + ").");
-        } else if (parent == null) {
+        } else if (isNull(parent)) {
             if (createMissing) {
                 if (splitKey[0].startsWith("$")
                         || (splitKey.length > 1
@@ -80,14 +84,12 @@ class Util {
                 if (isNumber(currentKey.substring(1))) {
                     // This is an array index key
                     final int index = Integer.parseInt(currentKey.substring(1));
+                    if (!(parent instanceof JSONArray)) {
+                        throw new InvalidPathException("Cannot use index notation on objects (" +
+                                currentKey + " in " + key + ")!");
+                    }
                     Object current = ((JSONArray) parent).opt(index);
-                    if (current != null
-                            && !(current instanceof JSONObject)
-                            && !(current instanceof JSONArray)) {
-                        throw new InvalidPathException("Item at index" + i + " of current entry " +
-                                " refers to " + currentKey + ", which is not an object or array (it's a " +
-                                current.getClass().getName() + ").");
-                    } else if (current == null) {
+                    if (isNull(current)) {
                         if (createMissing) {
                             if (i < splitKey.length - 1
                                     && splitKey[i + 1].startsWith("$")) {
@@ -108,11 +110,11 @@ class Util {
 
             // Key is an object name
             Object current = ((JSONObject) parent).opt(currentKey);
-            if (current != null
+            if (!isNull(current)
                     && !(current instanceof JSONObject)
                     && !(current instanceof JSONArray)) {
                 return null;
-            } else if (current == null) {
+            } else if (isNull(current)) {
                 if (createMissing) {
                     if (i < splitKey.length - 1
                             && splitKey[i + 1].startsWith("$")) {
@@ -141,9 +143,7 @@ class Util {
             return (T) wrapper.opt(key);
         }
         Object target = followPath(wrapper, key, splitKey, false);
-        if (target == null
-                || JSONObject.NULL.equals(target)
-                || JSONObject.NULL == target) {
+        if (isNull(target)) {
             return null;
         }
 
@@ -257,5 +257,11 @@ class Util {
     static Class<?> listGenericType(Field field) {
         ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
         return (Class<?>) stringListType.getActualTypeArguments()[0];
+    }
+
+    static boolean isNull(@Nullable Object value) {
+        return value == null
+                || JSONObject.NULL.equals(value)
+                || JSONObject.NULL == value;
     }
 }

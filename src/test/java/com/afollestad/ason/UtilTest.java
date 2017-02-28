@@ -1,5 +1,6 @@
 package com.afollestad.ason;
 
+import org.json.JSONObject;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -25,6 +26,14 @@ public class UtilTest {
     @SuppressWarnings("unused") static class NoDefaultCtorClass {
 
         @SuppressWarnings("unused") public NoDefaultCtorClass(String name) {
+        }
+    }
+
+    @Test public void test_ctor() {
+        try {
+            new Util();
+            assertFalse("Util class shouldn't be constructed!", false);
+        } catch (IllegalStateException ignored) {
         }
     }
 
@@ -76,5 +85,13 @@ public class UtilTest {
             assertFalse("No exception was thrown for accessing inaccessible field!", false);
         } catch (RuntimeException ignored) {
         }
+    }
+
+    @Test public void test_is_null() {
+        assertTrue(isNull(null));
+        assertTrue(isNull(JSONObject.NULL));
+        assertFalse(isNull("Hello"));
+        assertFalse(isNull(new Ason()));
+        assertFalse(isNull(new AsonArray<>()));
     }
 }

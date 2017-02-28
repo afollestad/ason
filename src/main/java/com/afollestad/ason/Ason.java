@@ -314,9 +314,7 @@ import static com.afollestad.ason.Util.*;
 
     public boolean isNull(String key) {
         Object value = get(key);
-        return value == null
-                || JSONObject.NULL.equals(value)
-                || JSONObject.NULL == value;
+        return Util.isNull(value);
     }
 
     @Override public int hashCode() {
