@@ -120,6 +120,7 @@ import static com.afollestad.ason.Util.*;
                     arrayTarget.put(insertIndex, insertObject);
                 }
             } else {
+                //noinspection ConstantConditions
                 ((JSONObject) target).put(splitKey[splitKey.length - 1], insertObject);
             }
         } else {
@@ -267,7 +268,7 @@ import static com.afollestad.ason.Util.*;
             @NotNull String key,
             @NotNull Class<T> cls,
             @Nullable T defaultValue) {
-        Object value = get(key, defaultValue);
+        final Object value = get(key, defaultValue);
         if (value == null) {
             return defaultValue;
         } else if (isPrimitive(cls) ||
@@ -335,16 +336,13 @@ import static com.afollestad.ason.Util.*;
             return;
         }
         loadedMyFields = true;
-
         Field[] fields = getClass().getDeclaredFields();
         for (Field f : fields) {
             if (Modifier.isPrivate(f.getModifiers()) || shouldIgnore(f)) {
                 continue;
             }
-
             f.setAccessible(true);
             String name = fieldName(f);
-
             try {
                 put(name, f.get(this));
             } catch (IllegalAccessException e) {

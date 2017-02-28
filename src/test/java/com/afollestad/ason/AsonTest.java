@@ -3,7 +3,9 @@ package com.afollestad.ason;
 import org.json.JSONObject;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -64,11 +66,17 @@ public class AsonTest {
     }
 
     @Test public void builder_test() {
+        List<Integer> list = new ArrayList<>(2);
+        list.add(1);
+        list.add(2);
         Ason ason = new Ason()
                 .put("_id", 3)
                 .put("name", "Aidan")
-                .put("age", 21);
-        String output = "{\"name\":\"Aidan\",\"_id\":3,\"age\":21}";
+                .put("age", 21)
+                .put("array", (Object) new int[]{1, 2, 3, 4})
+                .put("list", list);
+        String output = "{\"array\":[1,2,3,4],\"name\":\"Aidan\"," +
+                "\"_id\":3,\"list\":[1,2],\"age\":21}";
         assertEquals(output, ason.toString());
     }
 

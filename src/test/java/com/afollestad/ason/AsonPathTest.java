@@ -186,6 +186,14 @@ public class AsonPathTest {
         assertEquals(participants.get(0).get("name"), "Waverly");
     }
 
+    @Test public void test_index_notation_add_array() {
+        Ason ason = new Ason()
+                .put("person.props", 1, 2, 3, 4);
+        ason.put("person.props.$4", 5);
+        ason.put("person.props.$1", 6);
+        assertEquals("{\"person\":{\"props\":[1,6,3,4,5]}}", ason.toString());
+    }
+
     @Test public void test_put_null_path() {
         Ason ason = new Ason()
                 .putNull("test1")

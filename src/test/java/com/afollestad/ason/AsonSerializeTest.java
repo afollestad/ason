@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
  */
 public class AsonSerializeTest {
 
-    static class Person {
+    @SuppressWarnings("unused") static class Person {
 
         @AsonName(name = "_id") int id;
         String name;
