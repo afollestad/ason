@@ -3,6 +3,7 @@ package com.afollestad.ason;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class AsonPathTest {
@@ -155,6 +156,7 @@ public class AsonPathTest {
                 .put("spouse.name", "Waverly")
                 .put("spouse.age", 19);
         ason.remove("spouse.age");
+        ason.remove("spouse.nonexisting.test"); // nothing should happen here
         assertEquals("{\"name\":\"Aidan\",\"_id\":3,\"age\":21," +
                 "\"spouse\":{\"name\":\"Waverly\"}}", ason.toString());
     }
@@ -170,5 +172,14 @@ public class AsonPathTest {
         assertEquals(participants.size(), 1);
         assertEquals(participants.get(0).get("id"), 1);
         assertEquals(participants.get(0).get("name"), "Waverly");
+    }
+
+    @Test public void test_mid_path_null() {
+        Ason ason = new Ason()
+                .put("person.name", "Aidan")
+                .put("person.born", 1995)
+                .put("person.spouse.name", "Waverly");
+        assertEquals("Aidan", ason.get("person.name"));
+        assertNull(ason.get("person.spouse.spouse.age"));
     }
 }

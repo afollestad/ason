@@ -147,16 +147,23 @@ public class AsonArray<T> implements Iterable<T> {
             } else {
                 value = getPathValue(((Ason) value).toStockJson(), path, splitPath(path));
             }
+            if(value == null
+                    || JSONObject.NULL.equals(value)
+                    || JSONObject.NULL == value) {
+                return null;
+            }
             cls = (Class<T>) value.getClass();
         }
 
-        if (value == null) {
+        if(value == null
+                || JSONObject.NULL.equals(value)
+                || JSONObject.NULL == value) {
             return null;
         }
         if (cls == null) {
             throw new IllegalArgumentException("cls parameter cannot be null!");
         }
-        
+
         if (isPrimitive(cls) ||
                 cls == JSONObject.class ||
                 cls == JSONArray.class ||
@@ -225,7 +232,9 @@ public class AsonArray<T> implements Iterable<T> {
             encloser = ((Ason) arrayEntry).toStockJson();
         }
         Object pathValue = getPathValue(encloser, path, splitPath(path));
-        if (pathValue == null) {
+        if (pathValue == null
+                || JSONObject.NULL.equals(pathValue)
+                || JSONObject.NULL == pathValue) {
             return value == null;
         }
         return pathValue.equals(value);

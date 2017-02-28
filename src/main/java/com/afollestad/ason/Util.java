@@ -1,6 +1,6 @@
 package com.afollestad.ason;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -42,7 +42,7 @@ class Util {
         return true;
     }
 
-    @NotNull static Object followPath(
+    @Nullable static Object followPath(
             JSONObject wrapper,
             String key,
             String[] splitKey,
@@ -66,8 +66,7 @@ class Util {
                 }
                 wrapper.put(splitKey[0], parent);
             } else {
-                throw new InvalidPathException("No object or array found for the first component of key " +
-                        key + " (" + splitKey[0] + ").");
+                return null;
             }
         }
 
@@ -126,8 +125,7 @@ class Util {
                     }
                     ((JSONObject) parent).put(currentKey, current);
                 } else {
-                    throw new NullPathException("Item at index " + i + " " +
-                            "of current entry refers to a null or out of bounds entry.");
+                    return null;
                 }
             }
             parent = current;
@@ -136,7 +134,9 @@ class Util {
         return parent;
     }
 
-    @SuppressWarnings("unchecked") static <T> T getPathValue(
+    @SuppressWarnings("unchecked")
+    @Nullable
+    static <T> T getPathValue(
             JSONObject wrapper,
             String key,
             String[] splitKey) {
@@ -144,7 +144,9 @@ class Util {
             return (T) wrapper.opt(key);
         }
         Object target = followPath(wrapper, key, splitKey, false);
-        if (target instanceof JSONObject) {
+        if (target == null) {
+            return null;
+        } else if (target instanceof JSONObject) {
             return (T) ((JSONObject) target).opt(splitKey[splitKey.length - 1]);
         } else {
             throw new InvalidPathException("Cannot get a value from a JSONArray using a key.");

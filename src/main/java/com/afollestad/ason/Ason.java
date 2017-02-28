@@ -130,6 +130,9 @@ import static com.afollestad.ason.Util.*;
             json.remove(key);
         } else {
             Object followed = followPath(json, key, splitKey, false);
+            if (followed == null) {
+                return this;
+            }
             if (followed instanceof JSONArray) {
                 JSONArray followedArray = (JSONArray) followed;
                 int insertIndex = Integer.parseInt(splitKey[splitKey.length - 1].substring(1));
@@ -154,9 +157,8 @@ import static com.afollestad.ason.Util.*;
         } else {
             result = json.opt(key);
         }
-        if (result == null) {
-            return defaultValue;
-        } else if (JSONObject.NULL.equals(result)
+        if (result == null
+                || JSONObject.NULL.equals(result)
                 || JSONObject.NULL == result) {
             return defaultValue;
         } else if (result instanceof JSONObject) {
