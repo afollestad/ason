@@ -98,8 +98,7 @@ class Util {
                                 ((JSONArray) parent).put(current);
                             }
                         } else {
-                            throw new NullPathException("Item at index " + i + " " +
-                                    "of current entry refers to a null or out of bounds entry.");
+                            return null;
                         }
                     }
                     parent = current;
@@ -112,9 +111,7 @@ class Util {
             if (current != null
                     && !(current instanceof JSONObject)
                     && !(current instanceof JSONArray)) {
-                throw new InvalidPathException("Component " + (i + 1) + " of key " + key +
-                        " refers to " + currentKey + ", which is not an object or array (it's a " +
-                        current.getClass().getName() + ").");
+                return null;
             } else if (current == null) {
                 if (createMissing) {
                     if (i < splitKey.length - 1
@@ -144,12 +141,22 @@ class Util {
             return (T) wrapper.opt(key);
         }
         Object target = followPath(wrapper, key, splitKey, false);
-        if (target == null) {
+        if (target == null
+                || JSONObject.NULL.equals(target)
+                || JSONObject.NULL == target) {
             return null;
-        } else if (target instanceof JSONObject) {
-            return (T) ((JSONObject) target).opt(splitKey[splitKey.length - 1]);
+        }
+
+        final String lastKey = splitKey[splitKey.length - 1];
+        if (target instanceof JSONObject) {
+            return (T) ((JSONObject) target).opt(lastKey);
+        } else if (target instanceof JSONArray
+                && lastKey.startsWith("$")
+                && isNumber(lastKey.substring(1))) {
+            int index = Integer.parseInt(lastKey.substring(1));
+            return (T) ((JSONArray) target).opt(index);
         } else {
-            throw new InvalidPathException("Cannot get a value from a JSONArray using a key.");
+            throw new InvalidPathException("Cannot get a value from a JSONArray using a name key (" + lastKey + ").");
         }
     }
 

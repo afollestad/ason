@@ -2,9 +2,7 @@ package com.afollestad.ason;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class AsonPathTest {
 
@@ -174,6 +172,17 @@ public class AsonPathTest {
         assertEquals(participants.get(0).get("name"), "Waverly");
     }
 
+    @Test public void test_put_null_path() {
+        Ason ason = new Ason()
+                .putNull("person.spouse.name");
+        assertNotNull(ason.getJsonObject("person"));
+        assertNotNull(ason.getJsonObject("person")
+                .getJsonObject("spouse"));
+        assertNull(ason.getJsonObject("person")
+                .getJsonObject("spouse")
+                .getString("name"));
+    }
+
     @Test public void test_mid_path_null() {
         Ason ason = new Ason()
                 .put("person.name", "Aidan")
@@ -181,5 +190,65 @@ public class AsonPathTest {
                 .put("person.spouse.name", "Waverly");
         assertEquals("Aidan", ason.get("person.name"));
         assertNull(ason.get("person.spouse.spouse.age"));
+    }
+
+    @Test public void test_index_notation_mid_null() {
+        Ason ason = new Ason()
+                .putNull("person.family")
+                .putNull("person.props.$0")
+                .putNull("person.props.$1");
+        assertNull(ason.get("person.family"));
+        assertNull(ason.get("person.family.$0"));
+        assertNotNull(ason.get("person.props"));
+        assertNull(ason.get("person.props.$0"));
+        assertNull(ason.get("person.props.$1"));
+        assertNull(ason.get("person.props.$2"));
+    }
+
+    @Test public void test_error_get_array_keyname() {
+        AsonArray<String> array = new AsonArray<String>()
+                .add("Aidan", "Waverly", "Natalie", "Jeff");
+        Ason ason = new Ason()
+                .put("array", array);
+        try {
+            ason.get("array.$1i");
+            assertFalse("No error was thrown for attempting" +
+                    " to retrieve a value from an array using a name key!", false);
+        } catch (InvalidPathException ignored) {
+        }
+    }
+
+    @Test public void test_index_notation_get_value() {
+        Ason one = new Ason()
+                .put("id", 2)
+                .put("name", "Aidan");
+        Ason two = new Ason()
+                .put("id", 3)
+                .put("name", "Waverly");
+        Ason three = new Ason()
+                .put("id", 4)
+                .put("name", "Natalie");
+        Ason four = new Ason()
+                .put("id", 5)
+                .put("name", "Jeff");
+        AsonArray<Ason> array = new AsonArray<Ason>()
+                .add(one, two, three, four);
+        Ason child1 = new Ason()
+                .put("array", array);
+        Ason parent = new Ason()
+                .put("id", 1)
+                .put("child1", child1);
+        assertEquals("Jeff", parent.get("child1.array.$3.name"));
+        assertNull(parent.get("child1.array.$4.name.idk"));
+    }
+
+    @Test public void test_path_on_primitive() {
+        Ason ason = new Ason()
+                .put("id", 2);
+        try {
+            ason.get("id.name");
+            assertFalse("No exception was thrown for using a path on a primitive entry!", false);
+        } catch(InvalidPathException ignored) {
+        }
     }
 }

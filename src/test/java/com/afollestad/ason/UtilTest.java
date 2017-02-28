@@ -14,6 +14,20 @@ import static org.junit.Assert.*;
  */
 public class UtilTest {
 
+    @SuppressWarnings("unused") static class DefaultCtorClass {
+
+        private String hiddenField;
+
+        @SuppressWarnings("unused") public DefaultCtorClass() {
+        }
+    }
+
+    @SuppressWarnings("unused") static class NoDefaultCtorClass {
+
+        @SuppressWarnings("unused") public NoDefaultCtorClass(String name) {
+        }
+    }
+
     @SuppressWarnings({"FieldCanBeLocal", "unused", "MismatchedQueryAndUpdateOfCollection"})
     private List<Ason> listField;
 
@@ -36,9 +50,31 @@ public class UtilTest {
 
     @Test public void test_is_json_array_true() {
         assertTrue(isJsonArray("[]"));
+        assertTrue(isJsonArray("   []    "));
     }
 
     @Test public void test_is_json_array_false() {
+        assertFalse(isJsonArray(""));
         assertFalse(isJsonArray("{}"));
+        assertFalse(isJsonArray("  abc"));
+    }
+
+    @Test public void test_no_default_ctor() {
+        try {
+            getDefaultConstructor(NoDefaultCtorClass.class);
+            assertFalse("No exception thrown for no default constructor!", false);
+        } catch (IllegalStateException ignored) {
+        }
+    }
+
+    @Test public void test_cant_access_field() throws Exception {
+        DefaultCtorClass instance = (DefaultCtorClass) getDefaultConstructor(
+                DefaultCtorClass.class).newInstance();
+        Field field = DefaultCtorClass.class.getDeclaredField("hiddenField");
+        try {
+            setFieldValue(field, instance, "Test");
+            assertFalse("No exception was thrown for accessing inaccessible field!", false);
+        } catch (RuntimeException ignored) {
+        }
     }
 }
