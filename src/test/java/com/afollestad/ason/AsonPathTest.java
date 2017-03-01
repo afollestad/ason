@@ -2,6 +2,8 @@ package com.afollestad.ason;
 
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class AsonPathTest {
@@ -276,12 +278,22 @@ public class AsonPathTest {
         try {
             ason.get("id.name");
             assertFalse("No exception was thrown for using a path on a primitive entry!", false);
-        } catch(InvalidPathException ignored) {
+        } catch (InvalidPathException ignored) {
         }
         try {
             ason.get("test.id.hello");
             assertFalse("No exception was thrown for using a path on a primitive entry!", false);
-        } catch(InvalidPathException ignored) {
+        } catch (InvalidPathException ignored) {
+        }
+        try {
+            ason.get("test.id", SimpleTestDataOne[].class);
+            assertFalse("No exception thrown when AsonArray was expected, but not found!", false);
+        } catch (IllegalStateException ignored) {
+        }
+        try {
+            ason.get("test.id", List.class);
+            assertFalse("No exception thrown when AsonArray was expected, but not found!", false);
+        } catch (IllegalStateException ignored) {
         }
     }
 
@@ -292,7 +304,7 @@ public class AsonPathTest {
         try {
             ason.get("person.$0.test");
             assertFalse("No exception thrown for using index notation on a parent object!", false);
-        } catch(InvalidPathException ignored) {
+        } catch (InvalidPathException ignored) {
         }
     }
 }

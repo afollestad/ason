@@ -268,8 +268,8 @@ import static com.afollestad.ason.Util.*;
             @NotNull String key,
             @NotNull Class<T> cls,
             @Nullable T defaultValue) {
-        final Object value = get(key, defaultValue);
-        if (value == null) {
+        final Object value = get(key, (T) null);
+        if (Util.isNull(value)) {
             return defaultValue;
         } else if (isPrimitive(cls) ||
                 cls == JSONObject.class ||
@@ -285,12 +285,8 @@ import static com.afollestad.ason.Util.*;
             AsonArray<T> array = (AsonArray<T>) value;
             return AsonSerializer.get().deserializeArray(array, cls);
         } else if (isList(cls)) {
-            if (!(value instanceof AsonArray)) {
-                throw new IllegalStateException("Expected a AsonArray to convert to " +
-                        cls.getName() + ", found " + value.getClass().getName() + ".");
-            }
-            AsonArray<T> array = (AsonArray<T>) value;
-            return (T) AsonSerializer.get().deserializeList(array, cls.getComponentType());
+            throw new IllegalStateException("Use getList(String, Class) instead of " +
+                    "get(String, Class) for deserializing arrays to Lists.");
         } else {
             if (!(value instanceof Ason)) {
                 throw new IllegalStateException("Expected a Ason to convert to " +
@@ -299,6 +295,20 @@ import static com.afollestad.ason.Util.*;
             Ason object = (Ason) value;
             return AsonSerializer.get().deserialize(object, cls);
         }
+    }
+
+    @Nullable public <T> List<T> getList(@NotNull String key,
+                               Class<T> itemCls) {
+        final Object value = get(key, (T) null);
+        if (Util.isNull(value)) {
+            return null;
+        }
+        if (!(value instanceof AsonArray)) {
+            throw new IllegalStateException("Expected a AsonArray to convert to List, " +
+                    "found " + value.getClass().getName() + ".");
+        }
+        AsonArray<T> array = (AsonArray<T>) value;
+        return AsonSerializer.get().deserializeList(array, itemCls);
     }
 
     public boolean has(@NotNull String key) {

@@ -698,6 +698,14 @@ AsonArray<Person> array = // ...
 Person person = array.get(0, Person.class);
 ```
 
+For Lists, you need to use a separate method since it requires that you specific the type held by the list:
+
+```java
+Ason ason = // ...
+// The JSON object needs to contain a child array with the key "people" representing an array of Person classes.
+List<Person> people = array.getList("people", Person.class); 
+```
+
 ---
 
 # Annotations

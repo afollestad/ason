@@ -345,17 +345,10 @@ public class AsonSerializeTest {
         assertTrue(array.isEmpty());
     }
 
-    @SuppressWarnings("unused") class One {
-        String hi = "hello";
-    }
-
-    @SuppressWarnings({"unused", "WeakerAccess"}) class Two {
-    }
-
     @Test public void test_serialize_inaccessible_field() throws Exception {
-        Field hi = One.class.getDeclaredField("hi");
+        Field hi = SimpleTestDataOne.class.getDeclaredField("hi");
         try {
-            AsonSerializer.get().serializeField(hi, new Two());
+            AsonSerializer.get().serializeField(hi, new SimpleTestDataTwo());
             assertFalse("No exception thrown when trying to serialize inaccessible field!", false);
         } catch (RuntimeException ignored) {
         }
@@ -402,14 +395,14 @@ public class AsonSerializeTest {
     }
 
     @Test public void test_deserialize_null_json() {
-        One one = AsonSerializer.get().deserialize(null, One.class);
+        SimpleTestDataOne one = AsonSerializer.get().deserialize(null, SimpleTestDataOne.class);
         assertNull(one);
     }
 
     @Test public void test_deserialize_wrong_object_target() {
         Ason ason = new Ason("{\"obj\":{\"hi\":\"hello\"}}");
         try {
-            ason.get("obj.hi", One.class);
+            ason.get("obj.hi", SimpleTestDataOne.class);
             assertFalse("No exception thrown for wrong get() cast.", false);
         } catch (IllegalStateException ignored) {
         }
@@ -418,7 +411,7 @@ public class AsonSerializeTest {
     @Test public void test_deserialize_wrong_array_target() {
         Ason ason = new Ason("{\"obj\":[\"hi\",\"hello\"]}");
         try {
-            ason.get("obj", One[].class);
+            ason.get("obj", SimpleTestDataOne[].class);
             assertFalse("No exception thrown for wrong get() cast.", false);
         } catch (IllegalStateException ignored) {
         }
@@ -431,6 +424,66 @@ public class AsonSerializeTest {
         assertNotNull(array.get(0));
         assertNotNull(array.get(1));
         assertNotNull(array.get(2));
+    }
+
+    @Test public void test_auto_deserialize_default() {
+        Ason ason = new Ason()
+                .put("obj", new SimpleTestDataOne());
+        SimpleTestDataOne fallback = new SimpleTestDataOne();
+        fallback.hi = "fallback";
+        SimpleTestDataOne result = ason.get("obj", SimpleTestDataOne.class, fallback);
+        assertNotNull(result);
+        assertEquals("hello", result.hi);
+        result = ason.get("obj2", SimpleTestDataOne.class, fallback);
+        assertNotNull(result);
+        assertEquals("fallback", result.hi);
+    }
+
+    @Test public void test_auto_deserialize_primitive() {
+        // This happens if you use the variation of get() that takes a class even though it's unnecessary
+        Ason ason = new Ason()
+                .put("id", 6);
+        assertEquals(6, ason.get("id",
+                Integer.class, 0).intValue());
+    }
+
+    @Test public void test_auto_deserialize_list() {
+        Ason ason = new Ason()
+                .put("array", 1, 2, 3, 4);
+        List<Integer> list = ason.getList("array", Integer.class);
+        assertEquals(1, list.get(0).intValue());
+        assertEquals(2, list.get(1).intValue());
+        assertEquals(3, list.get(2).intValue());
+        assertEquals(4, list.get(3).intValue());
+    }
+
+    @Test public void test_auto_deserialize_list_wrong_method() {
+        Ason ason = new Ason()
+                .put("array", 1, 2, 3, 4);
+        try {
+            ason.get("array", List.class);
+            assertFalse("Exception not thrown for using the wrong " +
+                    "list get() method.", false);
+        } catch (IllegalStateException ignored) {
+        }
+    }
+
+    @Test public void test_get_list_on_object() {
+        Ason ason = new Ason()
+                .put("value", 1);
+        try {
+            ason.getList("value", Integer.class);
+            assertFalse("No exception thrown when using getList() for a " +
+                    "key that represents a non-array!", false);
+        } catch(IllegalStateException ignored) {
+        }
+    }
+
+    @Test public void test_get_list_null() {
+        Ason ason = new Ason()
+                .putNull("value");
+        assertNull(ason.getList("value", Integer.class));
+        assertNull(ason.getList("value2", Integer.class));
     }
 
     //
