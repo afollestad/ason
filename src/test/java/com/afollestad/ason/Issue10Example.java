@@ -1,9 +1,7 @@
 package com.afollestad.ason;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 class Issue10Example {
 
-    Object item;
+  Object item;
 }

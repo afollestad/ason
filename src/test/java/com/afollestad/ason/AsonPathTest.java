@@ -307,4 +307,22 @@ public class AsonPathTest {
         } catch (InvalidPathException ignored) {
         }
     }
+
+    @Test public void test_put_path_existing_obj() {
+        Ason ason = new Ason()
+                .put("person.id", 1);
+        ason.put("person.idk", 4);
+        assertEquals("{\"person\":{\"idk\":4,\"id\":1}}", ason.toString());
+    }
+
+    @Test public void test_get_from_array_with_path() {
+        SimpleTestDataOne one = new SimpleTestDataOne();
+        one.hi = "Aidan";
+        SimpleTestDataOne two = new SimpleTestDataOne();
+        two.hi = "Waverly";
+        AsonArray<SimpleTestDataOne> array = new AsonArray<SimpleTestDataOne>()
+                .add(one, two);
+
+        SimpleTestDataOne pullOut = array.get(1, "hi", S)
+    }
 }
