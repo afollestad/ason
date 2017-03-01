@@ -218,8 +218,9 @@ class Util {
     }
 
     static boolean shouldIgnore(Field field) {
-        return field.getName().startsWith("this$") ||
-                field.getAnnotation(AsonIgnore.class) != null;
+        return field.getName().startsWith("this$")
+                || field.getName().equals("$jacocoData") // used with Jacoco testing
+                || field.getAnnotation(AsonIgnore.class) != null;
     }
 
     static String fieldName(Field field) {

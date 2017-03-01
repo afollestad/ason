@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
 /**
  * @author Aidan Follestad (afollestad)
  */
-public class UtilTest {
+@SuppressWarnings("unused") public class UtilTest {
 
     @SuppressWarnings("unused") static class DefaultCtorClass {
 
@@ -112,5 +112,15 @@ public class UtilTest {
                     "class which throws an error on purpose!", false);
         } catch (Throwable ignored) {
         }
+    }
+
+    @AsonIgnore Field ignoreYes1;
+    Field $jacocoData;
+    Field ignoreNo2;
+
+    @Test public void test_should_ignore() throws Exception {
+        assertTrue(shouldIgnore(getClass().getDeclaredField("ignoreYes1")));
+        assertTrue(shouldIgnore(getClass().getDeclaredField("$jacocoData")));
+        assertFalse(shouldIgnore(getClass().getDeclaredField("ignoreNo2")));
     }
 }
