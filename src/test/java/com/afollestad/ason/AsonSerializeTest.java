@@ -533,8 +533,20 @@ public class AsonSerializeTest {
 
   @Test
   public void test_deserialize_all_nulls() {
-    AsonArray<Integer> jsonArray = new AsonArray<Integer>().addNull().addNull().addNull().addNull();
+    AsonArray<Integer> jsonArray = new AsonArray<Integer>().addNull().addNull();
     Integer[] array = AsonSerializer.get().deserializeArray(jsonArray, Integer[].class);
+    assertNotNull(array);
+    assertNull(array[0]);
+    assertNull(array[1]);
+  }
+
+  @Test
+  public void test_deserialize_all_nulls_to_primitive() {
+    AsonArray<Character> jsonArray = new AsonArray<Character>().addNull().addNull();
+    char[] array = AsonSerializer.get().deserializeArray(jsonArray, char[].class);
+    assertNotNull(array);
+    assertEquals('\0', array[0]);
+    assertEquals('\0', array[1]);
   }
 
   //
