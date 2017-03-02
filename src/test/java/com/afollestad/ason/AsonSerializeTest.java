@@ -1,15 +1,18 @@
 package com.afollestad.ason;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import static org.junit.Assert.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.junit.Test;
 
 /** @author Aidan Follestad (afollestad) */
 public class AsonSerializeTest {
@@ -508,6 +511,30 @@ public class AsonSerializeTest {
       this.name = name;
       this.age = age;
     }
+  }
+
+  @Test
+  public void test_deserialize_array_on_non_array() {
+    try {
+      AsonSerializer.get().deserializeArray(new AsonArray(), Integer.class);
+      assertFalse("No exception thrown!", false);
+    } catch (IllegalArgumentException ignored) {
+    }
+  }
+
+  @Test
+  public void test_deserialize_array_on_list() {
+    try {
+      AsonSerializer.get().deserializeArray(new AsonArray(), List.class);
+      assertFalse("No exception thrown!", false);
+    } catch (IllegalArgumentException ignored) {
+    }
+  }
+
+  @Test
+  public void test_deserialize_all_nulls() {
+    AsonArray<Integer> jsonArray = new AsonArray<Integer>().addNull().addNull().addNull().addNull();
+    Integer[] array = AsonSerializer.get().deserializeArray(jsonArray, Integer[].class);
   }
 
   //

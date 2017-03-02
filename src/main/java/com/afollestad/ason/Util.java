@@ -200,6 +200,28 @@ class Util {
         || cls instanceof Character;
   }
 
+  static Object defaultPrimitiveValue(Class<?> primitiveCls) {
+    if (primitiveCls == boolean.class) {
+      return false;
+    } else if (primitiveCls == double.class) {
+      return 0d;
+    } else if (primitiveCls == float.class) {
+      return 0f;
+    } else if (primitiveCls == short.class) {
+      return (short) 0;
+    } else if (primitiveCls == int.class) {
+      return 0;
+    } else if (primitiveCls == long.class) {
+      return 0L;
+    } else if (primitiveCls == byte.class) {
+      return (byte) 0;
+    } else if (primitiveCls == char.class) {
+      return '\0';
+    } else {
+      return null;
+    }
+  }
+
   static boolean isList(Class<?> cls) {
     if (cls.equals(List.class)) return true;
     Class[] is = cls.getInterfaces();

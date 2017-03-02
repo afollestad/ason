@@ -1,5 +1,6 @@
 package com.afollestad.ason;
 
+import static com.afollestad.ason.Util.defaultPrimitiveValue;
 import static com.afollestad.ason.Util.fieldName;
 import static com.afollestad.ason.Util.isList;
 import static com.afollestad.ason.Util.isNull;
@@ -208,7 +209,7 @@ class AsonSerializer {
       return null;
     } else if (!cls.isArray() && cls != Object.class) {
       if (isList(cls)) {
-        throw new IllegalStateException(
+        throw new IllegalArgumentException(
             "Use Ason.deserializeList() for Lists, not deserializeArray().");
       }
       throw new IllegalArgumentException(cls.getName() + " is not an array type.");
@@ -223,7 +224,7 @@ class AsonSerializer {
     for (int i = 0; i < json.size(); i++) {
       Object item = json.get(i);
       if (isNull(item)) {
-        Array.set(newArray, i, null);
+        Array.set(newArray, i, defaultPrimitiveValue(component));
         continue;
       }
 
