@@ -1,18 +1,24 @@
 package com.afollestad.ason;
 
+import static com.afollestad.ason.Util.fieldName;
+import static com.afollestad.ason.Util.followPath;
+import static com.afollestad.ason.Util.getPathValue;
+import static com.afollestad.ason.Util.isJsonArray;
+import static com.afollestad.ason.Util.isList;
+import static com.afollestad.ason.Util.isPrimitive;
+import static com.afollestad.ason.Util.shouldIgnore;
+import static com.afollestad.ason.Util.splitPath;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.List;
+import java.util.Map;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.List;
-import java.util.Map;
-
-import static com.afollestad.ason.Util.*;
 
 /** @author Aidan Follestad (afollestad) */
 @SuppressWarnings({"WeakerAccess", "unused", "unchecked", "SameParameterValue"})

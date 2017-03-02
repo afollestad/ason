@@ -1,9 +1,10 @@
 package com.afollestad.ason;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import static com.afollestad.ason.Util.fieldName;
+import static com.afollestad.ason.Util.isList;
+import static com.afollestad.ason.Util.isNull;
+import static com.afollestad.ason.Util.isPrimitive;
+import static com.afollestad.ason.Util.shouldIgnore;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -11,8 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.afollestad.ason.Util.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /** @author Aidan Follestad (afollestad) */
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused"})

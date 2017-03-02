@@ -1,16 +1,18 @@
 package com.afollestad.ason;
 
+import static com.afollestad.ason.Util.getPathValue;
+import static com.afollestad.ason.Util.isList;
+import static com.afollestad.ason.Util.isPrimitive;
+import static com.afollestad.ason.Util.splitPath;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.afollestad.ason.Util.*;
 
 /** @author Aidan Follestad (afollestad) */
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
