@@ -561,6 +561,60 @@ public class AsonSerializeTest {
     assertArrayEquals(two, matrix[1]);
   }
 
+  @SuppressWarnings("unchecked")
+  @Test
+  public void test_deserialize_array_of_lists() {
+    List<Integer> one = new ArrayList<>(4);
+    one.add(1);
+    one.add(2);
+    one.add(3);
+    one.add(4);
+
+    List<Integer> two = new ArrayList<>(4);
+    two.add(5);
+    two.add(6);
+    two.add(7);
+    two.add(8);
+
+    AsonArray<List<Integer>> jsonArray = new AsonArray<List<Integer>>().add(one, two);
+    List<Integer>[] result = AsonSerializer.get().deserializeArray(jsonArray, List[].class);
+    assertNotNull(result);
+
+    one = result[0];
+    assertEquals(1, one.get(0).intValue());
+    assertEquals(2, one.get(1).intValue());
+    assertEquals(3, one.get(2).intValue());
+    assertEquals(4, one.get(3).intValue());
+
+    two = result[1];
+    assertEquals(5, two.get(0).intValue());
+    assertEquals(6, two.get(1).intValue());
+    assertEquals(7, two.get(2).intValue());
+    assertEquals(8, two.get(3).intValue());
+  }
+
+  @Test
+  public void test_deserialize_array_of_empty_lists() {
+    List<Integer> one = new ArrayList<>(0);
+    List<Integer> two = new ArrayList<>(0);
+
+    AsonArray<List<Integer>> jsonArray = new AsonArray<List<Integer>>().add(one, two);
+    List<Integer>[] result = AsonSerializer.get().deserializeArray(jsonArray, List[].class);
+    assertNotNull(result);
+    assertEquals(0, result[0].size());
+    assertEquals(0, result[1].size());
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void test_deserialize_array_of_null_lists() {
+    AsonArray<List<Integer>> jsonArray = new AsonArray<List<Integer>>().addNull().addNull();
+    List<Integer>[] result = AsonSerializer.get().deserializeArray(jsonArray, List[].class);
+    assertNotNull(result);
+    assertNull(result[0]);
+    assertNull(result[1]);
+  }
+
   //
   ////// TEST FOR ISSUE #10
   //

@@ -43,7 +43,7 @@ class AsonSerializer {
 
   @Nullable
   public Ason serialize(@Nullable Object object) {
-    if (object == null) {
+    if (Util.isNull(object)) {
       return null;
     } else if (object instanceof Ason
         || object instanceof AsonArray
@@ -76,7 +76,7 @@ class AsonSerializer {
 
   @Nullable
   public AsonArray serializeArray(@Nullable Object arrayObject) {
-    if (arrayObject == null) {
+    if (isNull(arrayObject)) {
       return null;
     }
 
@@ -109,9 +109,12 @@ class AsonSerializer {
 
   @Nullable
   public AsonArray serializeList(@Nullable List list) {
-    if (list == null || list.isEmpty()) {
+    if (isNull(list)) {
       return null;
+    } else if (list.isEmpty()) {
+      return new AsonArray();
     }
+
     Class<?> componentType = list.get(0).getClass();
     Object array = Array.newInstance(componentType, list.size());
     for (int i = 0; i < list.size(); i++) {
@@ -128,7 +131,7 @@ class AsonSerializer {
     } catch (IllegalAccessException e) {
       throw new RuntimeException(e);
     }
-    if (fieldValue == null) {
+    if (isNull(fieldValue)) {
       return null;
     }
     if (isPrimitive(fieldValue)
@@ -152,7 +155,7 @@ class AsonSerializer {
 
   @Nullable
   public <T> T deserialize(@Nullable Ason ason, @NotNull Class<T> cls) {
-    if (ason == null) {
+    if (isNull(ason)) {
       return null;
     } else if (isPrimitive(cls)) {
       throw new IllegalArgumentException(
@@ -167,7 +170,7 @@ class AsonSerializer {
     }
 
     ClassCacheEntry<T> cacheEntry = classCache.get(cls.getName());
-    if (cacheEntry == null) {
+    if (isNull(cacheEntry)) {
       cacheEntry = new ClassCacheEntry<>(cls);
       classCache.put(cls.getName(), cacheEntry);
     }
@@ -205,7 +208,7 @@ class AsonSerializer {
 
   @Nullable
   public <T> T deserializeArray(@Nullable AsonArray json, @NotNull Class<T> cls) {
-    if (json == null) {
+    if (isNull(json)) {
       return null;
     } else if (!cls.isArray() && cls != Object.class) {
       if (isList(cls)) {
@@ -266,7 +269,7 @@ class AsonSerializer {
 
   @Nullable
   public <T> List<T> deserializeList(@Nullable AsonArray json, @NotNull Class<T> cls) {
-    if (json == null) {
+    if (isNull(json)) {
       return null;
     } else if (json.isEmpty()) {
       return new ArrayList<>(0);
@@ -274,9 +277,6 @@ class AsonSerializer {
 
     Class<?> arrayType = Array.newInstance(cls, 0).getClass();
     Object array = deserializeArray(json, arrayType);
-    if (array == null) {
-      return null;
-    }
 
     int length = Array.getLength(array);
     List<T> result = new ArrayList<>();
