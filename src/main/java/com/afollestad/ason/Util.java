@@ -223,7 +223,12 @@ class Util {
   }
 
   static boolean isList(Class<?> cls) {
-    if (cls.equals(List.class)) return true;
+    if (cls == null) {
+      return false;
+    }
+    if (cls.equals(List.class)) {
+      return true;
+    }
     Class[] is = cls.getInterfaces();
     for (Class i : is) {
       if (i.equals(List.class)) {

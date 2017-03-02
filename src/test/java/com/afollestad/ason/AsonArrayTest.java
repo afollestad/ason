@@ -180,6 +180,17 @@ public class AsonArrayTest {
   }
 
   @Test
+  public void test_array_in_array_deserialize() {
+    AsonArray<Integer[]> parent =
+        new AsonArray<Integer[]>().add(new Integer[] {1, 2, 3, 4}, new Integer[] {5, 6, 7, 8});
+    assertEquals(2, parent.size());
+
+    Integer[] arrayOne = parent.get(0, Integer[].class);
+    assertNotNull(arrayOne);
+    assertEquals(arrayOne.length, 4);
+  }
+
+  @Test
   public void test_to_list() {
     AsonArray<Integer> array = new AsonArray<Integer>().add(1, 2, 3, 4);
     List<Integer> list = array.toList();
@@ -284,5 +295,42 @@ public class AsonArrayTest {
     assertEquals(6, two.get(1).intValue());
     assertEquals(7, two.get(2).intValue());
     assertEquals(8, two.get(3).intValue());
+  }
+
+  @Test
+  public void test_get_list_null_items() {
+    AsonArray<List<Integer>> array = new AsonArray<List<Integer>>().addNull().addNull();
+    assertNull(array.getList(0, Integer.class));
+    assertNull(array.getList(1, Integer.class));
+  }
+
+  @Test
+  public void test_get_list_non_array_items() {
+    AsonArray<Integer> array = new AsonArray<Integer>().add(1, 2, 3, 4);
+    try {
+      array.getList(0, Integer.class);
+      assertFalse("No exception was thrown!", false);
+    } catch (IllegalStateException ignored) {
+    }
+  }
+
+  @Test
+  public void test_get_list_wrong_cls() {
+    AsonArray<Integer> array = new AsonArray<Integer>().add(1, 2, 3, 4);
+    try {
+      array.getList(0, List.class);
+      assertFalse("No exception was thrown!", false);
+    } catch (IllegalArgumentException ignored) {
+    }
+  }
+
+  @Test
+  public void test_regular_get_list() {
+    AsonArray<List> array = new AsonArray<List>().addNull().addNull();
+    try {
+      array.get(0, List.class);
+      assertFalse("No exception was thrown!", false);
+    } catch (IllegalStateException ignored) {
+    }
   }
 }

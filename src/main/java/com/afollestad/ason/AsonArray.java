@@ -156,14 +156,18 @@ public class AsonArray<T> implements Iterable<T> {
     return value;
   }
 
-  public <IT> List<IT> getList(int index, Class<IT> itemTypeCls) {
+  public <IT> List<IT> getList(int index, @NotNull Class<IT> itemTypeCls) {
     return getList(index, null, itemTypeCls);
   }
 
-  public <IT> List<IT> getList(int index, @Nullable String path, Class<IT> itemTypeCls) {
+  public <IT> List<IT> getList(int index, @Nullable String path, @NotNull Class<IT> itemTypeCls) {
     Object value = getInternal(index, null);
     if (isNull(value)) {
       return null;
+    }
+    if (isList(itemTypeCls)) {
+      throw new IllegalArgumentException(
+          "itemTypeCls should be the class of the items contained in the resulting List.");
     }
     if (!(value instanceof JSONArray)) {
       throw new IllegalStateException(
@@ -201,17 +205,9 @@ public class AsonArray<T> implements Iterable<T> {
         || cls == AsonArray.class) {
       return (T) value;
     } else if (cls.isArray()) {
-      if (!(value instanceof JSONArray)) {
-        throw new IllegalStateException(
-            "Expected an array to convert to " + cls.getName() + ", didn't find one.");
-      }
       AsonArray<T> array = new AsonArray<>((JSONArray) value);
-      return (T) AsonSerializer.get().deserializeArray(array, cls.getComponentType());
+      return (T) AsonSerializer.get().deserializeArray(array, cls);
     } else {
-      if (!(value instanceof JSONObject)) {
-        throw new IllegalStateException(
-            "Expected an object to convert to " + cls.getName() + ", didn't find one.");
-      }
       Ason object = new Ason((JSONObject) value);
       return AsonSerializer.get().deserialize(object, cls);
     }

@@ -3,6 +3,7 @@ package com.afollestad.ason;
 import static com.afollestad.ason.Util.defaultPrimitiveValue;
 import static com.afollestad.ason.Util.getDefaultConstructor;
 import static com.afollestad.ason.Util.isJsonArray;
+import static com.afollestad.ason.Util.isList;
 import static com.afollestad.ason.Util.isNull;
 import static com.afollestad.ason.Util.isNumber;
 import static com.afollestad.ason.Util.listGenericType;
@@ -37,6 +38,15 @@ public class UtilTest {
       assertFalse("Util class shouldn't be constructed!", false);
     } catch (IllegalStateException ignored) {
     }
+  }
+
+  @Test
+  public void test_is_list_cls() {
+    assertFalse(isList(null));
+    assertFalse(isList(int.class));
+    assertFalse(isList(SimpleTestDataOne.class));
+    assertTrue(isList(List.class));
+    assertTrue(isList(ArrayList.class));
   }
 
   @Test
