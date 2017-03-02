@@ -2,6 +2,7 @@ package com.afollestad.ason;
 
 import static com.afollestad.ason.Util.getPathValue;
 import static com.afollestad.ason.Util.isList;
+import static com.afollestad.ason.Util.isNull;
 import static com.afollestad.ason.Util.isPrimitive;
 import static com.afollestad.ason.Util.splitPath;
 
@@ -124,15 +125,7 @@ public class AsonArray<T> implements Iterable<T> {
     return new AsonArray(ary);
   }
 
-  public T get(int index, Class<T> cls) {
-    return get(index, null, cls);
-  }
-
-  public T get(int index, @Nullable String path) {
-    return get(index, path, null);
-  }
-
-  public T get(int index, @Nullable String path, Class<T> cls) {
+  Object getInternal(int index, @Nullable String path) {
     if (index < 0 || index > array.length() - 1) {
       throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
     }
@@ -142,7 +135,7 @@ public class AsonArray<T> implements Iterable<T> {
         return null;
       }
       if (!(value instanceof JSONObject) && !(value instanceof Ason)) {
-        throw new IllegalArgumentException(
+        throw new IllegalStateException(
             "Cannot get from an AsonArray using a "
                 + "path when array items are not objects (they're probably primitives).");
       }
@@ -154,14 +147,51 @@ public class AsonArray<T> implements Iterable<T> {
       if (Util.isNull(value)) {
         return null;
       }
-      cls = (Class<T>) value.getClass();
     }
 
     if (Util.isNull(value)) {
       return null;
     }
-    if (cls == null) {
-      throw new IllegalArgumentException("cls parameter cannot be null!");
+
+    return value;
+  }
+
+  public <IT> List<IT> getList(int index, Class<IT> itemTypeCls) {
+    return getList(index, null, itemTypeCls);
+  }
+
+  public <IT> List<IT> getList(int index, @Nullable String path, Class<IT> itemTypeCls) {
+    Object value = getInternal(index, null);
+    if (isNull(value)) {
+      return null;
+    }
+    if (!(value instanceof JSONArray)) {
+      throw new IllegalStateException(
+          "Cannot use getList() on an array which does not contain JSON arrays.");
+    }
+    return AsonSerializer.get().deserializeList(new AsonArray((JSONArray) value), itemTypeCls);
+  }
+
+  public T get(int index, Class<T> cls) {
+    return get(index, null, cls);
+  }
+
+  public T get(int index, @Nullable String path) {
+    return get(index, path, null);
+  }
+
+  public T get(int index, @Nullable String path, Class<T> cls) {
+    if (isList(cls)) {
+      throw new IllegalStateException(
+          "Use AsonArray.getList(...) to retrieve List<> children instead of get(...).");
+    }
+
+    Object value = getInternal(index, path);
+    if (path != null && value != null) {
+      cls = (Class<T>) value.getClass();
+    }
+    if (isNull(value)) {
+      return null;
     }
 
     if (isPrimitive(cls)
@@ -173,21 +203,14 @@ public class AsonArray<T> implements Iterable<T> {
     } else if (cls.isArray()) {
       if (!(value instanceof JSONArray)) {
         throw new IllegalStateException(
-            "Expected a JSONArray to convert to " + cls.getName() + ", didn't find one.");
+            "Expected an array to convert to " + cls.getName() + ", didn't find one.");
       }
       AsonArray<T> array = new AsonArray<>((JSONArray) value);
       return (T) AsonSerializer.get().deserializeArray(array, cls.getComponentType());
-    } else if (isList(cls)) {
-      if (!(value instanceof JSONArray)) {
-        throw new IllegalStateException(
-            "Expected a JSONArray to convert to " + cls.getName() + ", didn't find one.");
-      }
-      AsonArray<T> array = new AsonArray<>((JSONArray) value);
-      return (T) AsonSerializer.get().deserializeList(array, cls.getComponentType());
     } else {
       if (!(value instanceof JSONObject)) {
         throw new IllegalStateException(
-            "Expected a JSONObject to convert to " + cls.getName() + ", didn't find one.");
+            "Expected an object to convert to " + cls.getName() + ", didn't find one.");
       }
       Ason object = new Ason((JSONObject) value);
       return AsonSerializer.get().deserialize(object, cls);

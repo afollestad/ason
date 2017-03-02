@@ -1,11 +1,15 @@
 package com.afollestad.ason;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class AsonArrayTest {
 
@@ -216,5 +220,69 @@ public class AsonArrayTest {
           "An exception was not thrown when using path equality on a primitive array!", false);
     } catch (InvalidPathException ignored) {
     }
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void test_get_with_path_on_primitive() {
+    AsonArray array = new AsonArray().add(1, 2, 3, 4);
+    try {
+      array.get(2, "idk.name", SimpleTestDataOne.class);
+      assertFalse("No exception was thrown!", false);
+    } catch (IllegalStateException ignored) {
+    }
+  }
+
+  @Test
+  public void test_get_with_path_nulls() {
+    AsonArray<SimpleTestDataOne> array = new AsonArray<SimpleTestDataOne>().addNull().addNull();
+    assertNull(array.get(1, "idk.name", SimpleTestDataOne.class));
+  }
+
+  @Test
+  public void test_to_list_null_values() {
+    AsonArray array = new AsonArray().addNull().addNull();
+    List list = array.toList();
+    assertNull(list.get(0));
+    assertNull(list.get(1));
+  }
+
+  @Test
+  public void test_auto_deserialize_null() {
+    AsonArray<SimpleTestDataOne> array = new AsonArray<SimpleTestDataOne>().addNull().addNull();
+    SimpleTestDataOne data = array.get(0, SimpleTestDataOne.class);
+    assertNull(data);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void test_get_list() {
+    List<Integer> one = new ArrayList<>(4);
+    one.add(1);
+    one.add(2);
+    one.add(3);
+    one.add(4);
+
+    List<Integer> two = new ArrayList<>(4);
+    two.add(5);
+    two.add(6);
+    two.add(7);
+    two.add(8);
+
+    AsonArray<List<Integer>> array = new AsonArray<List<Integer>>().add(one, two);
+
+    one = array.getList(0, Integer.class);
+    assertNotNull(one);
+    assertEquals(1, one.get(0).intValue());
+    assertEquals(2, one.get(1).intValue());
+    assertEquals(3, one.get(2).intValue());
+    assertEquals(4, one.get(3).intValue());
+
+    two = array.getList(1, Integer.class);
+    assertNotNull(two);
+    assertEquals(5, two.get(0).intValue());
+    assertEquals(6, two.get(1).intValue());
+    assertEquals(7, two.get(2).intValue());
+    assertEquals(8, two.get(3).intValue());
   }
 }
