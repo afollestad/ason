@@ -238,8 +238,7 @@ class AsonSerializer {
         Array.set(newArray, i, item);
       } else if (itemType.isArray()) {
         AsonArray subArray = (AsonArray) item;
-        Class<?> arrayComponent = itemType.getComponentType();
-        Array.set(newArray, i, deserializeArray(subArray, arrayComponent));
+        Array.set(newArray, i, deserializeArray(subArray, component));
       } else if (isList(itemType)) {
         AsonArray subArray = (AsonArray) item;
         if (subArray.isEmpty()) {

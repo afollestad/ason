@@ -1,5 +1,6 @@
 package com.afollestad.ason;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -547,6 +548,17 @@ public class AsonSerializeTest {
     assertNotNull(array);
     assertEquals('\0', array[0]);
     assertEquals('\0', array[1]);
+  }
+
+  @Test
+  public void test_deserialize_array_of_arrays() {
+    Integer[] one = new Integer[] {1, 2, 3, 4};
+    Integer[] two = new Integer[] {5, 6, 7, 8};
+    AsonArray<Integer[]> jsonArray = new AsonArray<Integer[]>().add(one, two);
+    Integer[][] matrix = AsonSerializer.get().deserializeArray(jsonArray, Integer[][].class);
+    assertNotNull(matrix);
+    assertArrayEquals(one, matrix[0]);
+    assertArrayEquals(two, matrix[1]);
   }
 
   //
