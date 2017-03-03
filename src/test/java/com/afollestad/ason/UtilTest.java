@@ -20,11 +20,14 @@ import java.util.List;
 import org.json.JSONObject;
 import org.junit.Test;
 
-/** @author Aidan Follestad (afollestad) */
+/**
+ * @author Aidan Follestad (afollestad)
+ */
 @SuppressWarnings("unused")
 public class UtilTest {
 
-  @AsonIgnore Field ignoreYes1;
+  @AsonIgnore
+  Field ignoreYes1;
   Field $jacocoData;
   Field ignoreNo2;
 
@@ -154,14 +157,16 @@ public class UtilTest {
     private String hiddenField;
 
     @SuppressWarnings("unused")
-    public DefaultCtorClass() {}
+    public DefaultCtorClass() {
+    }
   }
 
   @SuppressWarnings("unused")
   static class NoDefaultCtorClass {
 
     @SuppressWarnings("unused")
-    public NoDefaultCtorClass(String name) {}
+    public NoDefaultCtorClass(String name) {
+    }
   }
 
   @SuppressWarnings("unused")

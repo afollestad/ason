@@ -1,8 +1,11 @@
 package com.afollestad.ason;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class AsonPrimitivesTest {
 
@@ -12,7 +15,7 @@ public class AsonPrimitivesTest {
 
   @Test
   public void short_test() {
-    AsonArray<Short> result = Ason.serializeArray(new short[] {1, 2, 3, 4});
+    AsonArray<Short> result = Ason.serializeArray(new short[]{1, 2, 3, 4});
     String output = result.toString();
     assertEquals("[1,2,3,4]", output);
 
@@ -25,7 +28,7 @@ public class AsonPrimitivesTest {
 
   @Test
   public void int_test() {
-    AsonArray<Integer> result = Ason.serializeArray(new int[] {1, 2, 3, 4});
+    AsonArray<Integer> result = Ason.serializeArray(new int[]{1, 2, 3, 4});
     String output = result.toString();
     assertEquals("[1,2,3,4]", output);
 
@@ -38,7 +41,7 @@ public class AsonPrimitivesTest {
 
   @Test
   public void long_test() {
-    AsonArray<Long> result = Ason.serializeArray(new long[] {1L, 2L, 3L, 4L});
+    AsonArray<Long> result = Ason.serializeArray(new long[]{1L, 2L, 3L, 4L});
     String output = result.toString();
     assertEquals("[1,2,3,4]", output);
 
@@ -51,7 +54,7 @@ public class AsonPrimitivesTest {
 
   @Test
   public void float_test() {
-    AsonArray<Float> result = Ason.serializeArray(new float[] {1f, 2f, 3f, 4f});
+    AsonArray<Float> result = Ason.serializeArray(new float[]{1f, 2f, 3f, 4f});
     String output = result.toString();
     assertEquals("[1,2,3,4]", output);
 
@@ -64,7 +67,7 @@ public class AsonPrimitivesTest {
 
   @Test
   public void double_test() {
-    AsonArray<Double> result = Ason.serializeArray(new double[] {1d, 2d, 3d, 4d});
+    AsonArray<Double> result = Ason.serializeArray(new double[]{1d, 2d, 3d, 4d});
     String output = result.toString();
     assertEquals("[1,2,3,4]", output);
 
@@ -77,7 +80,7 @@ public class AsonPrimitivesTest {
 
   @Test
   public void char_test() {
-    AsonArray<Character> result = Ason.serializeArray(new char[] {'a', 'b', 'c', 'd'});
+    AsonArray<Character> result = Ason.serializeArray(new char[]{'a', 'b', 'c', 'd'});
     String output = result.toString();
     assertEquals("[\"a\",\"b\",\"c\",\"d\"]", output);
 
@@ -90,7 +93,7 @@ public class AsonPrimitivesTest {
 
   @Test
   public void byte_test() {
-    AsonArray<Byte> result = Ason.serializeArray(new byte[] {1, 2, 3, 4});
+    AsonArray<Byte> result = Ason.serializeArray(new byte[]{1, 2, 3, 4});
     String output = result.toString();
     assertEquals("[1,2,3,4]", output);
 
@@ -103,7 +106,7 @@ public class AsonPrimitivesTest {
 
   @Test
   public void boolean_test() {
-    AsonArray<Boolean> result = Ason.serializeArray(new boolean[] {true, false, true, false});
+    AsonArray<Boolean> result = Ason.serializeArray(new boolean[]{true, false, true, false});
     String output = result.toString();
     assertEquals("[true,false,true,false]", output);
 

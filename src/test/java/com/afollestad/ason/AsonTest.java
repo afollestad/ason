@@ -1,14 +1,18 @@
 package com.afollestad.ason;
 
-import org.json.JSONObject;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
+import org.json.JSONObject;
+import org.junit.Test;
 
 public class AsonTest {
 
@@ -74,7 +78,7 @@ public class AsonTest {
             .put("_id", 3)
             .put("name", "Aidan")
             .put("age", 21)
-            .put("array", (Object) new int[] {1, 2, 3, 4})
+            .put("array", (Object) new int[]{1, 2, 3, 4})
             .put("list", list);
     String output =
         "{\"array\":[1,2,3,4],\"name\":\"Aidan\"," + "\"_id\":3,\"list\":[1,2],\"age\":21}";

@@ -1,6 +1,8 @@
 package com.afollestad.ason;
 
-/** @author Aidan Follestad (afollestad) */
+/**
+ * @author Aidan Follestad (afollestad)
+ */
 public class InvalidJsonException extends IllegalArgumentException {
 
   InvalidJsonException(String json, Exception inner) {

@@ -1,19 +1,24 @@
 package com.afollestad.ason;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class AsonPathTest {
 
-  @Test public void test_split_path_no_components() {
+  @Test
+  public void test_split_path_no_components() {
     String[] result = Util.splitPath("Hello!");
     assertEquals(1, result.length);
   }
 
-  @Test public void builder_test() {
+  @Test
+  public void builder_test() {
     Ason ason = new Ason()
         .put("person._id", 3)
         .put("person.name", "Aidan")
@@ -27,7 +32,8 @@ public class AsonPathTest {
     assertEquals(output, ason.toString());
   }
 
-  @Test public void builder_index_test_one() {
+  @Test
+  public void builder_index_test_one() {
     Ason ason = new Ason()
         .put("_id", 3)
         .put("name", "Aidan")
@@ -39,7 +45,8 @@ public class AsonPathTest {
         "\"name\":\"Aidan\",\"_id\":3}", ason.toString());
   }
 
-  @Test public void builder_index_test_two() {
+  @Test
+  public void builder_index_test_two() {
     Ason ason = new Ason()
         .put("_id", 3)
         .put("name", "Aidan")
@@ -56,7 +63,8 @@ public class AsonPathTest {
         "\"name\":\"Aidan\",\"_id\":3}", ason.toString());
   }
 
-  @Test public void builder_index_test_three() {
+  @Test
+  public void builder_index_test_three() {
     Ason ason = new Ason()
         .put("_id", 1)
         .put("people.$0.name", "Aidan")
@@ -72,7 +80,8 @@ public class AsonPathTest {
         "}", ason.toString());
   }
 
-  @Test public void builder_index_test_four() {
+  @Test
+  public void builder_index_test_four() {
     Ason ason = new Ason()
         .put("_id", 1)
         .put("people.$0.name", "Aidan")
@@ -90,21 +99,24 @@ public class AsonPathTest {
         "\"id\":1}]}", ason.toString());
   }
 
-  @Test public void builder_index_test_five() {
+  @Test
+  public void builder_index_test_five() {
     Ason ason = new Ason()
         .put("_id", 1)
         .put("props.$0", 1, 2, 3, 4);
     assertEquals("{\"_id\":1,\"props\":[[1,2,3,4]]}", ason.toString());
   }
 
-  @Test public void builder_index_test_six() {
+  @Test
+  public void builder_index_test_six() {
     Ason ason = new Ason()
         .put("_id", 1)
         .put("props.$0.$0", 1, 2, 3, 4);
     assertEquals("{\"_id\":1,\"props\":[[[1,2,3,4]]]}", ason.toString());
   }
 
-  @Test public void from_string_test() {
+  @Test
+  public void from_string_test() {
     String input = "{\"person\":{\"name\":\"Aidan\",\"_id\":3,\"age\":21}}";
     Ason ason = new Ason(input);
 
@@ -114,11 +126,15 @@ public class AsonPathTest {
     assertTrue(ason.equal("person.age", 21));
   }
 
-  @Test public void anon_fields_test() {
+  @Test
+  public void anon_fields_test() {
     Ason ason = new Ason() {
-      @AsonName(name = "person._id") int id = 3;
-      @AsonName(name = "person.name") String name = "Aidan";
-      @AsonName(name = "person.age") int age = 21;
+      @AsonName(name = "person._id")
+      int id = 3;
+      @AsonName(name = "person.name")
+      String name = "Aidan";
+      @AsonName(name = "person.age")
+      int age = 21;
     };
 
     assertEquals(ason.size(), 1);
@@ -130,7 +146,8 @@ public class AsonPathTest {
     assertEquals(output, ason.toString());
   }
 
-  @Test public void array_get_path_test() {
+  @Test
+  public void array_get_path_test() {
     String input = "[{\"body\":\"Hello, world\",\"sender\":{\"name\":\"Aidan\",\"id\":2}}," +
         "{\"body\":\"Hello, world\",\"sender\":{\"name\":\"Waverly\",\"id\":1}}," +
         "{\"body\":\"Hello, world\",\"sender\":{\"name\":\"Jeff\",\"id\":3}}]";
@@ -140,13 +157,15 @@ public class AsonPathTest {
     assertEquals(3, array.get(2, "sender.id"));
   }
 
-  @Test public void test_escape_period() {
+  @Test
+  public void test_escape_period() {
     String input = "{\"files\":{\"test.txt\":\"Hello, world!\"}}";
     Ason object = new Ason(input);
     assertEquals("Hello, world!", object.get("files.test\\.txt"));
   }
 
-  @Test public void test_index_notation() {
+  @Test
+  public void test_index_notation() {
     String input = "{\"group_id\":1,\"title\":\"Hello, world!\"," +
         "\"participants\":[{\"name\":\"Aidan\",\"id\":2}," +
         "{\"name\":\"Waverly\",\"id\":1}]}";
@@ -156,13 +175,15 @@ public class AsonPathTest {
     assertEquals(2, object.get("participants.$0.id"));
   }
 
-  @Test public void test_escape_dollarsign() {
+  @Test
+  public void test_escape_dollarsign() {
     String input = "{\"participants\":{\"$1\":{\"name\":\"Waverly\"}}}";
     Ason object = new Ason(input);
     assertEquals("Waverly", object.get("participants.\\$1.name"));
   }
 
-  @Test public void test_remove_dot_notation() {
+  @Test
+  public void test_remove_dot_notation() {
     Ason ason = new Ason()
         .put("_id", 3)
         .put("name", "Aidan")
@@ -175,7 +196,8 @@ public class AsonPathTest {
         "\"spouse\":{\"name\":\"Waverly\"}}", ason.toString());
   }
 
-  @Test public void test_remove_index_notation() {
+  @Test
+  public void test_remove_index_notation() {
     String input = "{\"group_id\":1,\"title\":\"Hello, world!\"," +
         "\"participants\":[{\"name\":\"Aidan\",\"id\":2}," +
         "{\"name\":\"Waverly\",\"id\":1}]}";
@@ -188,7 +210,8 @@ public class AsonPathTest {
     assertEquals(participants.get(0).get("name"), "Waverly");
   }
 
-  @Test public void test_index_notation_add_array() {
+  @Test
+  public void test_index_notation_add_array() {
     Ason ason = new Ason()
         .put("person.props", 1, 2, 3, 4);
     ason.put("person.props.$4", 5);
@@ -196,7 +219,8 @@ public class AsonPathTest {
     assertEquals("{\"person\":{\"props\":[1,6,3,4,5]}}", ason.toString());
   }
 
-  @Test public void test_put_null_path() {
+  @Test
+  public void test_put_null_path() {
     Ason ason = new Ason()
         .putNull("test1")
         .putNull("test2.test3")
@@ -212,7 +236,8 @@ public class AsonPathTest {
         .getString("name"));
   }
 
-  @Test public void test_mid_path_null() {
+  @Test
+  public void test_mid_path_null() {
     Ason ason = new Ason()
         .put("person.name", "Aidan")
         .put("person.born", 1995)
@@ -221,7 +246,8 @@ public class AsonPathTest {
     assertNull(ason.get("person.spouse.spouse.age"));
   }
 
-  @Test public void test_index_notation_mid_null() {
+  @Test
+  public void test_index_notation_mid_null() {
     Ason ason = new Ason()
         .putNull("person.family")
         .putNull("person.props.$0")
@@ -234,7 +260,8 @@ public class AsonPathTest {
     assertNull(ason.get("person.props.$2"));
   }
 
-  @Test public void test_error_get_array_keyname() {
+  @Test
+  public void test_error_get_array_keyname() {
     AsonArray<String> array = new AsonArray<String>()
         .add("Aidan", "Waverly", "Natalie", "Jeff");
     Ason ason = new Ason()
@@ -247,7 +274,8 @@ public class AsonPathTest {
     }
   }
 
-  @Test public void test_index_notation_get_value() {
+  @Test
+  public void test_index_notation_get_value() {
     Ason one = new Ason()
         .put("id", 2)
         .put("name", "Aidan");
@@ -271,7 +299,8 @@ public class AsonPathTest {
     assertNull(parent.get("child1.array.$4.name.idk"));
   }
 
-  @Test public void test_path_on_primitive() {
+  @Test
+  public void test_path_on_primitive() {
     Ason ason = new Ason()
         .put("id", 2)
         .put("test.id", 3);
@@ -297,7 +326,8 @@ public class AsonPathTest {
     }
   }
 
-  @Test public void test_index_notation_on_parent_object() {
+  @Test
+  public void test_index_notation_on_parent_object() {
     Ason ason = new Ason()
         .put("person.name", "Aidan")
         .put("person.born", 1995);
@@ -308,7 +338,8 @@ public class AsonPathTest {
     }
   }
 
-  @Test public void test_put_path_existing_obj() {
+  @Test
+  public void test_put_path_existing_obj() {
     Ason ason = new Ason()
         .put("person.id", 1);
     ason.put("person.idk", 4);
