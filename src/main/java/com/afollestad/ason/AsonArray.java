@@ -15,7 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/** @author Aidan Follestad (afollestad) */
+/**
+ * @author Aidan Follestad (afollestad)
+ */
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
 public class AsonArray<T> implements Iterable<T> {
 
@@ -139,14 +141,7 @@ public class AsonArray<T> implements Iterable<T> {
             "Cannot get from an AsonArray using a "
                 + "path when array items are not objects (they're probably primitives).");
       }
-      if (value instanceof JSONObject) {
-        value = getPathValue((JSONObject) value, path, splitPath(path));
-      } else {
-        value = getPathValue(((Ason) value).toStockJson(), path, splitPath(path));
-      }
-      if (Util.isNull(value)) {
-        return null;
-      }
+      value = getPathValue((JSONObject) value, path, splitPath(path));
     }
 
     if (Util.isNull(value)) {
@@ -244,12 +239,7 @@ public class AsonArray<T> implements Iterable<T> {
               + arrayEntry.getClass().getName()
               + ").");
     }
-    JSONObject encloser;
-    if (arrayEntry instanceof JSONObject) {
-      encloser = (JSONObject) arrayEntry;
-    } else {
-      encloser = ((Ason) arrayEntry).toStockJson();
-    }
+    JSONObject encloser = ((Ason) arrayEntry).toStockJson();
     Object pathValue = getPathValue(encloser, path, splitPath(path));
     if (Util.isNull(pathValue)) {
       return Util.isNull(value);
