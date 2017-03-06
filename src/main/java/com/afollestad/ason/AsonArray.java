@@ -120,6 +120,9 @@ public class AsonArray<T> implements Iterable<T> {
     } else if (value instanceof JSONArray) {
       value = new AsonArray((JSONArray) value);
     }
+    if (isNull(value)) {
+      return null;
+    }
     return (T) value;
   }
 
