@@ -90,7 +90,7 @@ public class AsonArray<T> implements Iterable<T> {
     return this;
   }
 
-  public AsonArray<T> add(@Nullable Ason... objects) {
+  public AsonArray<T> addObjects(@Nullable Ason... objects) {
     if (objects != null) {
       for (Ason obj : objects) {
         putInternal(obj);
@@ -101,7 +101,7 @@ public class AsonArray<T> implements Iterable<T> {
     return this;
   }
 
-  public AsonArray<T> add(@Nullable AsonArray... arrays) {
+  public AsonArray<T> addArrays(@Nullable AsonArray... arrays) {
     if (arrays != null) {
       for (AsonArray ary : arrays) {
         putInternal(ary);
