@@ -293,7 +293,7 @@ public class Ason {
     return get(key, (Ason) null);
   }
 
-  public AsonArray getJsonArray(@NotNull String key) {
+  public <IT> AsonArray<IT> getJsonArray(@NotNull String key) {
     return get(key, (AsonArray) null);
   }
 
