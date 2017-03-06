@@ -15,9 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
 public class AsonArray<T> implements Iterable<T> {
 
@@ -85,6 +83,28 @@ public class AsonArray<T> implements Iterable<T> {
     if (objects != null) {
       for (T obj : objects) {
         putInternal(obj);
+      }
+    } else {
+      putInternal(JSONObject.NULL);
+    }
+    return this;
+  }
+
+  public AsonArray<T> add(@Nullable Ason... objects) {
+    if (objects != null) {
+      for (Ason obj : objects) {
+        putInternal(obj);
+      }
+    } else {
+      putInternal(JSONObject.NULL);
+    }
+    return this;
+  }
+
+  public AsonArray<T> add(@Nullable AsonArray... arrays) {
+    if (arrays != null) {
+      for (AsonArray ary : arrays) {
+        putInternal(ary);
       }
     } else {
       putInternal(JSONObject.NULL);
