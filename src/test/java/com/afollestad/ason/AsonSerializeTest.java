@@ -410,9 +410,9 @@ public class AsonSerializeTest {
     Ason ason = new Ason("{\"array\":[null,null,null]}");
     AsonArray array = ason.get("array");
     assertNotNull(array);
-    assertNotNull(array.get(0));
-    assertNotNull(array.get(1));
-    assertNotNull(array.get(2));
+    assertNull(array.get(0));
+    assertNull(array.get(1));
+    assertNull(array.get(2));
   }
 
   @Test
