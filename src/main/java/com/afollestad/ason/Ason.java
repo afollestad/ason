@@ -20,9 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 @SuppressWarnings({"WeakerAccess", "unused", "unchecked", "SameParameterValue"})
 public class Ason {
 
@@ -256,7 +254,8 @@ public class Ason {
   }
 
   public float getFloat(@NotNull String key, float defaultValue) {
-    return get(key, defaultValue);
+    double value = get(key, defaultValue);
+    return Double.valueOf(value).floatValue();
   }
 
   public double getDouble(@NotNull String key) {
