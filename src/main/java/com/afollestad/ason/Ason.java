@@ -254,7 +254,8 @@ public class Ason {
   }
 
   public float getFloat(@NotNull String key, float defaultValue) {
-    double value = get(key, defaultValue);
+    double defaultDouble = Float.valueOf(defaultValue).doubleValue();
+    double value = get(key, defaultDouble);
     return Double.valueOf(value).floatValue();
   }
 

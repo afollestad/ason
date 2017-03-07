@@ -1,5 +1,5 @@
 group 'com.afollestad'
-version '1.4.11'
+version '1.4.12'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -34,7 +34,7 @@ publish {
     userOrg = 'drummer-aidan'
     groupId = 'com.afollestad'
     artifactId = 'ason'
-    publishVersion = '1.4.11'
+    publishVersion = '1.4.12'
     website = 'https://github.com/afollestad/ason'
 }
 
