@@ -204,6 +204,9 @@ public class Ason {
     } else if (result instanceof JSONArray) {
       result = new AsonArray((JSONArray) result);
     }
+    if (result instanceof Float) {
+      result = Float.valueOf((float) result).doubleValue();
+    }
     return (T) result;
   }
 
@@ -254,8 +257,7 @@ public class Ason {
   }
 
   public float getFloat(@NotNull String key, float defaultValue) {
-    double defaultDouble = Float.valueOf(defaultValue).doubleValue();
-    double value = get(key, defaultDouble);
+    double value = getDouble(key, Float.valueOf(defaultValue).doubleValue());
     return Double.valueOf(value).floatValue();
   }
 

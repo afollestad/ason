@@ -169,17 +169,16 @@ public class AsonPrimitivesTest {
   @Test
   public void get_float_test() {
     Ason ason = new Ason().put("test", 1995.5f);
-    assertEquals(1995.5f, ason.get("test"));
     assertEquals(1995.5f, ason.getFloat("test"), 0f);
     assertEquals(1996f, ason.getFloat("test2", 1996f), 0f);
   }
 
   @Test
   public void get_double_test() {
-    Ason ason = new Ason().put("test", 1995d);
-    assertEquals(1995d, ason.get("test"));
-    assertEquals(1995d, ason.getDouble("test"), 0d);
-    assertEquals(1996d, ason.getDouble("test2", 1996d), 0d);
+    Ason ason = new Ason().put("test", 1995.2d);
+    assertEquals(1995.2d, ason.get("test"));
+    assertEquals(1995.2d, ason.getDouble("test"), 0d);
+    assertEquals(1996.9d, ason.getDouble("test2", 1996.9d), 0d);
   }
 
   @Test
