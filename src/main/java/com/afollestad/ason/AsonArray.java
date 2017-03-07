@@ -1,19 +1,16 @@
 package com.afollestad.ason;
 
-import static com.afollestad.ason.Util.getPathValue;
-import static com.afollestad.ason.Util.isList;
-import static com.afollestad.ason.Util.isNull;
-import static com.afollestad.ason.Util.isPrimitive;
-import static com.afollestad.ason.Util.splitPath;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import static com.afollestad.ason.Util.*;
 
 /** @author Aidan Follestad (afollestad) */
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
@@ -280,13 +277,10 @@ public class AsonArray<T> implements Iterable<T> {
 
   @NotNull
   public List<T> toList() {
-    List<T> list = new ArrayList<>(array.length());
-    for (int i = 0; i < array.length(); i++) {
-      Object val = array.opt(i);
-      if (Util.isNull(val)) {
-        val = null;
-      }
-      list.add((T) val);
+    List<T> list = new ArrayList<>(size());
+    for (int i = 0; i < size(); i++) {
+      T val = get(i);
+      list.add(val);
     }
     return list;
   }
