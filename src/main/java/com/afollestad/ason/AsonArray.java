@@ -1,18 +1,23 @@
 package com.afollestad.ason;
 
+import static com.afollestad.ason.Util.getPathValue;
+import static com.afollestad.ason.Util.isList;
+import static com.afollestad.ason.Util.isNull;
+import static com.afollestad.ason.Util.isPrimitive;
+import static com.afollestad.ason.Util.splitPath;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static com.afollestad.ason.Util.*;
-
-/** @author Aidan Follestad (afollestad) */
+/**
+ * @author Aidan Follestad (afollestad)
+ */
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
 public class AsonArray<T> implements Iterable<T> {
 
@@ -136,7 +141,7 @@ public class AsonArray<T> implements Iterable<T> {
   }
 
   @Nullable
-  public AsonArray getJsonArray(int index) {
+  public <IT> AsonArray<IT> getJsonArray(int index) {
     if (index < 0 || index > array.length() - 1) {
       throw new IndexOutOfBoundsException("Index " + index + " is out of bounds for this array!");
     }
@@ -144,7 +149,7 @@ public class AsonArray<T> implements Iterable<T> {
     if (Util.isNull(ary)) {
       return null;
     }
-    return new AsonArray(ary);
+    return new AsonArray<>(ary);
   }
 
   Object getInternal(int index, @Nullable String path) {
