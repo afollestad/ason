@@ -182,7 +182,7 @@ public class AsonArrayTest {
   @Test
   public void test_array_in_array_deserialize() {
     AsonArray<Integer[]> parent =
-        new AsonArray<Integer[]>().add(new Integer[]{1, 2, 3, 4}, new Integer[]{5, 6, 7, 8});
+        new AsonArray<Integer[]>().add(new Integer[] {1, 2, 3, 4}, new Integer[] {5, 6, 7, 8});
     assertEquals(2, parent.size());
 
     Integer[] arrayOne = parent.get(0, Integer[].class);

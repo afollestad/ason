@@ -3,9 +3,7 @@ package com.afollestad.ason;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 class Person {
 
   int id;
@@ -16,9 +14,8 @@ class Person {
 
   Person() {
     props =
-        new String[]{
-            "Hi", "Hey", "Hello", "What is up?", "How is it going?", "Yo", "Hello, world!",
-            "Goodbye"
+        new String[] {
+          "Hi", "Hey", "Hello", "What is up?", "How is it going?", "Yo", "Hello, world!", "Goodbye"
         };
     relationshipList = new ArrayList<>();
   }

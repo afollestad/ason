@@ -78,7 +78,7 @@ public class AsonTest {
             .put("_id", 3)
             .put("name", "Aidan")
             .put("age", 21)
-            .put("array", (Object) new int[]{1, 2, 3, 4})
+            .put("array", (Object) new int[] {1, 2, 3, 4})
             .put("list", list);
     String output =
         "{\"array\":[1,2,3,4],\"name\":\"Aidan\"," + "\"_id\":3,\"list\":[1,2],\"age\":21}";

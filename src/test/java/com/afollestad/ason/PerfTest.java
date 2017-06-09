@@ -8,9 +8,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.TreeMap;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 public class PerfTest {
 
   private static Gson gson;
@@ -75,8 +73,7 @@ public class PerfTest {
   }
 
   private static void gsonTest(int sampleSize) {
-    final Type arrayType = new TypeToken<Person[]>() {
-    }.getType();
+    final Type arrayType = new TypeToken<Person[]>() {}.getType();
 
     long start = System.currentTimeMillis();
     for (int i = 0; i <= sampleSize; i++) {

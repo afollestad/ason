@@ -12,9 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 class ClassCacheEntry<T> {
 
   private final Class<T> cls;

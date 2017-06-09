@@ -1,16 +1,13 @@
 package com.afollestad.ason;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 class Relationship {
 
   int id;
   String name;
   String relationship;
 
-  Relationship() {
-  }
+  Relationship() {}
 
   Relationship(int id, String name, String relationship) {
     this();

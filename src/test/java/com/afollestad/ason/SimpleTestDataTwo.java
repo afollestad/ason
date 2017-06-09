@@ -1,8 +1,4 @@
 package com.afollestad.ason;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
-class SimpleTestDataTwo {
-
-}
+/** @author Aidan Follestad (afollestad) */
+class SimpleTestDataTwo {}

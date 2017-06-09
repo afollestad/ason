@@ -15,9 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
 public class AsonArray<T> implements Iterable<T> {
 
