@@ -239,8 +239,11 @@ class Util {
   }
 
   static boolean shouldIgnore(Field field) {
-    return field.getName().startsWith("this$")
+    return field.isSynthetic() // synthetic fields
+        || field.getName().startsWith("this$")
         || field.getName().equals("$jacocoData") // used with Jacoco testing
+        || field.getName().equals("$change") // used by Instant run in Android Studio
+        || field.getName().equals("serialVersionUID")
         || field.getAnnotation(AsonIgnore.class) != null;
   }
 
