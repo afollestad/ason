@@ -242,8 +242,8 @@ class Util {
     return field.isSynthetic() // synthetic fields
         || field.getName().startsWith("this$")
         || field.getName().equals("$jacocoData") // used with Jacoco testing
-        || field.getName().equals("serialVersionUID") // used by Instant run
-        || field.getName().equals("$change")          // in Android Studio
+        || field.getName().equals("$change") // used by Instant run in Android Studio
+        || field.getName().equals("serialVersionUID")
         || field.getAnnotation(AsonIgnore.class) != null;
   }
 
