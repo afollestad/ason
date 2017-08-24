@@ -15,9 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 public class AsonSerializeTest {
 
   //
@@ -40,7 +38,7 @@ public class AsonSerializeTest {
 
   @Test
   public void test_serialize_array() {
-    Person[] people = new Person[]{new Person(1, "Aidan", 22), new Person(2, "Nina", 22)};
+    Person[] people = new Person[] {new Person(1, "Aidan", 22), new Person(2, "Nina", 22)};
     AsonArray<Person> json = Ason.serializeArray(people);
 
     Ason one = json.getJsonObject(0);
@@ -97,7 +95,7 @@ public class AsonSerializeTest {
 
   @Test
   public void test_primitive_serialize() {
-    int[] ids = new int[]{1, 2, 3, 4};
+    int[] ids = new int[] {1, 2, 3, 4};
     AsonArray<Integer> array = Ason.serializeArray(ids);
     assertEquals("[1,2,3,4]", array.toString());
   }
@@ -105,7 +103,7 @@ public class AsonSerializeTest {
   @Test
   public void test_serialize_with_array() {
     Person2 person = new Person2(1);
-    person.family = new Person2[]{new Person2(2), new Person2(3), new Person2(4)};
+    person.family = new Person2[] {new Person2(2), new Person2(3), new Person2(4)};
 
     Ason ason = Ason.serialize(person);
     AsonArray<Person3> array = ason.get("family");
@@ -308,7 +306,7 @@ public class AsonSerializeTest {
   @Test
   public void test_serialize_array_list_wrong_method() {
     try {
-      Ason.serialize(new int[]{1, 2, 3, 4});
+      Ason.serialize(new int[] {1, 2, 3, 4});
       assertFalse("No exception thrown when using serialize() on array!", false);
     } catch (IllegalArgumentException ignored) {
     }
@@ -327,7 +325,7 @@ public class AsonSerializeTest {
 
   @Test
   public void test_serialize_empty_array() {
-    AsonArray array = Ason.serializeArray(new int[]{});
+    AsonArray array = Ason.serializeArray(new int[] {});
     assertTrue(array.isEmpty());
   }
 
@@ -484,7 +482,7 @@ public class AsonSerializeTest {
   @Test
   public void test_issue10_serialize() {
     Issue10Example data = new Issue10Example();
-    data.item = new Object[]{1, 2, 3, 4};
+    data.item = new Object[] {1, 2, 3, 4};
 
     Ason ason = Ason.serialize(data);
     AsonArray<Integer> array = ason.get("item");
@@ -500,7 +498,7 @@ public class AsonSerializeTest {
     Ason ason = new Ason("{\"item\": [1, 2, 3, 4]}");
     Issue10Example result = Ason.deserialize(ason, Issue10Example.class);
     Object[] array = (Object[]) result.item;
-    assertTrue(Arrays.equals(new Integer[]{1, 2, 3, 4}, array));
+    assertTrue(Arrays.equals(new Integer[] {1, 2, 3, 4}, array));
   }
 
   @Test
@@ -541,8 +539,8 @@ public class AsonSerializeTest {
 
   @Test
   public void test_deserialize_array_of_arrays() {
-    Integer[] one = new Integer[]{1, 2, 3, 4};
-    Integer[] two = new Integer[]{5, 6, 7, 8};
+    Integer[] one = new Integer[] {1, 2, 3, 4};
+    Integer[] two = new Integer[] {5, 6, 7, 8};
     AsonArray<Integer[]> jsonArray = new AsonArray<Integer[]>().add(one, two);
     Integer[][] matrix = AsonSerializer.get().deserializeArray(jsonArray, Integer[][].class);
     assertNotNull(matrix);
@@ -606,8 +604,9 @@ public class AsonSerializeTest {
 
   @Test
   public void test_recursive_deserialize() {
-    Ason ason = new Ason(
-        "{\"name\":\"Aidan\",\"power\":\"Flight\",\"_id\":2,\"age\":22,\"spouse\":{\"name\":\"Nina\",\"_id\":6,\"age\":22,\"spouse\":null}}");
+    Ason ason =
+        new Ason(
+            "{\"name\":\"Aidan\",\"power\":\"Flight\",\"_id\":2,\"age\":22,\"spouse\":{\"name\":\"Nina\",\"_id\":6,\"age\":22,\"spouse\":null}}");
     Superhero person = ason.deserialize(Superhero.class, true);
     assertEquals(person.name, "Aidan");
     assertEquals(person.id, 2);
@@ -624,11 +623,9 @@ public class AsonSerializeTest {
     String name;
     int age;
     Person spouse;
-    @AsonIgnore
-    String gibberish = "Hello, world!";
+    @AsonIgnore String gibberish = "Hello, world!";
 
-    Person() {
-    }
+    Person() {}
 
     Person(int id, String name, int age) {
       this.id = id;
@@ -648,8 +645,7 @@ public class AsonSerializeTest {
 
     Person2[] family;
 
-    Person2() {
-    }
+    Person2() {}
 
     Person2(int id) {
       this();
@@ -679,8 +675,7 @@ public class AsonSerializeTest {
 
     String power;
 
-    Superhero() {
-    }
+    Superhero() {}
 
     Superhero(int id, String name, int age, String power) {
       super(id, name, age);

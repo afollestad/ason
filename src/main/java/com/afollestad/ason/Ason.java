@@ -20,9 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 @SuppressWarnings({"WeakerAccess", "unused", "unchecked", "SameParameterValue"})
 public class Ason {
 
@@ -109,8 +107,8 @@ public class Ason {
     return deserialize(json, cls, false);
   }
 
-  public static <T> T deserialize(@Nullable AsonArray json, @NonNls Class<T> cls,
-      boolean recursive) {
+  public static <T> T deserialize(
+      @Nullable AsonArray json, @NonNls Class<T> cls, boolean recursive) {
     return AsonSerializer.get().deserializeArray(json, cls, recursive);
   }
 
@@ -118,8 +116,8 @@ public class Ason {
     return deserializeList(json, cls, false);
   }
 
-  public static <T> List<T> deserializeList(@Nullable String json, @NotNull Class<T> cls,
-      boolean recursive) {
+  public static <T> List<T> deserializeList(
+      @Nullable String json, @NotNull Class<T> cls, boolean recursive) {
     AsonArray array = new AsonArray(json);
     return AsonSerializer.get().deserializeList(array, cls, recursive);
   }
@@ -128,8 +126,8 @@ public class Ason {
     return deserializeList(json, cls, false);
   }
 
-  public static <T> List<T> deserializeList(@Nullable AsonArray json, @NotNull Class<T> cls,
-      boolean recursive) {
+  public static <T> List<T> deserializeList(
+      @Nullable AsonArray json, @NotNull Class<T> cls, boolean recursive) {
     return AsonSerializer.get().deserializeList(json, cls, recursive);
   }
 
