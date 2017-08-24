@@ -1,5 +1,5 @@
 group 'com.afollestad'
-version '1.4.13'
+version '1.4.14'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -15,7 +15,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.novoda:bintray-release:+'
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.4.0"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.4.1"
     }
 }
 
@@ -35,7 +35,7 @@ publish {
     userOrg = 'drummer-aidan'
     groupId = 'com.afollestad'
     artifactId = 'ason'
-    publishVersion = '1.4.13'
+    publishVersion = '1.4.14'
     website = 'https://github.com/afollestad/ason'
 }
 

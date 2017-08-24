@@ -1,10 +1,10 @@
 package com.afollestad.ason;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +20,14 @@ public class AsonArrayTest {
     array =
         new AsonArray<Ason>()
             .add(new Ason().put("_id", 1).put("name", "Aidan").put("attrs.priority", 2))
-            .add(new Ason().put("_id", 2).put("name", "Waverly").put("attrs.priority", 1));
+            .add(new Ason().put("_id", 2).put("name", "Nina").put("attrs.priority", 1));
   }
 
   @Test
   public void invalid_json_test() {
     try {
       new AsonArray<>("Hello, world!");
-      assertFalse("No exception thrown for invalid JSON!", false);
+      fail("No exception thrown for invalid JSON!");
     } catch (InvalidJsonException ignored) {
     }
   }
@@ -41,39 +41,31 @@ public class AsonArrayTest {
   @Test
   public void out_of_bounds_test() {
     AsonArray<Integer> array = new AsonArray<Integer>().add(1, 2, 3, 4);
-    try {
-      array.get(9);
-      assertFalse("No exception was thrown for an out of bounds index!", false);
-    } catch (IndexOutOfBoundsException ignored) {
-    }
+    assertNull(array.get(9));
     try {
       array.getJsonArray(9);
-      assertFalse("No exception was thrown for an out of bounds index!", false);
+      fail("No exception was thrown for an out of bounds index!");
     } catch (IndexOutOfBoundsException ignored) {
     }
     try {
       array.getJsonObject(9);
-      assertFalse("No exception was thrown for an out of bounds index!", false);
+      fail("No exception was thrown for an out of bounds index!");
     } catch (IndexOutOfBoundsException ignored) {
     }
-    try {
-      array.equal(9, 21);
-      assertFalse("No exception was thrown for an out of bounds index!", false);
-    } catch (IndexOutOfBoundsException ignored) {
-    }
+    assertTrue(array.equal(9, null));
     try {
       array.remove(20);
-      assertFalse("No exception was thrown for an out of bounds index!", false);
+      fail("No exception was thrown for an out of bounds index!");
     } catch (IndexOutOfBoundsException ignored) {
     }
     try {
       array.equal(21, "name", "Aidan");
-      assertFalse("No exception was thrown for an out of bounds index!", false);
+      fail("No exception was thrown for an out of bounds index!");
     } catch (IndexOutOfBoundsException ignored) {
     }
     try {
       array.get(21, "name", Integer.class);
-      assertFalse("No exception was thrown for an out of bounds index!", false);
+      fail("No exception was thrown for an out of bounds index!");
     } catch (IndexOutOfBoundsException ignored) {
     }
   }
@@ -118,7 +110,7 @@ public class AsonArrayTest {
   public void builder_test() {
     String expected =
         "[{\"name\":\"Aidan\",\"_id\":1,\"attrs\":{\"priority\":2}},"
-            + "{\"name\":\"Waverly\",\"_id\":2,\"attrs\":{\"priority\":1}}]";
+            + "{\"name\":\"Nina\",\"_id\":2,\"attrs\":{\"priority\":1}}]";
     assertEquals(array.toString(), expected);
   }
 
@@ -130,7 +122,7 @@ public class AsonArrayTest {
     assertTrue(array.equal(0, "_id", 1));
     assertTrue(array.equal(0, "attrs.priority", 2));
 
-    assertTrue(array.equal(1, "name", "Waverly"));
+    assertTrue(array.equal(1, "name", "Nina"));
     assertTrue(array.equal(1, "_id", 2));
     assertTrue(array.equal(1, "attrs.priority", 1));
   }
@@ -138,7 +130,7 @@ public class AsonArrayTest {
   @Test
   public void remove_test() {
     Ason one = new Ason().put("_id", 1).put("name", "Aidan").put("attrs.priority", 2);
-    Ason two = new Ason().put("_id", 2).put("name", "Waverly").put("attrs.priority", 1);
+    Ason two = new Ason().put("_id", 2).put("name", "Nina").put("attrs.priority", 1);
     array = new AsonArray<Ason>().add(one).add(two);
     array.remove(0);
     assertEquals(two, array.get(0));
@@ -182,7 +174,7 @@ public class AsonArrayTest {
   @Test
   public void test_array_in_array_deserialize() {
     AsonArray<Integer[]> parent =
-        new AsonArray<Integer[]>().add(new Integer[] {1, 2, 3, 4}, new Integer[] {5, 6, 7, 8});
+        new AsonArray<Integer[]>().add(new Integer[]{1, 2, 3, 4}, new Integer[]{5, 6, 7, 8});
     assertEquals(2, parent.size());
 
     Integer[] arrayOne = parent.get(0, Integer[].class);
@@ -214,10 +206,10 @@ public class AsonArrayTest {
   @Test
   public void deep_equal_test() {
     Ason one = new Ason().put("name", "Aidan").put("born", 1995);
-    Ason two = new Ason().put("name", "Waverly").put("born", 1997);
+    Ason two = new Ason().put("name", "Nina").put("born", 1997);
     AsonArray<Ason> array = new AsonArray<Ason>().add(one, two).addNull();
     assertTrue(array.equal(0, "name", "Aidan"));
-    assertTrue(array.equal(1, "name", "Waverly"));
+    assertTrue(array.equal(1, "name", "Nina"));
     assertTrue(array.equal(0, "idk", null));
     assertTrue(array.equal(2, "idk", null));
   }
@@ -227,8 +219,7 @@ public class AsonArrayTest {
     AsonArray<Integer> idk = new AsonArray<Integer>().add(1, 2, 3, 4);
     try {
       idk.equal(0, "name", "Aidan");
-      assertFalse(
-          "An exception was not thrown when using path equality on a primitive array!", false);
+      fail("An exception was not thrown when using path equality on a primitive array!");
     } catch (InvalidPathException ignored) {
     }
   }
@@ -239,7 +230,7 @@ public class AsonArrayTest {
     AsonArray array = new AsonArray().add(1, 2, 3, 4);
     try {
       array.get(2, "idk.name", SimpleTestDataOne.class);
-      assertFalse("No exception was thrown!", false);
+      fail("No exception was thrown!");
     } catch (IllegalStateException ignored) {
     }
   }
@@ -309,7 +300,7 @@ public class AsonArrayTest {
     AsonArray<Integer> array = new AsonArray<Integer>().add(1, 2, 3, 4);
     try {
       array.getList(0, Integer.class);
-      assertFalse("No exception was thrown!", false);
+      fail("No exception was thrown!");
     } catch (IllegalStateException ignored) {
     }
   }
@@ -319,7 +310,7 @@ public class AsonArrayTest {
     AsonArray<Integer> array = new AsonArray<Integer>().add(1, 2, 3, 4);
     try {
       array.getList(0, List.class);
-      assertFalse("No exception was thrown!", false);
+      fail("No exception was thrown!");
     } catch (IllegalArgumentException ignored) {
     }
   }
@@ -329,7 +320,7 @@ public class AsonArrayTest {
     AsonArray<List> array = new AsonArray<List>().addNull().addNull();
     try {
       array.get(0, List.class);
-      assertFalse("No exception was thrown!", false);
+      fail("No exception was thrown!");
     } catch (IllegalStateException ignored) {
     }
   }

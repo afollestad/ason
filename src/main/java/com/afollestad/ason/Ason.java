@@ -20,7 +20,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/** @author Aidan Follestad (afollestad) */
+/**
+ * @author Aidan Follestad (afollestad)
+ */
 @SuppressWarnings({"WeakerAccess", "unused", "unchecked", "SameParameterValue"})
 public class Ason {
 
@@ -58,49 +60,83 @@ public class Ason {
   }
 
   public static Ason serialize(@Nullable Object object) {
-    return AsonSerializer.get().serialize(object);
+    return serialize(object, false);
+  }
+
+  public static Ason serialize(@Nullable Object object, boolean recursive) {
+    return AsonSerializer.get().serialize(object, recursive);
   }
 
   public static <T> AsonArray<T> serializeArray(@Nullable Object object) {
-    return AsonSerializer.get().serializeArray(object);
+    return serializeArray(object, false);
+  }
+
+  public static <T> AsonArray<T> serializeArray(@Nullable Object object, boolean recursive) {
+    return AsonSerializer.get().serializeArray(object, recursive);
   }
 
   public static <T> AsonArray<T> serializeList(@Nullable List<T> object) {
-    return AsonSerializer.get().serializeList(object);
+    return serializeList(object, false);
+  }
+
+  public static <T> AsonArray<T> serializeList(@Nullable List<T> object, boolean recursive) {
+    return AsonSerializer.get().serializeList(object, recursive);
   }
 
   public static <T> T deserialize(@Nullable String json, @NotNull Class<T> cls) {
+    return deserialize(json, cls, false);
+  }
+
+  public static <T> T deserialize(@Nullable String json, @NotNull Class<T> cls, boolean recursive) {
     if (isJsonArray(json)) {
       AsonArray ason = new AsonArray(json);
-      return AsonSerializer.get().deserializeArray(ason, cls);
+      return AsonSerializer.get().deserializeArray(ason, cls, recursive);
     } else {
       Ason ason = new Ason(json);
-      return AsonSerializer.get().deserialize(ason, cls);
+      return AsonSerializer.get().deserialize(ason, cls, recursive);
     }
   }
 
   public static <T> T deserialize(@Nullable Ason json, @NonNls Class<T> cls) {
-    return AsonSerializer.get().deserialize(json, cls);
+    return deserialize(json, cls, false);
+  }
+
+  public static <T> T deserialize(@Nullable Ason json, @NonNls Class<T> cls, boolean recursive) {
+    return AsonSerializer.get().deserialize(json, cls, recursive);
   }
 
   public static <T> T deserialize(@Nullable AsonArray json, @NonNls Class<T> cls) {
-    return AsonSerializer.get().deserializeArray(json, cls);
+    return deserialize(json, cls, false);
+  }
+
+  public static <T> T deserialize(@Nullable AsonArray json, @NonNls Class<T> cls,
+      boolean recursive) {
+    return AsonSerializer.get().deserializeArray(json, cls, recursive);
   }
 
   public static <T> List<T> deserializeList(@Nullable String json, @NotNull Class<T> cls) {
+    return deserializeList(json, cls, false);
+  }
+
+  public static <T> List<T> deserializeList(@Nullable String json, @NotNull Class<T> cls,
+      boolean recursive) {
     AsonArray array = new AsonArray(json);
-    return AsonSerializer.get().deserializeList(array, cls);
+    return AsonSerializer.get().deserializeList(array, cls, recursive);
   }
 
   public static <T> List<T> deserializeList(@Nullable AsonArray json, @NotNull Class<T> cls) {
-    return AsonSerializer.get().deserializeList(json, cls);
+    return deserializeList(json, cls, false);
   }
 
-  private Ason putInternal(JSONArray intoArray, JSONObject intoObject, String key, Object value) {
+  public static <T> List<T> deserializeList(@Nullable AsonArray json, @NotNull Class<T> cls,
+      boolean recursive) {
+    return AsonSerializer.get().deserializeList(json, cls, recursive);
+  }
+
+  private void putInternal(JSONArray intoArray, JSONObject intoObject, String key, Object value) {
     invalidateLoadedFields();
     if (value == null || JSONObject.NULL.equals(value) || JSONObject.NULL == value) {
       json.put(key, JSONObject.NULL);
-      return this;
     } else if (isPrimitive(value) || value instanceof JSONObject || value instanceof JSONArray) {
       if (value instanceof Byte) {
         value = ((Byte) value).intValue();
@@ -123,7 +159,6 @@ public class Ason {
     } else {
       putInternal(intoArray, intoObject, key, serializer.serialize(value));
     }
-    return this;
   }
 
   public Ason putNull(@NotNull String key) {
@@ -441,5 +476,9 @@ public class Ason {
 
   public <T> T deserialize(@NonNls Class<T> cls) {
     return deserialize(this, cls);
+  }
+
+  public <T> T deserialize(@NonNls Class<T> cls, boolean recursive) {
+    return deserialize(this, cls, recursive);
   }
 }

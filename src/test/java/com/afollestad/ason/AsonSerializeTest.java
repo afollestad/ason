@@ -15,87 +15,89 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 
-/** @author Aidan Follestad (afollestad) */
+/**
+ * @author Aidan Follestad (afollestad)
+ */
 public class AsonSerializeTest {
-
-  @Test
-  public void test_serialize() {
-    Person person = new Person(2, "Aidan", 21);
-    person.spouse = new Person(6, "Waverly", 19);
-    Ason ason = Ason.serialize(person);
-    assertEquals("Aidan", ason.get("name"));
-    assertEquals(2, ason.get("_id"));
-    assertEquals(21, ason.get("age"));
-    Ason spouse = ason.get("spouse");
-    assertEquals("Waverly", spouse.get("name"));
-    assertEquals(6, spouse.get("_id"));
-    assertEquals(19, spouse.get("age"));
-  }
-
-  @Test
-  public void test_serialize_array() {
-    Person[] people = new Person[] {new Person(1, "Aidan", 21), new Person(2, "Waverly", 19)};
-    AsonArray<Person> json = Ason.serializeArray(people);
-
-    Ason one = json.getJsonObject(0);
-    assertEquals("Aidan", one.get("name"));
-    assertEquals(1, one.get("_id"));
-    assertEquals(21, one.get("age"));
-
-    Ason two = json.getJsonObject(1);
-    assertEquals("Waverly", two.get("name"));
-    assertEquals(2, two.get("_id"));
-    assertEquals(19, two.get("age"));
-  }
-
-  @Test
-  public void test_serialize_list() {
-    List<Person> people = new ArrayList<>(2);
-    people.add(new Person(1, "Aidan", 21));
-    people.add(new Person(2, "Waverly", 19));
-    AsonArray<Person> json = Ason.serializeList(people);
-
-    Ason one = json.getJsonObject(0);
-    assertEquals("Aidan", one.get("name"));
-    assertEquals(1, one.get("_id"));
-    assertEquals(21, one.get("age"));
-
-    Ason two = json.getJsonObject(1);
-    assertEquals("Waverly", two.get("name"));
-    assertEquals(2, two.get("_id"));
-    assertEquals(19, two.get("age"));
-  }
 
   //
   ////// SERIALIZE
   //
 
   @Test
+  public void test_serialize() {
+    Person person = new Person(2, "Aidan", 22);
+    person.spouse = new Person(6, "Nina", 22);
+    Ason ason = Ason.serialize(person);
+    assertEquals("Aidan", ason.get("name"));
+    assertEquals(2, ason.get("_id"));
+    assertEquals(22, ason.get("age"));
+    Ason spouse = ason.get("spouse");
+    assertEquals("Nina", spouse.get("name"));
+    assertEquals(6, spouse.get("_id"));
+    assertEquals(22, spouse.get("age"));
+  }
+
+  @Test
+  public void test_serialize_array() {
+    Person[] people = new Person[]{new Person(1, "Aidan", 22), new Person(2, "Nina", 22)};
+    AsonArray<Person> json = Ason.serializeArray(people);
+
+    Ason one = json.getJsonObject(0);
+    assertEquals("Aidan", one.get("name"));
+    assertEquals(1, one.get("_id"));
+    assertEquals(22, one.get("age"));
+
+    Ason two = json.getJsonObject(1);
+    assertEquals("Nina", two.get("name"));
+    assertEquals(2, two.get("_id"));
+    assertEquals(22, two.get("age"));
+  }
+
+  @Test
+  public void test_serialize_list() {
+    List<Person> people = new ArrayList<>(2);
+    people.add(new Person(1, "Aidan", 22));
+    people.add(new Person(2, "Nina", 22));
+    AsonArray<Person> json = Ason.serializeList(people);
+
+    Ason one = json.getJsonObject(0);
+    assertEquals("Aidan", one.get("name"));
+    assertEquals(1, one.get("_id"));
+    assertEquals(22, one.get("age"));
+
+    Ason two = json.getJsonObject(1);
+    assertEquals("Nina", two.get("name"));
+    assertEquals(2, two.get("_id"));
+    assertEquals(22, two.get("age"));
+  }
+
+  @Test
   public void test_put_object_serialize() {
     Ason object = new Ason();
-    Person person = new Person(1, "Aidan", 21);
+    Person person = new Person(1, "Aidan", 22);
     object.put("person", person);
 
     assertEquals("Aidan", object.get("person.name"));
     assertEquals(1, object.get("person._id"));
-    assertEquals(21, object.get("person.age"));
+    assertEquals(22, object.get("person.age"));
   }
 
   @Test
   public void test_put_array_serialize() {
     AsonArray<Person> array = new AsonArray<>();
-    Person person = new Person(1, "Aidan", 21);
+    Person person = new Person(1, "Aidan", 22);
     array.add(person);
 
     Ason first = array.getJsonObject(0);
     assertEquals("Aidan", first.get("name"));
     assertEquals(1, first.get("_id"));
-    assertEquals(21, first.get("age"));
+    assertEquals(22, first.get("age"));
   }
 
   @Test
   public void test_primitive_serialize() {
-    int[] ids = new int[] {1, 2, 3, 4};
+    int[] ids = new int[]{1, 2, 3, 4};
     AsonArray<Integer> array = Ason.serializeArray(ids);
     assertEquals("[1,2,3,4]", array.toString());
   }
@@ -103,7 +105,7 @@ public class AsonSerializeTest {
   @Test
   public void test_serialize_with_array() {
     Person2 person = new Person2(1);
-    person.family = new Person2[] {new Person2(2), new Person2(3), new Person2(4)};
+    person.family = new Person2[]{new Person2(2), new Person2(3), new Person2(4)};
 
     Ason ason = Ason.serialize(person);
     AsonArray<Person3> array = ason.get("family");
@@ -125,53 +127,14 @@ public class AsonSerializeTest {
   }
 
   @Test
-  public void test_deserialize() {
-    String input =
-        "{\"name\":\"Aidan\",\"_id\":2,\"age\":21,"
-            + "\"spouse\":{\"name\":\"Waverly\",\"_id\":6,\"age\":19}}";
-    Ason ason = new Ason(input);
-    Person person = ason.deserialize(Person.class);
-    assertEquals(person.name, "Aidan");
-    assertEquals(person.id, 2);
-    assertEquals(person.age, 21);
-
-    assertEquals(person.spouse.name, "Waverly");
-    assertEquals(person.spouse.id, 6);
-    assertEquals(person.spouse.age, 19);
-  }
-
-  @Test
-  public void test_deserialize_array() {
-    String input =
-        "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},"
-            + "{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
-    AsonArray<Person> array = new AsonArray<>(input);
-    Person[] people = array.deserialize(Person[].class);
-
-    assertEquals(people[0].name, "Aidan");
-    assertEquals(people[0].id, 1);
-    assertEquals(people[0].age, 21);
-
-    assertEquals(people[1].name, "Waverly");
-    assertEquals(people[1].id, 2);
-    assertEquals(people[1].age, 19);
-  }
-
-  @Test
-  public void test_deserialize_list() {
-    String input =
-        "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},"
-            + "{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
-    AsonArray<Person> array = new AsonArray<>(input);
-    List<Person> people = array.deserializeList(Person.class);
-
-    assertEquals(people.get(0).name, "Aidan");
-    assertEquals(people.get(0).id, 1);
-    assertEquals(people.get(0).age, 21);
-
-    assertEquals(people.get(1).name, "Waverly");
-    assertEquals(people.get(1).id, 2);
-    assertEquals(people.get(1).age, 19);
+  public void test_recursive_serialize() {
+    Superhero person = new Superhero(2, "Aidan", 22, "Flight");
+    person.spouse = new Person(6, "Nina", 22);
+    Ason ason = Ason.serialize(person, true);
+    assertEquals("Aidan", ason.get("name"));
+    assertEquals(2, ason.get("_id"));
+    assertEquals(22, ason.get("age"));
+    assertEquals("Flight", ason.get("power"));
   }
 
   //
@@ -179,10 +142,58 @@ public class AsonSerializeTest {
   //
 
   @Test
+  public void test_deserialize() {
+    String input =
+        "{\"name\":\"Aidan\",\"_id\":2,\"age\":22,"
+            + "\"spouse\":{\"name\":\"Nina\",\"_id\":6,\"age\":22}}";
+    Ason ason = new Ason(input);
+    Person person = ason.deserialize(Person.class);
+    assertEquals(person.name, "Aidan");
+    assertEquals(person.id, 2);
+    assertEquals(person.age, 22);
+
+    assertEquals(person.spouse.name, "Nina");
+    assertEquals(person.spouse.id, 6);
+    assertEquals(person.spouse.age, 22);
+  }
+
+  @Test
+  public void test_deserialize_array() {
+    String input =
+        "[{\"name\":\"Aidan\",\"_id\":1,\"age\":22}," + "{\"name\":\"Nina\",\"_id\":2,\"age\":22}]";
+    AsonArray<Person> array = new AsonArray<>(input);
+    Person[] people = array.deserialize(Person[].class);
+
+    assertEquals(people[0].name, "Aidan");
+    assertEquals(people[0].id, 1);
+    assertEquals(people[0].age, 22);
+
+    assertEquals(people[1].name, "Nina");
+    assertEquals(people[1].id, 2);
+    assertEquals(people[1].age, 22);
+  }
+
+  @Test
+  public void test_deserialize_list() {
+    String input =
+        "[{\"name\":\"Aidan\",\"_id\":1,\"age\":22}," + "{\"name\":\"Nina\",\"_id\":2,\"age\":22}]";
+    AsonArray<Person> array = new AsonArray<>(input);
+    List<Person> people = array.deserializeList(Person.class);
+
+    assertEquals(people.get(0).name, "Aidan");
+    assertEquals(people.get(0).id, 1);
+    assertEquals(people.get(0).age, 22);
+
+    assertEquals(people.get(1).name, "Nina");
+    assertEquals(people.get(1).id, 2);
+    assertEquals(people.get(1).age, 22);
+  }
+
+  @Test
   public void test_deserialize_string_object() {
     String input =
-        "{\"name\":\"Aidan\",\"_id\":2,\"age\":21,"
-            + "\"spouse\":{\"name\":\"Waverly\",\"_id\":6,\"age\":19}}";
+        "{\"name\":\"Aidan\",\"_id\":2,\"age\":22,"
+            + "\"spouse\":{\"name\":\"Nina\",\"_id\":6,\"age\":22}}";
     Person object = Ason.deserialize(input, Person.class);
     assertNotNull(object);
   }
@@ -190,8 +201,7 @@ public class AsonSerializeTest {
   @Test
   public void test_deserialize_string_array() {
     String input =
-        "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},"
-            + "{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
+        "[{\"name\":\"Aidan\",\"_id\":1,\"age\":22}," + "{\"name\":\"Nina\",\"_id\":2,\"age\":22}]";
     Person[] object = Ason.deserialize(input, Person[].class);
     assertEquals(object.length, 2);
   }
@@ -199,30 +209,29 @@ public class AsonSerializeTest {
   @Test
   public void test_deserialize_string_list() {
     String input =
-        "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21},"
-            + "{\"name\":\"Waverly\",\"_id\":2,\"age\":19}]";
+        "[{\"name\":\"Aidan\",\"_id\":1,\"age\":22}," + "{\"name\":\"Nina\",\"_id\":2,\"age\":22}]";
     List<Person> object = Ason.deserializeList(input, Person.class);
     assertEquals(object.size(), 2);
   }
 
   @Test
   public void test_get_object_deserialize() {
-    String input = "{\"person\":{\"name\":\"Aidan\",\"_id\":1,\"age\":21}}";
+    String input = "{\"person\":{\"name\":\"Aidan\",\"_id\":1,\"age\":22}}";
     Ason ason = new Ason(input);
     Person person = ason.get("person", Person.class);
     assertEquals(person.name, "Aidan");
     assertEquals(person.id, 1);
-    assertEquals(person.age, 21);
+    assertEquals(person.age, 22);
   }
 
   @Test
   public void test_get_array_deserialize() {
-    String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":21}]";
+    String input = "[{\"name\":\"Aidan\",\"_id\":1,\"age\":22}]";
     AsonArray<Person> json = new AsonArray<>(input);
     Person person = json.get(0, Person.class);
     assertEquals(person.name, "Aidan");
     assertEquals(person.id, 1);
-    assertEquals(person.age, 21);
+    assertEquals(person.age, 22);
   }
 
   @Test
@@ -299,7 +308,7 @@ public class AsonSerializeTest {
   @Test
   public void test_serialize_array_list_wrong_method() {
     try {
-      Ason.serialize(new int[] {1, 2, 3, 4});
+      Ason.serialize(new int[]{1, 2, 3, 4});
       assertFalse("No exception thrown when using serialize() on array!", false);
     } catch (IllegalArgumentException ignored) {
     }
@@ -318,7 +327,7 @@ public class AsonSerializeTest {
 
   @Test
   public void test_serialize_empty_array() {
-    AsonArray array = Ason.serializeArray(new int[] {});
+    AsonArray array = Ason.serializeArray(new int[]{});
     assertTrue(array.isEmpty());
   }
 
@@ -475,7 +484,7 @@ public class AsonSerializeTest {
   @Test
   public void test_issue10_serialize() {
     Issue10Example data = new Issue10Example();
-    data.item = new Object[] {1, 2, 3, 4};
+    data.item = new Object[]{1, 2, 3, 4};
 
     Ason ason = Ason.serialize(data);
     AsonArray<Integer> array = ason.get("item");
@@ -491,7 +500,7 @@ public class AsonSerializeTest {
     Ason ason = new Ason("{\"item\": [1, 2, 3, 4]}");
     Issue10Example result = Ason.deserialize(ason, Issue10Example.class);
     Object[] array = (Object[]) result.item;
-    assertTrue(Arrays.equals(new Integer[] {1, 2, 3, 4}, array));
+    assertTrue(Arrays.equals(new Integer[]{1, 2, 3, 4}, array));
   }
 
   @Test
@@ -532,8 +541,8 @@ public class AsonSerializeTest {
 
   @Test
   public void test_deserialize_array_of_arrays() {
-    Integer[] one = new Integer[] {1, 2, 3, 4};
-    Integer[] two = new Integer[] {5, 6, 7, 8};
+    Integer[] one = new Integer[]{1, 2, 3, 4};
+    Integer[] two = new Integer[]{5, 6, 7, 8};
     AsonArray<Integer[]> jsonArray = new AsonArray<Integer[]>().add(one, two);
     Integer[][] matrix = AsonSerializer.get().deserializeArray(jsonArray, Integer[][].class);
     assertNotNull(matrix);
@@ -595,6 +604,17 @@ public class AsonSerializeTest {
     assertNull(result[1]);
   }
 
+  @Test
+  public void test_recursive_deserialize() {
+    Ason ason = new Ason(
+        "{\"name\":\"Aidan\",\"power\":\"Flight\",\"_id\":2,\"age\":22,\"spouse\":{\"name\":\"Nina\",\"_id\":6,\"age\":22,\"spouse\":null}}");
+    Superhero person = ason.deserialize(Superhero.class, true);
+    assertEquals(person.name, "Aidan");
+    assertEquals(person.id, 2);
+    assertEquals(person.age, 22);
+    assertEquals(person.power, "Flight");
+  }
+
   @SuppressWarnings("unused")
   static class Person {
 
@@ -604,9 +624,11 @@ public class AsonSerializeTest {
     String name;
     int age;
     Person spouse;
-    @AsonIgnore String gibberish = "Hello, world!";
+    @AsonIgnore
+    String gibberish = "Hello, world!";
 
-    public Person() {}
+    Person() {
+    }
 
     Person(int id, String name, int age) {
       this.id = id;
@@ -626,7 +648,8 @@ public class AsonSerializeTest {
 
     Person2[] family;
 
-    Person2() {}
+    Person2() {
+    }
 
     Person2(int id) {
       this();
@@ -648,6 +671,20 @@ public class AsonSerializeTest {
     Person3(int id) {
       this();
       this.id = id;
+    }
+  }
+
+  @SuppressWarnings("unused")
+  private static class Superhero extends Person {
+
+    String power;
+
+    Superhero() {
+    }
+
+    Superhero(int id, String name, int age, String power) {
+      super(id, name, age);
+      this.power = power;
     }
   }
 }

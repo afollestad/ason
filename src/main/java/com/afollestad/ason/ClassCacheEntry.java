@@ -1,5 +1,6 @@
 package com.afollestad.ason;
 
+import static com.afollestad.ason.AsonSerializer.getDeclaredFields;
 import static com.afollestad.ason.Util.fieldName;
 import static com.afollestad.ason.Util.getDefaultConstructor;
 import static com.afollestad.ason.Util.listGenericType;
@@ -15,18 +16,25 @@ import java.util.Set;
 /** @author Aidan Follestad (afollestad) */
 class ClassCacheEntry<T> {
 
+  private boolean gotRecursiveFields;
   private final Class<T> cls;
   private final Constructor<?> ctor;
   private final HashMap<String, Field> fieldMap;
   private final HashMap<String, Class<?>> listGenericTypeMap;
 
-  ClassCacheEntry(Class<T> cls) {
+  ClassCacheEntry(Class<T> cls, boolean recursive) {
     this.cls = cls;
     this.fieldMap = new HashMap<>(4);
     this.ctor = getDefaultConstructor(cls);
     this.listGenericTypeMap = new HashMap<>(0);
+    invalidateFields(recursive);
+  }
 
-    final Field[] fields = cls.getDeclaredFields();
+  private void invalidateFields(boolean recursive) {
+    if (recursive) {
+      this.gotRecursiveFields = true;
+    }
+    final List<Field> fields = getDeclaredFields(cls, recursive);
     for (Field field : fields) {
       field.setAccessible(true);
       if (shouldIgnore(field)) {
@@ -40,7 +48,10 @@ class ClassCacheEntry<T> {
     }
   }
 
-  Set<String> fields() {
+  Set<String> fields(boolean recursive) {
+    if (!gotRecursiveFields && recursive) {
+      invalidateFields(true);
+    }
     return fieldMap.keySet();
   }
 

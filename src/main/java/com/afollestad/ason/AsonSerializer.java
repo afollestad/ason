@@ -10,6 +10,7 @@ import static com.afollestad.ason.Util.shouldIgnore;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,9 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** @author Aidan Follestad (afollestad) */
+/**
+ * @author Aidan Follestad (afollestad)
+ */
 @SuppressWarnings({"unchecked", "WeakerAccess", "unused"})
 class AsonSerializer {
 
@@ -37,12 +40,31 @@ class AsonSerializer {
     return serializer;
   }
 
+  static List<Field> getDeclaredFields(Class<?> cls, boolean recursive) {
+    Field[] declaredFields = cls.getDeclaredFields();
+    if (declaredFields == null || declaredFields.length == 0) {
+      return Collections.emptyList();
+    }
+    List<Field> currentFields = new ArrayList<>(declaredFields.length);
+    Collections.addAll(currentFields, declaredFields);
+    if (!recursive || cls.getSuperclass() == null || cls.getSuperclass() == Object.class) {
+      return currentFields;
+    }
+    currentFields.addAll(getDeclaredFields(cls.getSuperclass(), true));
+    return currentFields;
+  }
+
   //
   ////// SERIALIZE
   //
 
   @Nullable
   public Ason serialize(@Nullable Object object) {
+    return serialize(object, false);
+  }
+
+  @Nullable
+  public Ason serialize(@Nullable Object object, boolean recursive) {
     if (Util.isNull(object)) {
       return null;
     } else if (object instanceof Ason
@@ -60,7 +82,7 @@ class AsonSerializer {
       throw new IllegalArgumentException(
           "Use Ason.serialize(Object, Class<?>) to serialize lists.");
     } else {
-      final Field[] fields = object.getClass().getDeclaredFields();
+      final List<Field> fields = getDeclaredFields(object.getClass(), recursive);
       final Ason ason = new Ason();
       for (Field field : fields) {
         field.setAccessible(true);
@@ -76,6 +98,11 @@ class AsonSerializer {
 
   @Nullable
   public AsonArray serializeArray(@Nullable Object arrayObject) {
+    return serializeArray(arrayObject, false);
+  }
+
+  @Nullable
+  public AsonArray serializeArray(@Nullable Object arrayObject, boolean recursive) {
     if (isNull(arrayObject)) {
       return null;
     }
@@ -101,7 +128,7 @@ class AsonSerializer {
         result.add(value);
         continue;
       }
-      result.add(serialize(value));
+      result.add(serialize(value, recursive));
     }
 
     return result;
@@ -109,6 +136,11 @@ class AsonSerializer {
 
   @Nullable
   public AsonArray serializeList(@Nullable List list) {
+    return serializeList(list, false);
+  }
+
+  @Nullable
+  public AsonArray serializeList(@Nullable List list, boolean recursive) {
     if (isNull(list)) {
       return null;
     } else if (list.isEmpty()) {
@@ -120,7 +152,7 @@ class AsonSerializer {
     for (int i = 0; i < list.size(); i++) {
       Array.set(array, i, list.get(i));
     }
-    return serializeArray(array);
+    return serializeArray(array, recursive);
   }
 
   Object serializeField(final Field field, final Object object) {
@@ -155,6 +187,11 @@ class AsonSerializer {
 
   @Nullable
   public <T> T deserialize(@Nullable Ason ason, @NotNull Class<T> cls) {
+    return deserialize(ason, cls, false);
+  }
+
+  @Nullable
+  public <T> T deserialize(@Nullable Ason ason, @NotNull Class<T> cls, boolean recursive) {
     if (isNull(ason)) {
       return null;
     } else if (isPrimitive(cls)) {
@@ -171,12 +208,12 @@ class AsonSerializer {
 
     ClassCacheEntry<T> cacheEntry = classCache.get(cls.getName());
     if (isNull(cacheEntry)) {
-      cacheEntry = new ClassCacheEntry<>(cls);
+      cacheEntry = new ClassCacheEntry<>(cls, recursive);
       classCache.put(cls.getName(), cacheEntry);
     }
     final T newObject = cacheEntry.newInstance();
 
-    for (String name : cacheEntry.fields()) {
+    for (String name : cacheEntry.fields(recursive)) {
       final Class<?> type = cacheEntry.fieldType(name);
       if (isPrimitive(type)
           || type == JSONObject.class
@@ -208,6 +245,12 @@ class AsonSerializer {
 
   @Nullable
   public <T> T deserializeArray(@Nullable AsonArray json, @NotNull Class<T> cls) {
+    return deserializeArray(json, cls, false);
+  }
+
+  @Nullable
+  public <T> T deserializeArray(
+      @Nullable AsonArray json, @NotNull Class<T> cls, boolean recursive) {
     if (isNull(json)) {
       return null;
     } else if (!cls.isArray() && cls != Object.class) {
@@ -241,14 +284,14 @@ class AsonSerializer {
         Array.set(newArray, i, item);
       } else if (itemType.isArray()) {
         AsonArray subArray = (AsonArray) item;
-        Array.set(newArray, i, deserializeArray(subArray, component));
+        Array.set(newArray, i, deserializeArray(subArray, component, recursive));
       } else if (isList(itemType)) {
         AsonArray subArray = (AsonArray) item;
         if (subArray.isEmpty()) {
           Array.set(newArray, i, new ArrayList(0));
         } else {
           Class<?> listComponent = subArray.get(0).getClass();
-          Array.set(newArray, i, deserializeList(subArray, listComponent));
+          Array.set(newArray, i, deserializeList(subArray, listComponent, recursive));
         }
       } else if (!(item instanceof Ason)) {
         throw new IllegalStateException(
@@ -260,7 +303,7 @@ class AsonSerializer {
                 + " objects instead.");
       } else {
         Ason subObject = (Ason) item;
-        Array.set(newArray, i, deserialize(subObject, itemType));
+        Array.set(newArray, i, deserialize(subObject, itemType, recursive));
       }
     }
 
@@ -269,6 +312,12 @@ class AsonSerializer {
 
   @Nullable
   public <T> List<T> deserializeList(@Nullable AsonArray json, @NotNull Class<T> cls) {
+    return deserializeList(json, cls, false);
+  }
+
+  @Nullable
+  public <T> List<T> deserializeList(
+      @Nullable AsonArray json, @NotNull Class<T> cls, boolean recursive) {
     if (isNull(json)) {
       return null;
     } else if (json.isEmpty()) {
@@ -276,7 +325,7 @@ class AsonSerializer {
     }
 
     Class<?> arrayType = Array.newInstance(cls, 0).getClass();
-    Object array = deserializeArray(json, arrayType);
+    Object array = deserializeArray(json, arrayType, recursive);
 
     int length = Array.getLength(array);
     List<T> result = new ArrayList<>();

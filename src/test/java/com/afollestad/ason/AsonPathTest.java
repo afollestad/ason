@@ -156,11 +156,11 @@ public class AsonPathTest {
   public void array_get_path_test() {
     String input =
         "[{\"body\":\"Hello, world\",\"sender\":{\"name\":\"Aidan\",\"id\":2}},"
-            + "{\"body\":\"Hello, world\",\"sender\":{\"name\":\"Waverly\",\"id\":1}},"
+            + "{\"body\":\"Hello, world\",\"sender\":{\"name\":\"Nina\",\"id\":1}},"
             + "{\"body\":\"Hello, world\",\"sender\":{\"name\":\"Jeff\",\"id\":3}}]";
     AsonArray array = new AsonArray(input);
 
-    assertEquals("Waverly", array.get(1, "sender.name"));
+    assertEquals("Nina", array.get(1, "sender.name"));
     assertEquals(3, array.get(2, "sender.id"));
   }
 
@@ -176,18 +176,18 @@ public class AsonPathTest {
     String input =
         "{\"group_id\":1,\"title\":\"Hello, world!\","
             + "\"participants\":[{\"name\":\"Aidan\",\"id\":2},"
-            + "{\"name\":\"Waverly\",\"id\":1}]}";
+            + "{\"name\":\"Nina\",\"id\":1}]}";
     Ason object = new Ason(input);
 
-    assertEquals("Waverly", object.get("participants.$1.name"));
+    assertEquals("Nina", object.get("participants.$1.name"));
     assertEquals(2, object.get("participants.$0.id"));
   }
 
   @Test
   public void test_escape_dollarsign() {
-    String input = "{\"participants\":{\"$1\":{\"name\":\"Waverly\"}}}";
+    String input = "{\"participants\":{\"$1\":{\"name\":\"Nina\"}}}";
     Ason object = new Ason(input);
-    assertEquals("Waverly", object.get("participants.\\$1.name"));
+    assertEquals("Nina", object.get("participants.\\$1.name"));
   }
 
   @Test
@@ -197,12 +197,12 @@ public class AsonPathTest {
             .put("_id", 3)
             .put("name", "Aidan")
             .put("age", 21)
-            .put("spouse.name", "Waverly")
+            .put("spouse.name", "Nina")
             .put("spouse.age", 19);
     ason.remove("spouse.age");
     ason.remove("spouse.nonexisting.test"); // nothing should happen here
     assertEquals(
-        "{\"name\":\"Aidan\",\"_id\":3,\"age\":21," + "\"spouse\":{\"name\":\"Waverly\"}}",
+        "{\"name\":\"Aidan\",\"_id\":3,\"age\":21," + "\"spouse\":{\"name\":\"Nina\"}}",
         ason.toString());
   }
 
@@ -211,14 +211,14 @@ public class AsonPathTest {
     String input =
         "{\"group_id\":1,\"title\":\"Hello, world!\","
             + "\"participants\":[{\"name\":\"Aidan\",\"id\":2},"
-            + "{\"name\":\"Waverly\",\"id\":1}]}";
+            + "{\"name\":\"Nina\",\"id\":1}]}";
     Ason object = new Ason(input);
     object.remove("participants.$0");
 
     AsonArray<Ason> participants = object.get("participants");
     assertEquals(participants.size(), 1);
     assertEquals(participants.get(0).get("id"), 1);
-    assertEquals(participants.get(0).get("name"), "Waverly");
+    assertEquals(participants.get(0).get("name"), "Nina");
   }
 
   @Test
@@ -246,7 +246,7 @@ public class AsonPathTest {
         new Ason()
             .put("person.name", "Aidan")
             .put("person.born", 1995)
-            .put("person.spouse.name", "Waverly");
+            .put("person.spouse.name", "Nina");
     assertEquals("Aidan", ason.get("person.name"));
     assertNull(ason.get("person.spouse.spouse.age"));
   }
@@ -265,7 +265,7 @@ public class AsonPathTest {
 
   @Test
   public void test_error_get_array_keyname() {
-    AsonArray<String> array = new AsonArray<String>().add("Aidan", "Waverly", "Natalie", "Jeff");
+    AsonArray<String> array = new AsonArray<String>().add("Aidan", "Nina", "Natalie", "Jeff");
     Ason ason = new Ason().put("array", array);
     try {
       ason.get("array.$1i");
@@ -280,7 +280,7 @@ public class AsonPathTest {
   @Test
   public void test_index_notation_get_value() {
     Ason one = new Ason().put("id", 2).put("name", "Aidan");
-    Ason two = new Ason().put("id", 3).put("name", "Waverly");
+    Ason two = new Ason().put("id", 3).put("name", "Nina");
     Ason three = new Ason().put("id", 4).put("name", "Natalie");
     Ason four = new Ason().put("id", 5).put("name", "Jeff");
     AsonArray<Ason> array = new AsonArray<Ason>().add(one, two, three, four);

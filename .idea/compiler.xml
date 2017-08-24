@@ -4,8 +4,6 @@
     <bytecodeTargetLevel>
       <module name="ason_main" target="1.7" />
       <module name="ason_test" target="1.7" />
-      <module name="json_main" target="1.7" />
-      <module name="json_test" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -116,7 +116,7 @@ public class UtilTest {
   @Test
   public void test_class_cache_new_instance() {
     ClassCacheEntry<DefaultCtorErrorClass> cacheEntry =
-        new ClassCacheEntry<>(DefaultCtorErrorClass.class);
+        new ClassCacheEntry<>(DefaultCtorErrorClass.class, false);
     try {
       cacheEntry.newInstance();
       assertFalse(
