@@ -1,17 +1,24 @@
+apply from: "$rootDir/gradle/dependencies.gradle"
+
 group 'com.afollestad'
-version '1.4.15'
+version versions.publishVersion
 
 apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'jacoco'
+apply plugin: 'com.novoda.bintray-release'
 
 sourceCompatibility = 1.7
 
 buildscript {
+    apply from: "$rootDir/gradle/dependencies.gradle"
+
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.novoda:bintray-release:+'
-        classpath "com.diffplug.spotless:spotless-plugin-gradle:3.4.1"
+        classpath "com.novoda:bintray-release:$versions.bintrayRelease"
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:$versions.spotlessPlugin"
     }
 }
 
@@ -21,18 +28,18 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
+    testCompile group: 'junit', name: 'junit', version: versions.junit
+    testCompile group: 'com.google.code.gson', name: 'gson', version: versions.gson
 
-    compile group: 'org.json', name: 'json', version: '20160810'
-    compile group: 'com.intellij', name: 'annotations', version: '12.0'
+    compile group: 'org.json', name: 'json', version: versions.json
+    compile group: 'com.intellij', name: 'annotations', version: versions.intellij
 }
 
 publish {
     userOrg = 'drummer-aidan'
     groupId = 'com.afollestad'
     artifactId = 'ason'
-    publishVersion = '1.4.15'
+    publishVersion = versions.publishVersion
     website = 'https://github.com/afollestad/ason'
 }
 

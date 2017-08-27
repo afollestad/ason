@@ -1,0 +1,11 @@
+ext.versions = [
+        publishVersion: '1.4.15',
+
+        junit         : '4.11',
+        json          : '20160810',
+        intellij      : '12.0',
+        gson          : '2.8.0',
+
+        spotlessPlugin: '3.5.1',
+        bintrayRelease: '+'
+]
