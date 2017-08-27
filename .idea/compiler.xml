@@ -4,10 +4,10 @@
     <bytecodeTargetLevel>
       <module name="ason_main" target="1.7" />
       <module name="ason_test" target="1.7" />
-      <module name="asonapt_main" target="1.8" />
-      <module name="asonapt_test" target="1.8" />
-      <module name="asonretrofit_main" target="1.8" />
-      <module name="asonretrofit_test" target="1.8" />
+      <module name="asonapt_main" target="1.7" />
+      <module name="asonapt_test" target="1.7" />
+      <module name="asonretrofit_main" target="1.7" />
+      <module name="asonretrofit_test" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

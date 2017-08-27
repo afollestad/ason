@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.linked.project.id="asonapt:main" external.linked.project.path="$MODULE_DIR$/../../asonapt" external.root.project.path="$MODULE_DIR$/../../asonapt" external.system.id="GRADLE" external.system.module.group="com.afollestad" external.system.module.type="sourceSet" external.system.module.version="1.4.15" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
-    <output url="file://$MODULE_DIR$/../../asonapt/build/classes/main" />
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
+    <output url="file://$MODULE_DIR$/../../asonapt/build/classes/java/main" />
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../asonapt/src/main">
       <sourceFolder url="file://$MODULE_DIR$/../../asonapt/src/main/java" isTestSource="false" />
@@ -9,6 +9,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="ason_main" />
+    <orderEntry type="library" name="Gradle: org.json:json:20160810" level="project" />
+    <orderEntry type="library" name="Gradle: com.intellij:annotations:12.0" level="project" />
   </component>
 </module>

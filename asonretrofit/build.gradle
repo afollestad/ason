@@ -1,4 +1,4 @@
-apply from: "$rootDir/gradle/dependencies.gradle"
+apply from: "../gradle/dependencies.gradle"
 
 group 'com.afollestad'
 version versions.publishVersion
@@ -11,7 +11,7 @@ apply plugin: 'com.novoda.bintray-release'
 sourceCompatibility = 1.7
 
 buildscript {
-    apply from: "$rootDir/gradle/dependencies.gradle"
+    apply from: "../gradle/dependencies.gradle"
 
     repositories {
         jcenter()
