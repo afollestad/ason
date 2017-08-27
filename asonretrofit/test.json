@@ -1,0 +1,15 @@
+{
+  "count": 2,
+  "people": [
+    {
+      "_id": 1,
+      "name": "Aidan",
+      "age": 22
+    },
+    {
+      "_id": 2,
+      "name": "Nina",
+      "age": 22
+    }
+  ]
+}
