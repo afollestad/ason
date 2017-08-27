@@ -30,9 +30,13 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: versions.junit
     testCompile group: 'com.google.code.gson', name: 'gson', version: versions.gson
+    testCompile "io.reactivex.rxjava2:rxjava:$versions.rxJava2"
+    testCompile "com.squareup.retrofit2:adapter-rxjava2:+"
+    testCompile "com.google.truth:truth:$versions.truth"
 
     compile group: 'org.json', name: 'json', version: versions.json
     compile group: 'com.intellij', name: 'annotations', version: versions.intellij
+    compile "com.squareup.retrofit2:retrofit:$versions.retrofit"
 }
 
 publish {

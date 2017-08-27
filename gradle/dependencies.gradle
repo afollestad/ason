@@ -5,6 +5,9 @@ ext.versions = [
         json          : '20160810',
         intellij      : '12.0',
         gson          : '2.8.0',
+        retrofit      : '2.3.0',
+        rxJava2       : '2.+',
+        truth         : '0.34',
 
         spotlessPlugin: '3.5.1',
         bintrayRelease: '+'
