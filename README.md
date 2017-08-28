@@ -55,7 +55,7 @@ The dependency is available via jCenter.
 ```Gradle
 dependencies {
     ...
-    compile 'com.afollestad:ason:1.4.15'
+    compile 'com.afollestad:ason:[latest-version]'
 }
 ```
 
@@ -66,7 +66,7 @@ Since Android includes `org.json` classes, you'll want to exclude the copies pro
 ```Gradle
 dependencies {
     ...
-    compile('com.afollestad:ason:1.4.15') {
+    compile('com.afollestad:ason:[latest-version]') {
         exclude group: 'org.json', module: 'json'
     }
 }
@@ -80,7 +80,7 @@ Android, make sure you also exclude org.json as shown in the section above.*
 ```Gradle
 dependencies {
     ...
-    compile('com.afollestad:ason:1.4.15') {
+    compile('com.afollestad:ason:[latest-version]') {
         exclude group: 'com.intellij', module: 'annotations'
     }
 }
@@ -92,7 +92,7 @@ dependencies {
 <dependency>
   <groupId>com.afollestad</groupId>
   <artifactId>ason</artifactId>
-  <version>1.4.15</version>
+  <version>[latest-version]</version>
   <type>pom</type>
 </dependency>
 ```
@@ -354,7 +354,7 @@ Take this JSON:
             "id": 2
         },
         {
-            "name": "Waverly",
+            "name": "Nina",
             "id": 1
         }
     ]
@@ -369,7 +369,7 @@ Ason ason = new Ason()
     .put("title", "Hello, world!")
     .put("participants.$0.name", "Aidan")
     .put("participants.$0.id", 2)
-    .put("participants.$1.name", "Waverly")
+    .put("participants.$1.name", "Nina")
     .put("participants.$1.id", 1);
 ```
 
@@ -428,7 +428,7 @@ Take this JSON:
 {
     "participants": {
         "$1": {
-            "name": "Waverly"
+            "name": "Nina"
         }
     }
 }
@@ -473,7 +473,7 @@ We can serialize an instance as follows:
 
 ```java
 Person aidan = new Person(1, "Aidan");
-aidan.spouse = new Person(2, "Waverly");
+aidan.spouse = new Person(2, "Nina");
 
 Ason ason = Ason.serialize(aidan);
 ```
@@ -486,7 +486,7 @@ The resulting `Ason` object is:
     "name": "Aidan",
     "spouse": {
         "id": 2,
-        "name": "Waverly"
+        "name": "Nina"
     }
 }
 ```
@@ -523,7 +523,7 @@ If you already have a `Ason` instance, you can add Java class instances into the
 ```java
 Ason ason = new Ason();
 Person person1 = new Person(1, "Aidan");
-Person person2 = new Person(2, "Waverly");
+Person person2 = new Person(2, "Nina");
 
 ason.put("person1", person);
 ason.put("person2", person2);
@@ -539,7 +539,7 @@ This would result in:
     },
     "person2": {
         "id": 2,
-        "name": "Waverly"
+        "name": "Nina"
     }
 }
 ```
@@ -551,7 +551,7 @@ This automatic serialization works with `AsonArray`'s too:
 ```java
 AsonArray<Person> array = new AsonArray<Person>();
 Person person1 = new Person(1, "Aidan");
-Person person2 = new Person(2, "Waverly");
+Person person2 = new Person(2, "Nina");
 
 array.add(person1, person2);
 ```
@@ -566,7 +566,7 @@ This would result in:
     },
     {
         "id": 2,
-        "name": "Waverly"
+        "name": "Nina"
     }
 ]
 ```
@@ -598,7 +598,7 @@ public class Person {
 We can deserialize an object as follows:
 
 ```java
-String input = "{\"id\":1,\"name\":\"Aidan\",\"spouse\":{\"id\":2,\"name\":\"Waverly\"}}";
+String input = "{\"id\":1,\"name\":\"Aidan\",\"spouse\":{\"id\":2,\"name\":\"Nina\"}}";
 Ason ason = new Ason(input);
 
 Person person = ason.deserialize(Person.class);
@@ -607,7 +607,7 @@ Person person = ason.deserialize(Person.class);
 There is also a static method which has the same effect:
 
 ```java
-String input = "{\"id\":1,\"name\":\"Aidan\",\"spouse\":{\"id\":2,\"name\":\"Waverly\"}}";
+String input = "{\"id\":1,\"name\":\"Aidan\",\"spouse\":{\"id\":2,\"name\":\"Nina\"}}";
 Ason ason = new Ason(input);
 
 Person person = Ason.deserialize(ason, Person.class);
@@ -616,7 +616,7 @@ Person person = Ason.deserialize(ason, Person.class);
 Lastly, you can directly deserialize JSON strings:
 
 ```java
-String input = "{\"id\":1,\"name\":\"Aidan\",\"spouse\":{\"id\":2,\"name\":\"Waverly\"}}";
+String input = "{\"id\":1,\"name\":\"Aidan\",\"spouse\":{\"id\":2,\"name\":\"Nina\"}}";
 Person person = Ason.deserialize(input, Person.class);
 ```
 
@@ -625,7 +625,7 @@ Person person = Ason.deserialize(input, Person.class);
 You can deserialize JSON arrays to Java lists and arrays too:
 
 ```java
-String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Nina\",\"_id\":2}]";
 AsonArray<Person> array = new AsonArray<>(input);
 
 Person[] peopleArray = array.deserialize(Person[].class);
@@ -634,7 +634,7 @@ Person[] peopleArray = array.deserialize(Person[].class);
 There is also static methods which have the same effect:
 
 ```java
-String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Nina\",\"_id\":2}]";
 AsonArray<Person> array = new AsonArray<>(input);
 
 Person[] peopleArray = Ason.deserialize(array, Person[].class);
@@ -643,7 +643,7 @@ Person[] peopleArray = Ason.deserialize(array, Person[].class);
 Lastly, you can directly deserialize JSON strings:
 
 ```java
-String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Nina\",\"_id\":2}]";
 Person[] peopleArray = Ason.deserialize(input, Person[].class);
 ```
 
@@ -659,7 +659,7 @@ int[] primitiveArray = Ason.deserialize(input, int[].class);
 Unlike objects and arrays, deserializing lists requires a separate method:
 
 ```java
-String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Nina\",\"_id\":2}]";
 AsonArray<Person> array = new AsonArray<>(input);
 
 List<Person> peopleList = array.deserializeList(Person.class);
@@ -668,7 +668,7 @@ List<Person> peopleList = array.deserializeList(Person.class);
 There is also a static method which has the same effect:
 
 ```java
-String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Nina\",\"_id\":2}]";
 AsonArray<Person> array = new AsonArray<>(input);
 
 List<Person> peopleList = Ason.deserializeList(array, Person.class);
@@ -677,7 +677,7 @@ List<Person> peopleList = Ason.deserializeList(array, Person.class);
 You can deserialize strings directly:
 
 ```java
-String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Waverly\",\"_id\":2}]";
+String input = "[{\"name\":\"Aidan\",\"_id\":1},{\"name\":\"Nina\",\"_id\":2}]";
 List<Person> peopleList = Ason.deserializeList(input, Person.class);
 ```
 
@@ -779,4 +779,13 @@ Retrofit retrofit =
       ...
       .addConverterFactory(new AsonConverterFactory())
       .build();
+```
+
+`AsonConverterFactory` exists in a separate dependency:
+
+```Gradle
+dependencies {
+    ...
+    compile 'com.afollestad:ason-retrofit:[latest-version]'
+}
 ```
