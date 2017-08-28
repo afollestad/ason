@@ -4,7 +4,6 @@ import com.afollestad.ason.Ason;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.util.List;
 import okhttp3.MediaType;

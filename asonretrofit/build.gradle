@@ -4,7 +4,6 @@ group 'com.afollestad'
 version versions.publishVersion
 
 apply plugin: 'java'
-apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'com.novoda.bintray-release'
 
@@ -35,7 +34,6 @@ dependencies {
     testCompile "com.google.truth:truth:$versions.truth"
 
     compile group: 'org.json', name: 'json', version: versions.json
-    compile group: 'com.intellij', name: 'annotations', version: versions.intellij
     compile "com.squareup.retrofit2:retrofit:$versions.retrofit"
 }
 
