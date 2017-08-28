@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.afollestad.asonretrofit.RequestTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2017-08-28T00:35:17" hostname="c4b301c62473" time="1.712">
+  <properties/>
+  <testcase name="test_request_converter_array" classname="com.afollestad.asonretrofit.RequestTest" time="1.149"/>
+  <testcase name="test_request_converter_list" classname="com.afollestad.asonretrofit.RequestTest" time="0.285"/>
+  <testcase name="test_request_converter_object" classname="com.afollestad.asonretrofit.RequestTest" time="0.278"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
