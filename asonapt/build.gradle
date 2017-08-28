@@ -35,13 +35,13 @@ dependencies {
     compile group: 'com.intellij', name: 'annotations', version: versions.intellij
 }
 
-publish {
-    userOrg = 'drummer-aidan'
-    groupId = 'com.afollestad'
-    artifactId = 'ason-apt'
-    publishVersion = versions.publishVersion
-    website = 'https://github.com/afollestad/ason'
-}
+//publish {
+//    userOrg = 'drummer-aidan'
+//    groupId = 'com.afollestad'
+//    artifactId = 'ason-apt'
+//    publishVersion = versions.publishVersion
+//    website = 'https://github.com/afollestad/ason'
+//}
 
 jacocoTestReport {
     reports {

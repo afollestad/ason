@@ -31,8 +31,8 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: versions.junit
     testCompile group: 'com.google.code.gson', name: 'gson', version: versions.gson
 
-    compile group: 'org.json', name: 'json', version: versions.json
-    compile group: 'com.intellij', name: 'annotations', version: versions.intellij
+    implementation group: 'org.json', name: 'json', version: versions.json
+    implementation group: 'com.intellij', name: 'annotations', version: versions.intellij
 }
 
 publish {

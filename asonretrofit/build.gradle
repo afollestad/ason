@@ -33,8 +33,10 @@ dependencies {
     testCompile "com.squareup.retrofit2:adapter-rxjava2:+"
     testCompile "com.google.truth:truth:$versions.truth"
 
-    compile group: 'org.json', name: 'json', version: versions.json
-    compile "com.squareup.retrofit2:retrofit:$versions.retrofit"
+    implementation group: 'org.json', name: 'json', version: versions.json
+    implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
+
+    implementation "com.afollestad:ason:$versions.publishVersion"
 }
 
 publish {
