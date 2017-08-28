@@ -1,6 +1,6 @@
 package com.afollestad.asonretrofit;
 
-public class TestResponse {
+public class TestData {
 
   public int count;
   public TestPerson[] people;

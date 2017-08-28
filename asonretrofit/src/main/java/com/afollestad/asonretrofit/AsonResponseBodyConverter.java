@@ -6,9 +6,7 @@ import java.io.IOException;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 
-/**
- * @author Aidan Follestad (afollestad)
- */
+/** @author Aidan Follestad (afollestad) */
 class AsonResponseBodyConverter<T> implements Converter<ResponseBody, T> {
 
   public enum Mode {

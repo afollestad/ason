@@ -71,7 +71,8 @@ class AsonSerializer {
         || object instanceof AsonArray
         || object instanceof JSONObject
         || object instanceof JSONArray) {
-      throw new IllegalArgumentException("You cannot serialize com.afollestad.ason.Ason or com.afollestad.ason.AsonArray.");
+      throw new IllegalArgumentException(
+          "You cannot serialize com.afollestad.ason.Ason or com.afollestad.ason.AsonArray.");
     } else if (isPrimitive(object)) {
       throw new IllegalArgumentException(
           "You cannot serialize primitive types (" + object.getClass().getName() + ").");

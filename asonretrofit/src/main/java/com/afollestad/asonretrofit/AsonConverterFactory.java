@@ -13,13 +13,13 @@ import retrofit2.Retrofit;
 public final class AsonConverterFactory extends Converter.Factory {
 
   @Override
-  public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations,
-      Retrofit retrofit) {
+  public Converter<ResponseBody, ?> responseBodyConverter(
+      Type type, Annotation[] annotations, Retrofit retrofit) {
     if (type instanceof ParameterizedType) {
       ParameterizedType paramType = (ParameterizedType) type;
       if (List.class == paramType.getRawType()) {
-        return new AsonResponseBodyConverter<>(Mode.List,
-            (Class<?>) paramType.getActualTypeArguments()[0]);
+        return new AsonResponseBodyConverter<>(
+            Mode.List, (Class<?>) paramType.getActualTypeArguments()[0]);
       }
     } else if (type instanceof Class) {
       Class<?> cls = (Class<?>) type;
@@ -33,9 +33,11 @@ public final class AsonConverterFactory extends Converter.Factory {
   }
 
   @Override
-  public Converter<?, RequestBody> requestBodyConverter(Type type,
-      Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
-    Class<?> cls = type.getClass();
-    return null;
+  public Converter<?, RequestBody> requestBodyConverter(
+      Type type,
+      Annotation[] parameterAnnotations,
+      Annotation[] methodAnnotations,
+      Retrofit retrofit) {
+    return new AsonRequestBodyConverter<>();
   }
 }

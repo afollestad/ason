@@ -2,13 +2,14 @@ package com.afollestad.asonretrofit;
 
 import static com.google.common.truth.Truth.assertThat;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-public class ResponseTest {
+public class RequestTest {
 
   private TestService service;
 
@@ -16,7 +17,7 @@ public class ResponseTest {
   public void setup() {
     Retrofit retrofit =
         new Retrofit.Builder()
-            .baseUrl("https://raw.githubusercontent.com")
+            .baseUrl("https://postman-echo.com")
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(new AsonConverterFactory())
             .build();
@@ -24,8 +25,15 @@ public class ResponseTest {
   }
 
   @Test
-  public void test_response_converter_object() {
-    TestData response = service.getTestObject().blockingGet().body();
+  public void test_request_converter_object() {
+    TestData request = new TestData();
+    request.count = 2;
+    request.people =
+        new TestPerson[] {new TestPerson(1, "Aidan", 22), new TestPerson(2, "Nina", 22)};
+
+    EchoObjectWrapper responseWrapper = service.putTestObject(request).blockingGet().body();
+    assertThat(responseWrapper).isNotNull();
+    TestData response = responseWrapper.data;
     assertThat(response).isNotNull();
     assertThat(response.count).isEqualTo(2);
     assertThat(response.people).isNotNull();
@@ -39,8 +47,13 @@ public class ResponseTest {
   }
 
   @Test
-  public void test_response_converter_array() {
-    TestPerson[] response = service.getTestArray().blockingGet().body();
+  public void test_request_converter_array() {
+    TestPerson[] request =
+        new TestPerson[] {new TestPerson(1, "Aidan", 22), new TestPerson(2, "Nina", 22)};
+    EchoArrayWrapper responseWrapper = service.putTestArray(request).blockingGet().body();
+    assertThat(responseWrapper).isNotNull();
+
+    TestPerson[] response = responseWrapper.data;
     assertThat(response).isNotNull();
     assertThat(response.length).isEqualTo(2);
     assertThat(response[0].id).isEqualTo(1);
@@ -52,8 +65,14 @@ public class ResponseTest {
   }
 
   @Test
-  public void test_response_converter_list() {
-    List<TestPerson> response = service.getTestList().blockingGet().body();
+  public void test_request_converter_list() {
+    List<TestPerson> request = new ArrayList<>(2);
+    request.add(new TestPerson(1, "Aidan", 22));
+    request.add(new TestPerson(2, "Nina", 22));
+    EchoListWrapper responseWrapper = service.putTestList(request).blockingGet().body();
+    assertThat(responseWrapper).isNotNull();
+
+    List<TestPerson> response = responseWrapper.data;
     assertThat(response).isNotNull();
     assertThat(response.size()).isEqualTo(2);
     assertThat(response.get(0).id).isEqualTo(1);
