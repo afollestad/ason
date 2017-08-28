@@ -1,5 +1,5 @@
 ext.versions = [
-        publishVersion: '1.4.15',
+        publishVersion: '1.4.16',
 
         junit         : '4.11',
         json          : '20160810',

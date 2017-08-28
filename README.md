@@ -42,6 +42,7 @@ in the Android SDK. As we all know, those stock classes tend to be a pain. They 
 9. [Annotations](https://github.com/afollestad/ason#annotations)
     1. [@AsonName](https://github.com/afollestad/ason#asonname)
     2. [@AsonIgnore](https://github.com/afollestad/ason#asonignore)
+10. [Retrofit](https://github.com/afollestad/ason#retrofit)
 
 ---
 
@@ -763,4 +764,19 @@ public class Person {
         this.born = born;
     }
 }
+```
+
+----
+
+# Retrofit
+
+Ason's built in Retrofit converters let you send and receive objects with Retrofit, they are 
+automatically serialized or deserialized. Just add the converter factory to your Retrofit instances:
+
+```java
+Retrofit retrofit =
+  new Retrofit.Builder()
+      ...
+      .addConverterFactory(new AsonConverterFactory())
+      .build();
 ```
