@@ -3,14 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ason.iml" filepath="$PROJECT_DIR$/.idea/modules/ason.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ason_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ason_main.iml" group="ason" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ason_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ason_test.iml" group="ason" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/asonapt.iml" filepath="$PROJECT_DIR$/.idea/modules/asonapt.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/asonapt_main.iml" filepath="$PROJECT_DIR$/.idea/modules/asonapt_main.iml" group="asonapt" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/asonapt_test.iml" filepath="$PROJECT_DIR$/.idea/modules/asonapt_test.iml" group="asonapt" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/asonretrofit.iml" filepath="$PROJECT_DIR$/.idea/modules/asonretrofit.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/asonretrofit_main.iml" filepath="$PROJECT_DIR$/.idea/modules/asonretrofit_main.iml" group="asonretrofit" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/asonretrofit_test.iml" filepath="$PROJECT_DIR$/.idea/modules/asonretrofit_test.iml" group="asonretrofit" />
     </modules>
   </component>
 </project>
